@@ -11,6 +11,7 @@
 #include "GoldenArcherBingo.h"
 #include "GameMain.h"
 #include "Guild.h"
+#include "InvasionManager.h"
 #include "ItemBagManager.h"
 #include "ItemStack.h"
 #include "ItemValue.h"
@@ -723,6 +724,8 @@ void DGCharacterInfoRecv(SDHP_CHARACTER_INFO_RECV* lpMsg)
 	gSkillManager.SkillChangeUse(lpObj->Index);
 
 	gObjViewportListProtocolCreate(lpObj);
+
+	gInvasionManager.TamachanUserReset(lpObj->Index);
 
 	gObjectManager.CharacterUpdateMapEffect(lpObj);
 

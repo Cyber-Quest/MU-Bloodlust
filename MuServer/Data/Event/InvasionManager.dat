@@ -4,11 +4,24 @@
 0	*	*	*	*	14	50	0
 1	*	*	*	*	19	35	0
 2	*	*	*	*	14	58	0
+3	*	*	*	*	0	0	0
+3	*	*	*	*	2	0	0
+3	*	*	*	*	4	0	0
+3	*	*	*	*	6	0	0
+3	*	*	*	*	8	0	0
+3	*	*	*	*	10	0	0
+3	*	*	*	*	12	0	0
+3	*	*	*	*	14	0	0
+3	*	*	*	*	16	0	0
+3	*	*	*	*	18	0	0
+3	*	*	*	*	20	0	0
+3	*	*	*	*	22	0	0
 end
 
 //0 Death King - Lorencia y Noria
 //1 Red Dragon - Lorencia y Devias
 //2 Dorados - Lorencia, Devias, Noria, Atlans y Tarkan
+//3 Tamachan - Lorencia
 
 // Invasion Effect
 // 1 = Flying Red Dragons ; 3 = Flying Golden Dragons
@@ -20,6 +33,7 @@ end
 0	19		21		55		20		10		5		18		0		"Death King"
 1	19		21		42		20		10		5		18		1		"Red Dragon"
 2	19		21		*		20		10		5		18		3		"Golden"
+3	-1		21		-1		-1		5		0		-1		0		"Tamachan"
 end
 
 2

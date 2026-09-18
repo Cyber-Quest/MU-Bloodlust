@@ -5,6 +5,9 @@
 #include "Monster.h"
 #include "MonsterSetBase.h"
 #include "Notice.h"
+#include "DSProtocol.h"
+#include "Protocol.h"
+#include "ItemManager.h"
 #ifdef _WIN32
 #include "resource.h"
 #endif
@@ -13,6 +16,31 @@
 #include "Util.h"
 
 CInvasionManager gInvasionManager;
+
+namespace
+{
+	const int TAMACHAN_MAP = 0;
+	const int TAMACHAN_DROP_MIN_X = 156;
+	const int TAMACHAN_DROP_MAX_X = 170;
+	const int TAMACHAN_DROP_MIN_Y = 126;
+	const int TAMACHAN_DROP_MAX_Y = 129;
+	// Tipo de evento del opcode 0x0B que el cliente 0.98j interpreta como
+	// Tamachan (ProtocolCore 0x444299): estado 1 lo hace aparecer en el
+	// puente de Lorencia y estado 0 lo despide.
+	const BYTE TAMACHAN_EVENT_INDEX = 2;
+	const int TAMACHAN_DROPS_PER_TYPE = 3;
+	const int TAMACHAN_DROP_INTERVAL_SECONDS = 60;
+	const int TAMACHAN_DROP_STEP_SECONDS = 12;
+	const int TAMACHAN_FIREWORKS_DISTANCE = 12;
+	const int TAMACHAN_JEWEL_LIST[] =
+	{
+		GET_ITEM(12, 15), // Chaos
+		GET_ITEM(14, 13), // Bless
+		GET_ITEM(14, 14), // Soul
+		GET_ITEM(14, 16), // Life
+		GET_ITEM(14, 22), // Creation
+	};
+}
 
 CInvasionManager::CInvasionManager()
 {
@@ -30,7 +58,16 @@ CInvasionManager::CInvasionManager()
 
 		lpInfo->TickCount = GetTickCount();
 
+		lpInfo->TamachanActive = 0;
+		lpInfo->TamachanRainWave = -1;
+		lpInfo->TamachanRainDropCount = 0;
+
 		this->CleanMonster(lpInfo);
+	}
+
+	for (int n = 0; n < MAX_OBJECT; n++)
+	{
+		this->m_TamachanUserMap[n] = -1;
 	}
 }
 
@@ -91,6 +128,9 @@ void CInvasionManager::Load(const char* path)
 		this->m_InvasionInfo[n].WarningTime = 0;
 
 		this->m_InvasionInfo[n].WarningMsg = -1;
+
+		this->m_InvasionInfo[n].TamachanRainWave = -1;
+		this->m_InvasionInfo[n].TamachanRainDropCount = 0;
 
 		this->m_InvasionInfo[n].StartTime.clear();
 
@@ -319,7 +359,11 @@ void CInvasionManager::ProcState_EMPTY(INVASION_INFO* lpInfo)
 
 	if (lpInfo->RemainTime <= 0)
 	{
-		if (lpInfo->RespawnMessage != -1)
+		if (_stricmp(lpInfo->InvasionName, "Tamachan") == 0)
+		{
+			gNotice.GCNoticeSendToAll(0, "Tamachan ha aparecido en Lorencia.");
+		}
+		else if (lpInfo->RespawnMessage != -1)
 		{
 			gNotice.GCNoticeSendToAll(0, lpInfo->RespawnMessage, lpInfo->InvasionName);
 		}
@@ -338,6 +382,10 @@ void CInvasionManager::ProcState_START(INVASION_INFO* lpInfo)
 		}
 
 		this->SetState(lpInfo, INVASION_STATE_EMPTY);
+	}
+	else
+	{
+		this->ProcTamachanJewelRain(lpInfo);
 	}
 }
 
@@ -377,6 +425,18 @@ void CInvasionManager::SetState_BLANK(INVASION_INFO* lpInfo)
 
 void CInvasionManager::SetState_EMPTY(INVASION_INFO* lpInfo)
 {
+	lpInfo->TamachanRainWave = -1;
+	lpInfo->TamachanRainDropCount = 0;
+
+	// Fin del Tamachan (por tiempo o porque Init() reinicio las invasiones):
+	// se le avisa a Lorencia para que el cliente lo despida.
+	if (lpInfo->TamachanActive != 0)
+	{
+		lpInfo->TamachanActive = 0;
+
+		GCEventStateSendToAll(TAMACHAN_MAP, 0, TAMACHAN_EVENT_INDEX);
+	}
+
 	this->ClearMonster(lpInfo);
 
 	this->CheckSync(lpInfo);
@@ -403,6 +463,203 @@ void CInvasionManager::SetState_START(INVASION_INFO* lpInfo)
 	lpInfo->RemainTime = lpInfo->InvasionTime * 60;
 
 	lpInfo->TargetTime = (int)(time(0) + lpInfo->RemainTime);
+
+	lpInfo->TamachanRainWave = -1;
+	lpInfo->TamachanRainDropCount = 0;
+
+	if (this->IsTamachanInvasion(lpInfo) != 0)
+	{
+		// El Tamachan del 0.98j no es un monstruo: lo dibuja el cliente al
+		// recibir el 0x0B con el evento 2.  Solo se avisa a quien esta en
+		// Lorencia; el resto lo recibe al entrar (TamachanUserMapCheck).
+		lpInfo->TamachanActive = 1;
+
+		GCEventStateSendToAll(TAMACHAN_MAP, 1, TAMACHAN_EVENT_INDEX);
+	}
+
+	this->ProcTamachanJewelRain(lpInfo);
+}
+
+bool CInvasionManager::IsTamachanInvasion(INVASION_INFO* lpInfo)
+{
+	return (_stricmp(lpInfo->InvasionName, "Tamachan") == 0);
+}
+
+bool CInvasionManager::IsTamachanActive()
+{
+	for (int n = 0; n < MAX_INVASION; n++)
+	{
+		INVASION_INFO* lpInfo = &this->m_InvasionInfo[n];
+
+		if (this->IsTamachanInvasion(lpInfo) != 0 && lpInfo->State == INVASION_STATE_START)
+		{
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+void CInvasionManager::TamachanUserReset(int aIndex)
+{
+	if (OBJECT_RANGE(aIndex) != 0)
+	{
+		this->m_TamachanUserMap[aIndex] = -1;
+	}
+}
+
+void CInvasionManager::TamachanUserMapCheck(LPOBJ lpObj)
+{
+	if (lpObj->Type != OBJECT_USER || OBJECT_RANGE(lpObj->Index) == 0)
+	{
+		return;
+	}
+
+	int lastMap = this->m_TamachanUserMap[lpObj->Index];
+
+	this->m_TamachanUserMap[lpObj->Index] = lpObj->Map;
+
+	// Solo al ENTRAR a Lorencia: el cliente borra al Tamachan cuando sale del
+	// mapa, pero dentro del mapa lo mantiene, y reenviar el estado 1 lo haria
+	// reaparecer en el punto de inicio (este hook tambien corre al cambiar
+	// anillos, al teletransportarse dentro del mapa, etc).
+	if (lpObj->Map != TAMACHAN_MAP || lastMap == TAMACHAN_MAP)
+	{
+		return;
+	}
+
+	if (this->IsTamachanActive() != 0)
+	{
+		GCEventStateSend(lpObj->Index, 1, TAMACHAN_EVENT_INDEX);
+	}
+}
+
+void CInvasionManager::ProcTamachanJewelRain(INVASION_INFO* lpInfo)
+{
+	if (this->IsTamachanInvasion(lpInfo) == 0)
+	{
+		return;
+	}
+
+	if (lpInfo->InvasionTime <= 0)
+	{
+		return;
+	}
+
+	int elapsed = (lpInfo->InvasionTime * 60) - lpInfo->RemainTime;
+
+	if (elapsed < 0)
+	{
+		return;
+	}
+
+	int wave = (elapsed / TAMACHAN_DROP_INTERVAL_SECONDS);
+
+	if (wave < 0 || wave >= lpInfo->InvasionTime)
+	{
+		return;
+	}
+
+	if (lpInfo->TamachanRainWave != wave)
+	{
+		lpInfo->TamachanRainWave = wave;
+		lpInfo->TamachanRainDropCount = 0;
+	}
+
+	int jewelCount = (sizeof(TAMACHAN_JEWEL_LIST) / sizeof(TAMACHAN_JEWEL_LIST[0]));
+	int dropsPerMinute = (TAMACHAN_DROPS_PER_TYPE * jewelCount);
+	int elapsedInMinute = (elapsed % TAMACHAN_DROP_INTERVAL_SECONDS);
+	int expectedDrops = (elapsedInMinute / TAMACHAN_DROP_STEP_SECONDS) + 1;
+
+	if (expectedDrops > dropsPerMinute)
+	{
+		expectedDrops = dropsPerMinute;
+	}
+
+	if (lpInfo->TamachanRainDropCount < expectedDrops)
+	{
+		this->DropTamachanJewelSingle(lpInfo->TamachanRainDropCount);
+
+		lpInfo->TamachanRainDropCount++;
+	}
+}
+
+void CInvasionManager::DropTamachanJewelSingle(int dropSequence)
+{
+	int dropOwnerIndex = this->GetTamachanDropOwnerIndex(TAMACHAN_MAP);
+
+	if (OBJECT_USER_RANGE(dropOwnerIndex) == 0)
+	{
+		return;
+	}
+
+	int jewelCount = (sizeof(TAMACHAN_JEWEL_LIST) / sizeof(TAMACHAN_JEWEL_LIST[0]));
+	int jewel = (dropSequence % jewelCount);
+	int x = TAMACHAN_DROP_MIN_X + (GetLargeRand() % ((TAMACHAN_DROP_MAX_X - TAMACHAN_DROP_MIN_X) + 1));
+	int y = TAMACHAN_DROP_MIN_Y + (GetLargeRand() % ((TAMACHAN_DROP_MAX_Y - TAMACHAN_DROP_MIN_Y) + 1));
+
+	GDCreateItemSend(dropOwnerIndex, (BYTE)TAMACHAN_MAP, (BYTE)x, (BYTE)y, TAMACHAN_JEWEL_LIST[jewel], 0, 0, 0, 0, 0, -1, 0);
+
+	int fireworksSource = this->GetTamachanFireworksSourceIndex(TAMACHAN_MAP, x, y);
+
+	if (OBJECT_USER_RANGE(fireworksSource) != 0)
+	{
+		GCFireworksSend(&gObj[fireworksSource], x, y);
+	}
+}
+
+int CInvasionManager::GetTamachanDropOwnerIndex(int map)
+{
+	int fallbackIndex = -1;
+
+	for (int n = OBJECT_START_USER; n < MAX_OBJECT; n++)
+	{
+		LPOBJ lpUser = &gObj[n];
+
+		if (lpUser->Type != OBJECT_USER || lpUser->Connected != OBJECT_ONLINE)
+		{
+			continue;
+		}
+
+		if (fallbackIndex == -1)
+		{
+			fallbackIndex = n;
+		}
+
+		if (lpUser->Map == map)
+		{
+			return n;
+		}
+	}
+
+	return fallbackIndex;
+}
+
+int CInvasionManager::GetTamachanFireworksSourceIndex(int map, int x, int y)
+{
+	int mapFallback = -1;
+
+	for (int n = OBJECT_START_USER; n < MAX_OBJECT; n++)
+	{
+		LPOBJ lpUser = &gObj[n];
+
+		if (lpUser->Type != OBJECT_USER || lpUser->Connected != OBJECT_ONLINE || lpUser->Map != map)
+		{
+			continue;
+		}
+
+		if (mapFallback == -1)
+		{
+			mapFallback = n;
+		}
+
+		if (abs(lpUser->X - x) <= TAMACHAN_FIREWORKS_DISTANCE && abs(lpUser->Y - y) <= TAMACHAN_FIREWORKS_DISTANCE)
+		{
+			return n;
+		}
+	}
+
+	return mapFallback;
 }
 
 void CInvasionManager::CheckSync(INVASION_INFO* lpInfo)

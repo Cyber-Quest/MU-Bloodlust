@@ -47,4 +47,5 @@
 "/clearinv"	1	1	1	1	0	0	0	0	*	*	*	*	*	*	*	*	*	*	*	*	*	*	*	*	0	0	//clearinv
 "/skin"	1	1	1	1	0	0	0	0	*	*	*	*	*	*	*	*	*	*	*	*	*	*	*	*	0	0	//skin <MonsterNumber>
 "/makemob"	1	1	1	1	0	0	0	0	*	*	*	*	*	*	*	*	*	*	*	*	*	*	*	*	0	1	//makemob <MonsterNumber>
+"/tamastart"	1	1	1	1	0	0	0	0	*	*	*	*	*	*	*	*	*	*	*	*	*	*	*	*	0	1	//tamastart
 end

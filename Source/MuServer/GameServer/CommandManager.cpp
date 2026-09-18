@@ -19,6 +19,7 @@
 #include "ServerInfo.h"
 #include "Util.h"
 #include "Monster.h"
+#include "InvasionManager.h"
 
 CCommandManager gCommandManager;
 
@@ -523,6 +524,13 @@ bool CCommandManager::ManagementCore(LPOBJ lpObj, char* message)
 		case COMMAND_GM_MAKEMOB:
 		{
 			this->CommandGMMakeMob(lpObj, argument);
+
+			break;
+		}
+
+		case COMMAND_GM_TAMASTART:
+		{
+			this->CommandGMTamaStart(lpObj, argument);
 
 			break;
 		}
@@ -2061,4 +2069,43 @@ void CCommandManager::CommandGMMakeMob(LPOBJ lpObj, char* arg)
 	gNotice.GCNoticeSend(lpObj->Index, 1, gMessage.GetTextMessage(102, lpObj->Lang));
 
 	gLog.Output(LOG_COMMAND, "[CommandMakeMob][%s][%s] - (Monster: %d, Qtd: %d)", lpObj->Account, lpObj->Name, monster, qtd);
+}
+
+void CCommandManager::CommandGMTamaStart(LPOBJ lpObj, char* arg)
+{
+	(void)arg;
+
+	int tamachanIndex = -1;
+
+	for (int n = 0; n < MAX_INVASION; n++)
+	{
+		char* invasionName = gInvasionManager.GetInvasionName(n);
+
+		if (invasionName != 0 && _stricmp(invasionName, "Tamachan") == 0)
+		{
+			tamachanIndex = n;
+
+			break;
+		}
+	}
+
+	if (tamachanIndex < 0)
+	{
+		gNotice.GCNoticeSend(lpObj->Index, 1, "No se encontro la invasion Tamachan.");
+
+		return;
+	}
+
+	if (gInvasionManager.GetState(tamachanIndex) == INVASION_STATE_START)
+	{
+		gNotice.GCNoticeSend(lpObj->Index, 1, "Tamachan ya esta activo.");
+
+		return;
+	}
+
+	gInvasionManager.StartInvasion(tamachanIndex);
+
+	gNotice.GCNoticeSend(lpObj->Index, 1, "Tamachan programado. Inicio en aproximadamente 2 minutos.");
+
+	gLog.Output(LOG_COMMAND, "[CommandTamaStart][%s][%s] - (InvasionIndex: %d)", lpObj->Account, lpObj->Name, tamachanIndex);
 }
