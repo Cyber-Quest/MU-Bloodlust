@@ -740,7 +740,7 @@ void CObjectManager::CharacterGameCloseSet(int aIndex, int type)
 
 void CObjectManager::CharacterUpdateMapEffect(LPOBJ lpObj)
 {
-	
+	gInvasionManager.TamachanUserMapCheck(lpObj);
 }
 
 bool CObjectManager::CharacterGetRespawnLocation(LPOBJ lpObj)

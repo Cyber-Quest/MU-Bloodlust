@@ -1973,6 +1973,11 @@ void gObjMonsterBaseAct(LPOBJ lpObj)
 					if ((attr & 1) != 1)
 					{
 						lpObj->ActionState.Attack = 1;
+
+						// Sin esto un monstruo que quedo con Move = 1 intentando llegar a un
+						// tile inalcanzable (puente de Blood Castle lleno) nunca ataca:
+						// gObjMonsterProcess revisa Move ANTES que Attack y hace return.
+						lpObj->ActionState.Move = 0;
 					}
 					else
 					{

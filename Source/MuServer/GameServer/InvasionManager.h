@@ -46,6 +46,9 @@ struct INVASION_INFO
 	int RemainTime;
 	int TargetTime;
 	int TickCount;
+	int TamachanRainWave;
+	int TamachanRainDropCount;
+	int TamachanActive;
 	int MonsterIndex[MAX_INVASION_MONSTER];
 	int RespawnMessage;
 	int DespawnMessage;
@@ -118,9 +121,27 @@ public:
 
 	void StartInvasion(int InvasionIndex);
 
+	bool IsTamachanInvasion(INVASION_INFO* lpInfo);
+
+	void ProcTamachanJewelRain(INVASION_INFO* lpInfo);
+
+	void DropTamachanJewelSingle(int dropSequence);
+
+	int GetTamachanDropOwnerIndex(int map);
+
+	int GetTamachanFireworksSourceIndex(int map, int x, int y);
+
+	bool IsTamachanActive();
+
+	void TamachanUserReset(int aIndex);
+
+	void TamachanUserMapCheck(LPOBJ lpObj);
+
 private:
 
 	INVASION_INFO m_InvasionInfo[MAX_INVASION];
+
+	int m_TamachanUserMap[MAX_OBJECT];
 };
 
 extern CInvasionManager gInvasionManager;
