@@ -5,7 +5,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/emapupi/mu-linux-97k-mu-editor?label=editor&logo=docker)](https://hub.docker.com/r/emapupi/mu-linux-97k-mu-editor)
 [![Docker Pulls](https://img.shields.io/docker/pulls/emapupi/mu-linux-97k-mysql?label=mysql&logo=docker)](https://hub.docker.com/r/emapupi/mu-linux-97k-mysql)
 
-Proyecto para portar y operar MuEmu 0.97k en Linux de forma nativa, con foco en Docker y despliegues on-demand. Incluye fuentes del servidor, cliente y encoder necesarios para operar, y automatiza el build dentro del contenedor.
+Proyecto para portar y operar MuEmu 0.97k en Linux de forma nativa, con foco en Docker y despliegues on-demand. Incluye fuentes del servidor, cliente y encoder necesarios para operar(Deprecado para futuras actualizaciones, el uso del cliente ahora pasa a estar en https://github.com/EmanuelCatania/Mu-97k-Client-Source), y automatiza el build dentro del contenedor.
 
 ## Base y referencia
 Este repo esta basado en las sources de Kayito. Referencia upstream:
@@ -83,6 +83,38 @@ Tags recomendados:
 - Server: fix de targeteo/ataque entre guilds en war y battle soccer.
 - Server: ajuste del flujo de quests para priorizar la quest activa al hablar con NPCs.
 
+## Update 3 (2026-09-20)
+- Server: fix de blood castle que evitaba el ataque de los monster del puente
+- Server: se agrego un evento de lluvia de joyas incluyendo el mob exclusivo japones Tamachan (Requiere usar el source del cliente y en el dll solo se vera la lluvia de joyas)
+
+  ## ⚠️ Estado del cliente / Client status / Status do cliente
+
+### 🇪🇸 Español
+
+El sistema basado en **inyección de DLL está comenzando a dejar de utilizarse como cliente principal**.
+
+El código y los archivos relacionados con este sistema **se mantendrán en este repositorio por motivos de compatibilidad, referencia y mantenimiento**, pero el desarrollo del cliente compatible con este servidor continúa ahora como un proyecto separado basado en el código fuente del cliente.
+
+➡️ **Cliente compatible:**
+https://github.com/EmanuelCatania/Mu-97k-Client-Source
+
+### 🇺🇸 English
+
+The **DLL injection-based system is starting to be phased out as the primary client implementation**.
+
+The related code and files **will remain in this repository for compatibility, reference, and maintenance purposes**, but development of the client compatible with this server now continues as a separate project based on the client's source code.
+
+➡️ **Compatible client:**
+https://github.com/EmanuelCatania/Mu-97k-Client-Source
+
+### 🇧🇷 Português
+
+O sistema baseado em **injeção de DLL está começando a deixar de ser utilizado como implementação principal do cliente**.
+
+O código e os arquivos relacionados **continuarão neste repositório por motivos de compatibilidade, referência e manutenção**, porém o desenvolvimento do cliente compatível com este servidor agora continua como um projeto separado baseado no código-fonte do cliente.
+
+➡️ **Cliente compatível:**
+https://github.com/EmanuelCatania/Mu-97k-Client-Source
 
 
 ## Uso rapido (Docker)
