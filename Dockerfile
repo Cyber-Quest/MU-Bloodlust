@@ -12,7 +12,7 @@ COPY Source/MuServer /src/Source/MuServer
 WORKDIR /src/Source/MuServer
 
 RUN cmake -S . -B /build -DCMAKE_BUILD_TYPE=Release \
-    && cmake --build /build -j
+    && cmake --build /build -j1
 
 FROM ubuntu:22.04
 
