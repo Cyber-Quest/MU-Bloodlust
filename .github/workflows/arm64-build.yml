@@ -5,6 +5,10 @@ on:
   push:
   workflow_dispatch:
 
+concurrency:
+  group: arm64-build-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   build-arm64:
     name: Build linux/arm64 image
