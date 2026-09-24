@@ -20,6 +20,29 @@ https://github.com/nicomuratona/MuEmu-0.97k-kayito
 - Base de datos MySQL (sin dependencias MSSQL)
 - Docker listo para levantar en un VPS y conectar con el cliente
 
+## Arquitecturas soportadas
+El stack se puede compilar y ejecutar de forma nativa en:
+
+- `linux/amd64` (VPS x86_64 tradicionales)
+- `linux/arm64` (por ejemplo AWS Graviton, Oracle Ampere o Raspberry Pi de 64 bits)
+
+No se requiere una configuración distinta para ARM64: copiá `.env.example` a `.env`, ajustá `PUBLIC_IP` y levantá el stack normalmente:
+
+```bash
+docker compose up -d --build
+```
+
+El build limita CMake a un solo trabajo para evitar picos de memoria. En instancias ARM con 1 GB de RAM o menos, se recomienda habilitar al menos 2 GB de swap antes del primer build. El stack usa MySQL 8, que dispone de imágenes oficiales para ambas arquitecturas.
+
+Para comprobar la arquitectura del host:
+
+```bash
+uname -m
+# x86_64 = amd64 | aarch64 = arm64
+```
+
+Cada push y pull request ejecuta además el workflow **ARM64 Docker build**, que compila la imagen `linux/arm64` y realiza un smoke test de inicio.
+
 ## Imagenes oficiales (Docker Hub)
 - `emapupi/mu-linux-97k` (server)
 - `emapupi/mu-linux-97k-web` (web)
