@@ -37,7 +37,8 @@ Based on Kayito's sources.
 - Server: Blood Castle fix and Tamachan jewel-rain event (the source-based client is required to see it fully).
 - `MonsterSetBase.txt`: restored missing normal spawn points and required NPCs in reported maps.
 - Docker: CMake uses one job (`-j1`) to prevent OOM on low-memory hosts.
-- Architectures: native `linux/amd64` and `linux/arm64` support, using MySQL 8 on both.
+- Architectures: native `linux/amd64` and `linux/arm64` support, using MySQL 8.4 LTS on both.
+- Database: upgraded to MySQL 8.4 LTS. Read the [migration guide](docs/mysql-8.4-upgrade.md) before reusing an existing volume.
 - ARM64: fixed script parsing and inherited `char` semantics, preventing parsing errors and incorrect disconnects.
 - CI: every push, pull request and manual run validates a `linux/arm64` image and startup smoke test.
 
