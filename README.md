@@ -43,7 +43,8 @@ Basado en las sources de Kayito.
 - Server: corrección de Blood Castle y evento de lluvia de joyas con Tamachan (requiere cliente basado en sources para verse completo).
 - `MonsterSetBase.txt`: restaurados spawn points normales faltantes y NPCs necesarios en los mapas reportados.
 - Docker: CMake limitado a un trabajo (`-j1`) para evitar OOM en hosts con poca memoria.
-- Arquitecturas: soporte nativo `linux/amd64` y `linux/arm64`, con MySQL 8 para ambas.
+- Arquitecturas: soporte nativo `linux/amd64` y `linux/arm64`, con MySQL 8.4 LTS para ambas.
+- Base de datos: actualización a MySQL 8.4 LTS. Consultá la [guía de migración](docs/mysql-8.4-upgrade.md) antes de reutilizar un volumen existente.
 - ARM64: corrección de lectura de scripts y semántica heredada de `char`, evitando errores de parseo y desconexiones incorrectas.
 - CI: cada push, PR y ejecución manual valida una imagen `linux/arm64` y un smoke test de inicio.
 
