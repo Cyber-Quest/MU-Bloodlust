@@ -334,7 +334,7 @@ struct OBJECTSTRUCT
 	int Connected;
 	char LoginMessageSend;
 	char LoginMessageCount;
-	char CloseCount;
+	signed char CloseCount;
 	char CloseType;
 	BOOL EnableDelCharacter;
 	struct PER_SOCKET_CONTEXT* PerSocketContext;

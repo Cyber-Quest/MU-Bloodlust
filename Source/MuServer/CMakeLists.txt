@@ -5,6 +5,13 @@ project(MuServerLinux CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# The original server relies on plain char being signed for several internal
+# sentinel values (for example -1). x86 GCC defaults to that behavior, while
+# AArch64 GCC does not.
+if (UNIX AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  add_compile_options(-fsigned-char)
+endif()
+
 set(COMMON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Common")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 

@@ -1,4 +1,4 @@
-FROM mysql:5.7
+FROM mysql:8.0
 
 COPY MuServer/MySQL/DB/CreateDatabase.sql /docker-entrypoint-initdb.d/01-create.sql
 COPY docker/mysql/02-populate.sh /docker-entrypoint-initdb.d/02-populate.sh

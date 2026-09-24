@@ -55,7 +55,8 @@ eTokenResult CReadScript::GetToken(bool wReturn)
 
 	memset(this->m_error, 0, sizeof(this->m_error));
 
-	char ch, * p, str[100];
+	int ch;
+	char* p, str[100];
 
 	do
 	{
