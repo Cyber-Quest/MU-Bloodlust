@@ -308,7 +308,7 @@
   restoreBtn?.addEventListener('click', async () => {
     const name = selectEl.value;
     if (!name) return;
-    if (!confirm(`Restaurar o snapshot ${name}? Isto sobrescreverá os dados atuais.`)) return;
+    if (!(await muConfirm(`Restaurar o snapshot ${name}? Isto sobrescreverá os dados atuais.`, { title: 'Restaurar backup', okText: 'Restaurar', danger: true }))) return;
     setMessage('Restaurando backup...', false);
     try {
       const res = await fetch('/admin/server-editor/api/backups/restore', {

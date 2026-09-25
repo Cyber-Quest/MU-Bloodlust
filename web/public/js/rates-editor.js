@@ -534,9 +534,9 @@
       renderSidebar(state.visibleSections.length ? state.visibleSections : state.sections.slice());
     });
 
-    root.querySelector('#reset-cfg').addEventListener('click', () => {
+    root.querySelector('#reset-cfg').addEventListener('click', async () => {
       if (!state.originalRaw) return;
-      const ok = confirm('Restaurar os valores do arquivo? As alterações não salvas serão perdidas.');
+      const ok = await muConfirm('Restaurar os valores do arquivo? As alterações não salvas serão perdidas.', { title: 'Restaurar valores', okText: 'Restaurar', danger: true });
       if (!ok) return;
       state.raw = state.originalRaw;
       parseCommon(state.raw);

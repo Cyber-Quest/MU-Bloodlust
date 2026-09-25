@@ -57,9 +57,9 @@
 
   textarea.addEventListener('input', updateDirty);
 
-  root.querySelector('#raw-reset').addEventListener('click', function () {
+  root.querySelector('#raw-reset').addEventListener('click', async function () {
     if (textarea.value === original) return;
-    if (!confirm('Descartar as alterações não salvas?')) return;
+    if (!(await muConfirm('Descartar as alterações não salvas?', { title: 'Descartar alterações', okText: 'Descartar', danger: true }))) return;
     textarea.value = original;
     updateDirty();
     setMessage('Alterações descartadas.', 'success');

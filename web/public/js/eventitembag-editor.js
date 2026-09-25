@@ -1416,13 +1416,13 @@
 
     root.querySelector('#save-bag')?.addEventListener('click', saveBag);
 
-    root.querySelector('#convert-mode')?.addEventListener('click', () => {
+    root.querySelector('#convert-mode')?.addEventListener('click', async () => {
       if (state.mode === 'advanced') {
-        if (!confirm('Converter para o modo normal? Os rates detalhados serão perdidos.')) return;
+        if (!(await muConfirm('Converter para o modo normal? Os rates detalhados serão perdidos.', { title: 'Converter modo', okText: 'Converter', danger: true }))) return;
         convertAdvancedToNormal();
         state.mode = 'normal';
       } else {
-        if (!confirm('Converter para o modo avançado? Serão gerados valores padrão.')) return;
+        if (!(await muConfirm('Converter para o modo avançado? Serão gerados valores padrão.', { title: 'Converter modo', okText: 'Converter' }))) return;
         convertNormalToAdvanced();
         state.mode = 'advanced';
       }

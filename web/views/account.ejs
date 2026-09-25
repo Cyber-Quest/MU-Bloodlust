@@ -76,7 +76,7 @@
                           <form method="post" action="/account/character/<%= encodeURIComponent(char.Name) %>/move-home">
                             <button class="btn btn-sm btn-outline-primary" type="submit">Mover para zona segura</button>
                           </form>
-                          <form method="post" action="/account/character/<%= encodeURIComponent(char.Name) %>/clear-inventory" onsubmit="return confirm('Tem certeza de que deseja limpar o inventário deste personagem?');">
+                          <form method="post" action="/account/character/<%= encodeURIComponent(char.Name) %>/clear-inventory" data-confirm="Tem certeza de que deseja limpar o inventário de <%= char.Name %>? Esta ação não pode ser desfeita." data-confirm-title="Limpar inventário" data-confirm-ok="Limpar" data-confirm-danger="1">
                             <button class="btn btn-sm btn-outline-danger" type="submit">Limpar inventário</button>
                           </form>
                         </div>

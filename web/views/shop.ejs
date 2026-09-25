@@ -125,7 +125,7 @@
               </div>
               <div class="shop-item-name" title="<%= item.name %>"><%= item.name %></div>
               <div class="shop-item-price"><%= item.price.toLocaleString('pt-BR') %> <span>Cash</span></div>
-              <form method="post" action="/shop/buy" onsubmit="return confirm('Comprar <%= item.name %> +15 por <%= item.price %> Cash?');">
+              <form method="post" action="/shop/buy" data-confirm="Comprar <%= item.name %> +15 por <%= item.price.toLocaleString('pt-BR') %> Cash?" data-confirm-title="Confirmar compra" data-confirm-ok="Comprar">
                 <input type="hidden" name="section" value="<%= item.section %>" />
                 <input type="hidden" name="index" value="<%= item.index %>" />
                 <button type="submit" class="shop-buy">Comprar</button>
