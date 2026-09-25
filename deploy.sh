@@ -3,22 +3,21 @@ set -euo pipefail
 
 cd "$HOME/Mu-Linux-0.97k"
 
-# Detecta se houve mudança em arquivos do servidor ANTES de puxar
-git fetch origin main
-SERVER_CHANGED=$(git diff --name-only HEAD origin/main | grep -cE '^(Dockerfile|Source/|MuServer/|docker/|docker-compose.yml)' || true)
-
 echo "==> git pull"
 git pull origin main
 
-echo "==> Deploy do commit: $(git rev-parse --short HEAD)"
+echo "==> Commit em deploy: $(git rev-parse --short HEAD)"
 
+# Site (sempre; o Docker usa cache quando nada mudou)
 echo "==> Rebuild mu-web"
 docker compose up -d --build mu-web
 
-if [ "$SERVER_CHANGED" -gt 0 ]; then
-  echo "==> Arquivos do servidor mudaram -> rebuild mu-server"
-  docker compose up -d --build mu-server
+# Cliente: regenera o zip de download se algum arquivo do cliente for mais novo
+if [ ! -f downloads/MuOnline-97k.zip ] || [ -n "$(find Client Encoder -newer downloads/MuOnline-97k.zip -print -quit 2>/dev/null)" ]; then
+  echo "==> Cliente mudou -> regenerando zip de download"
+  ( cd Client && zip -r -q ../downloads/MuOnline-97k.zip . -x 'ScreenShots/*' )
+  ls -lh downloads/MuOnline-97k.zip
 fi
 
-echo "==> Estado final:"
+echo "==> Containers:"
 docker compose ps
