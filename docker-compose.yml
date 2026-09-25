@@ -55,6 +55,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./downloads:/app/public/downloads
+      - ./Client:/app/public/updates:ro
     environment:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}

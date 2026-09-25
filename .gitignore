@@ -5,3 +5,7 @@ web/_template/
 .env
 downloads/
 *.zip
+
+Launcher/bin/
+Launcher/obj/
+Client/update-manifest.json

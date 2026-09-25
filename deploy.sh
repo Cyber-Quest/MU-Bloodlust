@@ -23,11 +23,15 @@ else
   echo "==> Servidor sem mudancas"
 fi
 
-# Cliente: regenera o zip de download se algum arquivo do cliente for mais novo
-if [ ! -f downloads/MuOnline-97k.zip ] || [ -n "$(find Client Encoder -newer downloads/MuOnline-97k.zip -print -quit 2>/dev/null)" ]; then
-  echo "==> Cliente mudou -> regenerando zip de download"
-  ( cd Client && zip -r -q ../downloads/MuOnline-97k.zip . -x 'ScreenShots/*' )
+# Cliente: regenera o manifesto do launcher e o zip de download
+if [ ! -f Client/update-manifest.json ] || [ ! -f downloads/MuOnline-97k.zip ] || \
+   [ -n "$(find Client Encoder tools -newer downloads/MuOnline-97k.zip -print -quit 2>/dev/null)" ]; then
+  echo "==> Cliente mudou -> regenerando manifesto e zip de download"
+  python3 tools/gen-manifest.py Client
+  ( cd Client && zip -r -q ../downloads/MuOnline-97k.zip . -x 'ScreenShots/*' -x 'update-manifest.json' )
   ls -lh downloads/MuOnline-97k.zip
+else
+  echo "==> Cliente sem mudancas"
 fi
 
 echo "==> Containers:"
