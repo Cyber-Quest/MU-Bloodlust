@@ -36,6 +36,22 @@
     <% } %>
   </div>
 
+  <div class="card" style="margin-top:12px">
+    <h3>Cash (Cash Shop)</h3>
+    <p class="muted">Saldo atual: <strong><%= Number(cash || 0).toLocaleString('pt-BR') %></strong> Cash</p>
+    <form method="post" action="/admin/accounts/<%= account.memb___id %>/cash">
+      <label>Valor</label>
+      <input type="number" name="cash" min="0" max="2000000000" step="1" value="<%= Number(cash || 0) %>" required />
+      <label class="checkbox">
+        <input type="checkbox" name="mode" value="add" />
+        Somar ao saldo atual (em vez de substituir)
+      </label>
+      <div class="row-between">
+        <button type="submit">Atualizar Cash</button>
+      </div>
+    </form>
+  </div>
+
   <form method="post" action="/admin/accounts/<%= account.memb___id %>">
     <label>Usuário</label>
     <input type="text" value="<%= account.memb___id %>" readonly />

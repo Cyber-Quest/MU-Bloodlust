@@ -522,6 +522,7 @@ function parseItemTxt(content) {
     if (!tokens || tokens.length < 9) continue;
     const index = Number(tokens[0]);
     const slot = Number(tokens[1]);
+    const skillCol = Number(tokens[2]);
     const width = Number(tokens[3]);
     const height = Number(tokens[4]);
     const haveSerial = Number(tokens[5]);
@@ -531,6 +532,7 @@ function parseItemTxt(content) {
       section,
       index,
       slot: Number.isNaN(slot) ? -1 : slot,
+      skill: Number.isNaN(skillCol) ? 0 : (skillCol > 0 ? 1 : 0),
       width: width || 1,
       height: height || 1,
       haveSerial: Number.isNaN(haveSerial) ? 0 : haveSerial,
@@ -703,6 +705,15 @@ async function ensureSchema() {
         action VARCHAR(32) NOT NULL,
         last_used DATETIME NOT NULL,
         PRIMARY KEY (account_id, character_name, action)
+      )
+    `);
+
+    await conn.query(`
+      CREATE TABLE IF NOT EXISTS web_cash (
+        account_id VARCHAR(10) NOT NULL,
+        cash INT NOT NULL DEFAULT 0,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (account_id)
       )
     `);
 
@@ -900,9 +911,11 @@ app.get('/account', requireUser, async (req, res) => {
     }));
   const notice = req.query.ok ? { type: 'success', text: decodeURIComponent(String(req.query.ok)) } : null;
   const error = req.query.err ? { type: 'danger', text: decodeURIComponent(String(req.query.err)) } : null;
+  const cash = await getCash(req.session.user.id);
   res.render('account', {
     account: rows[0],
     characters,
+    cash,
     notice,
     error,
     page: 'account',
@@ -973,6 +986,191 @@ function decodeProfileItems(buffer, totalSlots, equipCount = 0) {
   }
   return items;
 }
+
+// ---------------------------------------------------------------------------
+// Cash (moeda premium) + Cash Shop
+// ---------------------------------------------------------------------------
+const SHOP_SECTIONS = [
+  'Espadas', 'Machados', 'Maças', 'Lanças', 'Arcos e Bestas',
+  'Cajados', 'Escudos', 'Elmos', 'Armaduras', 'Calças',
+  'Luvas', 'Botas', 'Asas e Extras', 'Pets, Anéis e Pingentes',
+  'Joias e Consumíveis', 'Pergaminhos'
+];
+
+const SHOP_ITEM_PRICE = 1000;      // preço padrão em Cash (full +15)
+const SHOP_ITEM_LEVEL = 15;        // +15
+const SHOP_ITEM_ADD = 7;           // +28 de opção
+const SHOP_ITEM_EXCELLENT = 0x3f;  // excellent completo
+
+async function getCash(accountId) {
+  const [rows] = await pool.query('SELECT cash FROM web_cash WHERE account_id = ? LIMIT 1', [accountId]);
+  return rows.length ? Number(rows[0].cash) || 0 : 0;
+}
+
+async function setCash(accountId, amount) {
+  const value = Math.max(0, Math.min(2000000000, Math.trunc(Number(amount) || 0)));
+  await pool.query(
+    `INSERT INTO web_cash (account_id, cash) VALUES (?, ?)
+     ON DUPLICATE KEY UPDATE cash = VALUES(cash)`,
+    [accountId, value]
+  );
+  return value;
+}
+
+async function addCash(accountId, delta) {
+  const value = Math.trunc(Number(delta) || 0);
+  await pool.query(
+    `INSERT INTO web_cash (account_id, cash) VALUES (?, GREATEST(0, ?))
+     ON DUPLICATE KEY UPDATE cash = GREATEST(0, cash + ?)`,
+    [accountId, value, value]
+  );
+}
+
+function buildFullShopItem(section, index, def) {
+  const itemIndex = section * 32 + index;
+  const bytes = Buffer.alloc(10, 0xff);
+  const level = SHOP_ITEM_LEVEL & 0x0f;
+  const skill = def && def.skill ? 1 : 0;
+  const add = SHOP_ITEM_ADD;
+
+  bytes[0] = itemIndex & 0xff;
+  bytes[1] = level * 8;
+  if (skill) bytes[1] |= 0x80;
+  bytes[1] |= 0x04;              // luck
+  bytes[1] |= add & 3;
+  bytes[2] = 255;                // durabilidade máxima
+  bytes[3] = 0; bytes[4] = 0; bytes[5] = 0; bytes[6] = 0;  // serial (gerado depois)
+  bytes[7] = 0;
+  if (itemIndex & 0x100) bytes[7] |= 0x80;
+  if (add > 3) bytes[7] |= 0x40;
+  bytes[7] |= SHOP_ITEM_EXCELLENT & 0x3f;
+  bytes[8] = 0;
+  bytes[9] = ((itemIndex >> 9) & 0x0f) << 4;
+  return bytes;
+}
+
+function findFreeWarehouseSlot(buffer, width, height) {
+  const cols = 8;
+  const rows = 15;
+  const w = Math.max(1, Number(width) || 1);
+  const h = Math.max(1, Number(height) || 1);
+  for (let y = 0; y <= rows - h; y++) {
+    for (let x = 0; x <= cols - w; x++) {
+      let free = true;
+      for (let dy = 0; dy < h && free; dy++) {
+        for (let dx = 0; dx < w; dx++) {
+          const off = ((y + dy) * cols + (x + dx)) * 10;
+          if (off + 10 > buffer.length || !isEmptyItem(buffer.subarray(off, off + 10))) {
+            free = false;
+            break;
+          }
+        }
+      }
+      if (free) return y * cols + x;
+    }
+  }
+  return -1;
+}
+
+async function deliverItemToWarehouse(accountId, section, index, def) {
+  const [rows] = await pool.query('SELECT Items FROM warehouse WHERE AccountID = ? LIMIT 1', [accountId]);
+  let buffer = rows.length && rows[0].Items ? Buffer.from(rows[0].Items) : Buffer.alloc(1200, 0xff);
+  if (buffer.length < 1200) {
+    const padded = Buffer.alloc(1200, 0xff);
+    buffer.copy(padded, 0, 0, Math.min(buffer.length, 1200));
+    buffer = padded;
+  }
+
+  const slot = findFreeWarehouseSlot(buffer, def ? def.width : 1, def ? def.height : 1);
+  if (slot < 0) return { ok: false, error: 'Seu baú está cheio. Libere espaço para comprar.' };
+
+  buildFullShopItem(section, index, def).copy(buffer, slot * 10);
+  await applySerialsIfNeeded(buffer);
+
+  await pool.query(
+    `INSERT INTO warehouse (AccountID, Items, Money, pw) VALUES (?, ?, 0, 0)
+     ON DUPLICATE KEY UPDATE Items = VALUES(Items)`,
+    [accountId, buffer]
+  );
+  return { ok: true, slot };
+}
+
+function getShopCatalog() {
+  const { defs } = getItemDefs();
+  const grouped = new Map();
+  for (const def of defs) {
+    if (!def || !def.name) continue;
+    if (!grouped.has(def.section)) grouped.set(def.section, []);
+    grouped.get(def.section).push({
+      section: def.section,
+      index: def.index,
+      name: def.name,
+      width: def.width,
+      height: def.height,
+      skill: def.skill || 0,
+      price: SHOP_ITEM_PRICE
+    });
+  }
+  const catalog = [];
+  for (const [section, items] of [...grouped.entries()].sort((a, b) => a[0] - b[0])) {
+    catalog.push({
+      section,
+      title: SHOP_SECTIONS[section] || `Seção ${section}`,
+      items: items.sort((a, b) => a.index - b.index)
+    });
+  }
+  return catalog;
+}
+
+app.get('/shop', requireUser, async (req, res) => {
+  const cash = await getCash(req.session.user.id);
+  const catalog = getShopCatalog();
+  const notice = req.query.ok ? { type: 'success', text: decodeURIComponent(String(req.query.ok)) } : null;
+  const error = req.query.err ? { type: 'danger', text: decodeURIComponent(String(req.query.err)) } : null;
+  res.render('shop', {
+    catalog,
+    cash,
+    itemPrice: SHOP_ITEM_PRICE,
+    notice,
+    error,
+    page: 'shop',
+    pageTitle: 'Bloodlust - Cash Shop'
+  });
+});
+
+app.post('/shop/buy', requireUser, async (req, res) => {
+  const accountId = req.session.user.id;
+  const section = Number(req.body.section);
+  const index = Number(req.body.index);
+
+  if (!Number.isInteger(section) || !Number.isInteger(index) || section < 0 || index < 0) {
+    return res.redirect('/shop?err=' + encodeURIComponent('Item inválido.'));
+  }
+
+  const { map } = getItemDefs();
+  const def = map.get(`${section}:${index}`);
+  if (!def) {
+    return res.redirect('/shop?err=' + encodeURIComponent('Item não encontrado.'));
+  }
+
+  const price = SHOP_ITEM_PRICE;
+  const [debit] = await pool.query(
+    'UPDATE web_cash SET cash = cash - ? WHERE account_id = ? AND cash >= ?',
+    [price, accountId, price]
+  );
+  if (!debit || debit.affectedRows === 0) {
+    const cash = await getCash(accountId);
+    return res.redirect('/shop?err=' + encodeURIComponent(`Cash insuficiente. Você tem ${cash} Cash e o item custa ${price}.`));
+  }
+
+  const delivered = await deliverItemToWarehouse(accountId, section, index, def);
+  if (!delivered.ok) {
+    await addCash(accountId, price); // devolve o Cash
+    return res.redirect('/shop?err=' + encodeURIComponent(delivered.error || 'Não foi possível entregar o item.'));
+  }
+
+  return res.redirect('/shop?ok=' + encodeURIComponent(`Comprado: ${def.name} +15 completo. Entregue no baú (slot ${delivered.slot}).`));
+});
 
 app.get('/account/character/:name', requireUser, async (req, res) => {
   const accountId = req.session.user.id;
@@ -2410,7 +2608,27 @@ app.get('/admin/accounts/:id', requireAdmin, requireAdminPasswordChange, async (
       }
     : null;
 
-  res.render('admin_account_edit', { account, stat, characters, warehouse, notice, error });
+  const cash = await getCash(accountId);
+
+  res.render('admin_account_edit', { account, stat, characters, warehouse, cash, notice, error });
+});
+
+app.post('/admin/accounts/:id/cash', requireAdmin, requireAdminPasswordChange, async (req, res) => {
+  const accountId = String(req.params.id || '').trim();
+  const amount = parseIntField(req.body.cash, { min: 0, max: 2000000000 });
+  const mode = String(req.body.mode || 'set').toLowerCase();
+
+  if (!amount.ok) {
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Valor de Cash inválido.')}`);
+  }
+
+  if (mode === 'add') {
+    await addCash(accountId, amount.value);
+  } else {
+    await setCash(accountId, amount.value);
+  }
+
+  return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?ok=${encodeURIComponent('Cash atualizado.')}`);
 });
 
 app.post('/admin/accounts/:id', requireAdmin, requireAdminPasswordChange, async (req, res) => {

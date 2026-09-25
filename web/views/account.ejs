@@ -30,9 +30,14 @@
                 <th>Nível da conta</th>
                 <td><%= account?.AccountLevel %></td>
               </tr>
+              <tr>
+                <th>Cash</th>
+                <td><strong><%= Number(cash || 0).toLocaleString('pt-BR') %></strong> <span class="text-muted">Cash</span></td>
+              </tr>
             </tbody>
           </table>
-          <div class="d-grid mt-3">
+          <div class="d-grid mt-3 gap-2">
+            <a class="btn btn-primary" href="/shop">Abrir Cash Shop</a>
             <a class="btn btn-outline-secondary" href="/logout">Sair</a>
           </div>
         </div>
