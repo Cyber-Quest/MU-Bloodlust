@@ -1085,3 +1085,63 @@ body.site-body .mu-stat-value .status-dot {
   margin-right: 6px;
   vertical-align: middle;
 }
+
+/* ------------------------------------------------------------------
+   Cards de download (Launcher / Cliente / Patches)
+   ------------------------------------------------------------------ */
+body.site-body .download-card {
+  position: relative;
+  border: 1px solid var(--mu-gold-line);
+  border-radius: var(--mu-radius);
+  padding: 30px 22px 22px;
+  background: linear-gradient(180deg, rgba(20, 26, 38, 0.85), rgba(10, 14, 22, 0.92));
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+body.site-body .download-card:hover {
+  border-color: var(--mu-gold);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+}
+
+body.site-body .download-card--featured {
+  border-color: var(--mu-gold);
+  box-shadow: 0 0 0 1px var(--mu-gold-line), 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+body.site-body .download-card .download-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--mu-gold);
+  margin-bottom: 12px;
+  text-shadow: 0 0 18px var(--mu-gold-glow);
+}
+
+body.site-body .download-card h5 {
+  margin-bottom: 6px;
+}
+
+body.site-body .download-card p {
+  flex-grow: 1;
+}
+
+body.site-body .download-badge {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, var(--mu-gold-bright), var(--mu-gold));
+  color: #1a1206;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+}

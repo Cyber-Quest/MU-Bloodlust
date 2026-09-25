@@ -250,6 +250,8 @@ function loadEventConfig() {
 const DEFAULT_DOWNLOADS_CONFIG = {
   clientUrl: '',
   clientSubtitle: '',
+  launcherUrl: '',
+  launcherSubtitle: '',
   patchUrl: '',
   patchSubtitle: ''
 };
@@ -275,6 +277,8 @@ function loadDownloadsConfig() {
     return {
       clientUrl: sanitizeDownloadUrl(parsed?.clientUrl),
       clientSubtitle: sanitizeDownloadText(parsed?.clientSubtitle),
+      launcherUrl: sanitizeDownloadUrl(parsed?.launcherUrl),
+      launcherSubtitle: sanitizeDownloadText(parsed?.launcherSubtitle),
       patchUrl: sanitizeDownloadUrl(parsed?.patchUrl),
       patchSubtitle: sanitizeDownloadText(parsed?.patchSubtitle)
     };
@@ -287,6 +291,8 @@ function saveDownloadsConfig(config) {
   const payload = {
     clientUrl: sanitizeDownloadUrl(config.clientUrl),
     clientSubtitle: sanitizeDownloadText(config.clientSubtitle),
+    launcherUrl: sanitizeDownloadUrl(config.launcherUrl),
+    launcherSubtitle: sanitizeDownloadText(config.launcherSubtitle),
     patchUrl: sanitizeDownloadUrl(config.patchUrl),
     patchSubtitle: sanitizeDownloadText(config.patchSubtitle)
   };
@@ -1572,19 +1578,25 @@ app.get('/admin/downloads', requireAdmin, requireAdminPasswordChange, (req, res)
 
 app.post('/admin/downloads', requireAdmin, requireAdminPasswordChange, (req, res) => {
   const rawClient = String(req.body.client_url || '').trim();
+  const rawLauncher = String(req.body.launcher_url || '').trim();
   const rawPatch = String(req.body.patch_url || '').trim();
   const clientSubtitle = sanitizeDownloadText(req.body.client_subtitle);
+  const launcherSubtitle = sanitizeDownloadText(req.body.launcher_subtitle);
   const patchSubtitle = sanitizeDownloadText(req.body.patch_subtitle);
   const clientUrl = sanitizeDownloadUrl(rawClient);
+  const launcherUrl = sanitizeDownloadUrl(rawLauncher);
   const patchUrl = sanitizeDownloadUrl(rawPatch);
 
   if (rawClient && !clientUrl) {
     return res.redirect(`/admin/downloads?err=${encodeURIComponent('URL do cliente inválida. Use http(s):// ou um caminho /downloads/...')}`);
   }
+  if (rawLauncher && !launcherUrl) {
+    return res.redirect(`/admin/downloads?err=${encodeURIComponent('URL do launcher inválida. Use http(s):// ou um caminho /downloads/...')}`);
+  }
   if (rawPatch && !patchUrl) {
     return res.redirect(`/admin/downloads?err=${encodeURIComponent('URL dos patches inválida. Use http(s):// ou um caminho /downloads/...')}`);
   }
-  saveDownloadsConfig({ clientUrl, clientSubtitle, patchUrl, patchSubtitle });
+  saveDownloadsConfig({ clientUrl, clientSubtitle, launcherUrl, launcherSubtitle, patchUrl, patchSubtitle });
   return res.redirect(`/admin/downloads?ok=${encodeURIComponent('Links de downloads atualizados.')}`);
 });
 

@@ -1,6 +1,8 @@
 {
   "clientUrl": "/downloads/MuOnline-97k.zip",
-  "clientSubtitle": "Cliente Mu Online 0.97k (Windows)",
+  "clientSubtitle": "Cliente completo em .zip (Windows) — baixe, extraia e jogue.",
+  "launcherUrl": "/updates/Launcher.exe",
+  "launcherSubtitle": "Baixa o cliente e mantém tudo atualizado automaticamente.",
   "patchUrl": "",
   "patchSubtitle": ""
 }

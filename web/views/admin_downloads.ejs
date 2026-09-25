@@ -22,8 +22,14 @@
 
   <div class="card-sub">
     <h3>Links públicos</h3>
-    <p class="muted">Use URLs externas (MediaFire, Drive, R2) ou caminhos locais como <code>/downloads/cliente.zip</code>.</p>
+    <p class="muted">Use URLs externas (MediaFire, Drive, R2) ou caminhos locais como <code>/downloads/cliente.zip</code>. O launcher fica em <code>/updates/Launcher.exe</code>.</p>
     <form method="post" action="/admin/downloads">
+      <label for="launcher_url">Launcher (URL)</label>
+      <input id="launcher_url" name="launcher_url" type="text" value="<%= config.launcherUrl %>" placeholder="/updates/Launcher.exe" />
+
+      <label for="launcher_subtitle">Descrição do launcher</label>
+      <input id="launcher_subtitle" name="launcher_subtitle" type="text" value="<%= config.launcherSubtitle %>" placeholder="Ex: Mantém o cliente atualizado automaticamente." />
+
       <label for="client_url">Cliente completo (URL)</label>
       <input id="client_url" name="client_url" type="text" value="<%= config.clientUrl %>" placeholder="https://... ou /downloads/cliente.zip" />
 

@@ -5,31 +5,58 @@
     <div class="p-4 bg-light shadow-lg rounded-4">
       <div class="bg-white border p-4 shadow-sm rounded-3">
         <h2 class="mu-section-title"><span class="mu-ornament">&#9670;</span> Downloads</h2>
-        <p class="text-muted text-center mb-4">Baixe o cliente completo, patches e utilitários do servidor.</p>
+        <p class="text-muted text-center mb-4">
+          Escolha como baixar o jogo: pelo <strong>Launcher</strong> (recomendado — mantém o cliente
+          sempre atualizado) ou pelo <strong>cliente completo</strong> em .zip.
+        </p>
 
-        <% const clientUrl = downloads?.clientUrl || ''; %>
-        <% const patchUrl = downloads?.patchUrl || ''; %>
-        <% const clientSubtitle = downloads?.clientSubtitle || 'Inclui todos os arquivos necessários para jogar.'; %>
-        <% const patchSubtitle = downloads?.patchSubtitle || 'Atualizações e correções manuais.'; %>
-        <% const hasDownloads = clientUrl || patchUrl; %>
+        <%
+          const clientUrl = downloads?.clientUrl || '';
+          const launcherUrl = downloads?.launcherUrl || '';
+          const patchUrl = downloads?.patchUrl || '';
+          const clientSubtitle = downloads?.clientSubtitle || 'Inclui todos os arquivos necessários para jogar.';
+          const launcherSubtitle = downloads?.launcherSubtitle || 'Instala e mantém o cliente sempre atualizado automaticamente.';
+          const patchSubtitle = downloads?.patchSubtitle || 'Atualizações e correções manuais.';
+          const hasDownloads = clientUrl || launcherUrl || patchUrl;
+        %>
 
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
+          <% if (launcherUrl) { %>
+            <div class="col-12 col-lg-5">
+              <div class="download-card download-card--featured h-100">
+                <span class="download-badge"><i class="bi bi-star-fill me-1"></i>Recomendado</span>
+                <div class="download-icon"><i class="bi bi-rocket-takeoff"></i></div>
+                <h5 class="fw-bold mb-2">Launcher</h5>
+                <p class="text-muted mb-3"><%= launcherSubtitle %></p>
+                <a href="<%= launcherUrl %>" class="btn btn-primary w-100">
+                  <i class="bi bi-download me-2"></i>Baixar o launcher
+                </a>
+              </div>
+            </div>
+          <% } %>
+
           <% if (clientUrl) { %>
-            <div class="col-12 col-lg-6">
-              <div class="border rounded-3 p-4 h-100">
-                <h5 class="fw-bold mb-2">Cliente completo</h5>
+            <div class="col-12 col-lg-5">
+              <div class="download-card h-100">
+                <div class="download-icon"><i class="bi bi-file-earmark-zip"></i></div>
+                <h5 class="fw-bold mb-2">Cliente completo (.zip)</h5>
                 <p class="text-muted mb-3"><%= clientSubtitle %></p>
-                <a href="<%= clientUrl %>" class="btn btn-primary">Baixar cliente</a>
+                <a href="<%= clientUrl %>" class="btn btn-outline-primary w-100">
+                  <i class="bi bi-download me-2"></i>Baixar o .zip
+                </a>
               </div>
             </div>
           <% } %>
 
           <% if (patchUrl) { %>
-            <div class="col-12 col-lg-6">
-              <div class="border rounded-3 p-4 h-100">
+            <div class="col-12 col-lg-5">
+              <div class="download-card h-100">
+                <div class="download-icon"><i class="bi bi-arrow-repeat"></i></div>
                 <h5 class="fw-bold mb-2">Patches</h5>
                 <p class="text-muted mb-3"><%= patchSubtitle %></p>
-                <a href="<%= patchUrl %>" class="btn btn-outline-primary">Baixar patch</a>
+                <a href="<%= patchUrl %>" class="btn btn-outline-primary w-100">
+                  <i class="bi bi-download me-2"></i>Baixar patch
+                </a>
               </div>
             </div>
           <% } %>
@@ -38,6 +65,12 @@
         <% if (!hasDownloads) { %>
           <div class="alert alert-info mt-4">
             Downloads ainda não disponíveis. Volte mais tarde.
+          </div>
+        <% } else { %>
+          <div class="alert alert-info mt-4 mb-0">
+            <i class="bi bi-info-circle me-2"></i>
+            Dica: o <strong>Launcher</strong> baixa o cliente e mantém tudo atualizado sozinho —
+            você não precisa baixar o .zip toda vez que sair uma atualização.
           </div>
         <% } %>
       </div>
