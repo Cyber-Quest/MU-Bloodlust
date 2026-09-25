@@ -83,6 +83,33 @@
   }
   .shop-buy:hover { filter: brightness(1.08); }
   .shop-empty { opacity: .7; }
+
+  .shop-kits-hint { font-size: .85rem; opacity: .8; margin: -6px 0 14px; }
+  .shop-kits { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+  .shop-kit {
+    display: flex; flex-direction: column; border-radius: 12px; overflow: hidden;
+    background: var(--mu-panel, #111620);
+    border: 1px solid var(--mu-gold-line, rgba(224, 176, 97, .35));
+    transition: transform .12s ease, border-color .12s ease;
+  }
+  .shop-kit:hover { transform: translateY(-3px); border-color: var(--mu-gold, #e0b061); }
+  .shop-kit-head { display: flex; align-items: center; gap: 10px; padding: 12px 12px 8px; }
+  .shop-kit-icon { width: 42px; height: 42px; object-fit: contain; }
+  .shop-kit-name { font-size: .9rem; font-weight: 700; }
+  .shop-kit-items { font-size: .72rem; opacity: .75; }
+  .shop-kit-preview { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 10px; }
+  .shop-kit-preview img {
+    width: 42px; height: 42px; object-fit: contain;
+    background: #26262d; border-radius: 6px; padding: 2px;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+  .shop-kit-price {
+    font-size: .88rem; font-weight: 800; margin-top: auto;
+    color: var(--mu-gold, #e0b061); padding: 0 12px 10px;
+  }
+  .shop-kit-price span { font-size: .68rem; opacity: .75; }
 </style>
 
 <main class="flex-grow-1">
@@ -105,11 +132,47 @@
     <div class="shop-toolbar">
       <input id="shop-search" type="search" class="form-control" placeholder="Buscar item pelo nome..." autocomplete="off" />
       <div class="shop-nav">
+        <% if (kits && kits.length) { %><a href="#kits">Kits por classe</a><% } %>
         <% catalog.forEach(function (group) { %>
           <a href="#sec-<%= group.section %>"><%= group.title %></a>
         <% }); %>
       </div>
     </div>
+
+    <% if (kits && kits.length) { %>
+      <section class="shop-section" id="kits">
+        <h3>Kits por classe <span class="shop-count"><%= kits.length %></span></h3>
+        <p class="shop-kits-hint">
+          Conjunto completo (elmo, armadura, calça, luvas e botas) + arma + asas, todos <strong>+15 full</strong>.
+          Os itens são entregues no seu <strong>baú</strong>.
+        </p>
+        <div class="shop-kits">
+          <% kits.forEach(function (kit) { %>
+            <div class="shop-kit">
+              <div class="shop-kit-head">
+                <img class="shop-kit-icon" src="<%= kit.icon %>" alt="<%= kit.className %>" />
+                <div>
+                  <div class="shop-kit-name"><%= kit.name %></div>
+                  <div class="shop-kit-items"><%= kit.items.length %> itens +15 completos</div>
+                </div>
+              </div>
+              <div class="shop-kit-preview">
+                <% kit.items.forEach(function (it) { %>
+                  <img src="/assets/items/<%= it.section %>/<%= it.index %>.jpg"
+                       alt="<%= it.name %>" title="<%= it.name %> +15" loading="lazy"
+                       onerror="this.onerror=null;this.src='/assets/inventory/unknownItem.jpg';" />
+                <% }); %>
+              </div>
+              <div class="shop-kit-price"><%= kit.price.toLocaleString('pt-BR') %> <span>Cash</span></div>
+              <form method="post" action="/shop/kit/buy" data-confirm="Comprar o <%= kit.name %> por <%= kit.price.toLocaleString('pt-BR') %> Cash? Os <%= kit.items.length %> itens serão entregues no seu baú." data-confirm-title="Comprar kit" data-confirm-ok="Comprar kit">
+                <input type="hidden" name="kit" value="<%= kit.id %>" />
+                <button type="submit" class="shop-buy">Comprar kit</button>
+              </form>
+            </div>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
 
     <% catalog.forEach(function (group) { %>
       <section class="shop-section" id="sec-<%= group.section %>">
@@ -150,9 +213,12 @@
     input.addEventListener('input', function () {
       var q = input.value.trim().toLowerCase();
       document.querySelectorAll('.shop-section').forEach(function (sec) {
+        var cards = sec.querySelectorAll('.shop-item, .shop-kit');
+        if (!cards.length) { sec.style.display = ''; return; }
         var any = false;
-        sec.querySelectorAll('.shop-item').forEach(function (el) {
-          var match = !q || (el.dataset.name || '').indexOf(q) !== -1;
+        cards.forEach(function (el) {
+          var name = el.dataset.name || (el.querySelector('.shop-kit-name') || {}).textContent || '';
+          var match = !q || String(name).toLowerCase().indexOf(q) !== -1;
           el.style.display = match ? '' : 'none';
           if (match) any = true;
         });

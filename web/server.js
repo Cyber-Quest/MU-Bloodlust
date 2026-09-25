@@ -1107,6 +1107,45 @@ const SHOP_ITEM_LEVEL = 15;        // +15
 const SHOP_ITEM_ADD = 7;           // +28 de opção
 const SHOP_ITEM_EXCELLENT = 0x3f;  // excellent completo
 
+const SHOP_KIT_PRICE = 6000;              // preco do kit completo (7 itens full +15)
+const SHOP_SET_PARTS = [7, 8, 9, 10, 11]; // elmo, armadura, calca, luvas, botas
+
+// Kits completos por classe: conjunto + arma + asas, todos full +15
+const SHOP_KITS = [
+  {
+    id: 'dk',
+    classId: 16,
+    name: 'Kit Dark Knight / Blade Knight',
+    weapon: { section: 0, index: 20 },  // Knight Blade
+    setIndex: 21,                        // conjunto Great Dragon
+    wings: { section: 12, index: 5 }     // Wings of Dragon
+  },
+  {
+    id: 'dw',
+    classId: 0,
+    name: 'Kit Dark Wizard / Soul Master',
+    weapon: { section: 5, index: 9 },   // Dragon Soul Staff
+    setIndex: 18,                        // conjunto Grand Soul
+    wings: { section: 12, index: 4 }     // Wings of Soul
+  },
+  {
+    id: 'elf',
+    classId: 32,
+    name: 'Kit Fairy Elf / Muse Elf',
+    weapon: { section: 4, index: 17 },  // Celestial Bow
+    setIndex: 19,                        // conjunto Divine
+    wings: { section: 12, index: 3 }     // Wings of Spirits
+  },
+  {
+    id: 'mg',
+    classId: 48,
+    name: 'Kit Magic Gladiator',
+    weapon: { section: 0, index: 31 },  // Rune Blade
+    setIndex: 20,                        // conjunto Thunder Hawk
+    wings: { section: 12, index: 6 }     // Wings of Darkness
+  }
+];
+
 async function getCash(accountId) {
   const [rows] = await pool.query('SELECT cash FROM web_cash WHERE account_id = ? LIMIT 1', [accountId]);
   return rows.length ? Number(rows[0].cash) || 0 : 0;
@@ -1200,6 +1239,69 @@ async function deliverItemToWarehouse(accountId, section, index, def) {
   return { ok: true, slot };
 }
 
+function getShopKits() {
+  const { map } = getItemDefs();
+  return SHOP_KITS.map((kit) => {
+    const refs = [
+      kit.weapon,
+      ...SHOP_SET_PARTS.map((section) => ({ section, index: kit.setIndex })),
+      kit.wings
+    ];
+
+    const items = [];
+    for (const ref of refs) {
+      const def = map.get(`${ref.section}:${ref.index}`);
+      if (!def) continue;
+      items.push({
+        section: ref.section,
+        index: ref.index,
+        name: def.name,
+        width: def.width,
+        height: def.height,
+        skill: def.skill || 0
+      });
+    }
+
+    return {
+      id: kit.id,
+      name: kit.name,
+      className: getClassName(kit.classId),
+      icon: getClassIcon(kit.classId),
+      price: SHOP_KIT_PRICE,
+      items
+    };
+  }).filter((kit) => kit.items.length > 0);
+}
+
+async function deliverKitToWarehouse(accountId, items) {
+  const [rows] = await pool.query('SELECT Items FROM warehouse WHERE AccountID = ? LIMIT 1', [accountId]);
+  let buffer = rows.length && rows[0].Items ? Buffer.from(rows[0].Items) : Buffer.alloc(1200, 0xff);
+  if (buffer.length < 1200) {
+    const padded = Buffer.alloc(1200, 0xff);
+    buffer.copy(padded, 0, 0, Math.min(buffer.length, 1200));
+    buffer = padded;
+  }
+
+  const slots = [];
+  for (const item of items) {
+    const slot = findFreeWarehouseSlot(buffer, item.width, item.height);
+    if (slot < 0) {
+      return { ok: false, error: 'Seu baú não tem espaço suficiente para o kit completo. Libere espaço e tente novamente.' };
+    }
+    buildFullShopItem(item.section, item.index, item).copy(buffer, slot * 10);
+    slots.push(slot);
+  }
+
+  await applySerialsIfNeeded(buffer);
+
+  await pool.query(
+    `INSERT INTO warehouse (AccountID, Items, Money, pw) VALUES (?, ?, 0, 0)
+     ON DUPLICATE KEY UPDATE Items = VALUES(Items)`,
+    [accountId, buffer]
+  );
+  return { ok: true, slots };
+}
+
 function getShopCatalog() {
   const { defs } = getItemDefs();
   const grouped = new Map();
@@ -1230,12 +1332,15 @@ function getShopCatalog() {
 app.get('/shop', requireUser, async (req, res) => {
   const cash = await getCash(req.session.user.id);
   const catalog = getShopCatalog();
+  const kits = getShopKits();
   const notice = req.query.ok ? { type: 'success', text: decodeURIComponent(String(req.query.ok)) } : null;
   const error = req.query.err ? { type: 'danger', text: decodeURIComponent(String(req.query.err)) } : null;
   res.render('shop', {
     catalog,
+    kits,
     cash,
     itemPrice: SHOP_ITEM_PRICE,
+    kitPrice: SHOP_KIT_PRICE,
     notice,
     error,
     page: 'shop',
@@ -1275,6 +1380,34 @@ app.post('/shop/buy', requireUser, async (req, res) => {
   }
 
   return res.redirect('/shop?ok=' + encodeURIComponent(`Comprado: ${def.name} +15 completo. Entregue no baú (slot ${delivered.slot}).`));
+});
+
+app.post('/shop/kit/buy', requireUser, async (req, res) => {
+  const accountId = req.session.user.id;
+  const kitId = String(req.body.kit || '').trim();
+
+  const kit = getShopKits().find((item) => item.id === kitId);
+  if (!kit) {
+    return res.redirect('/shop?err=' + encodeURIComponent('Kit inválido.'));
+  }
+
+  const price = kit.price;
+  const [debit] = await pool.query(
+    'UPDATE web_cash SET cash = cash - ? WHERE account_id = ? AND cash >= ?',
+    [price, accountId, price]
+  );
+  if (!debit || debit.affectedRows === 0) {
+    const cash = await getCash(accountId);
+    return res.redirect('/shop?err=' + encodeURIComponent(`Cash insuficiente. Você tem ${cash} Cash e o kit custa ${price}.`));
+  }
+
+  const delivered = await deliverKitToWarehouse(accountId, kit.items);
+  if (!delivered.ok) {
+    await addCash(accountId, price); // devolve o Cash
+    return res.redirect('/shop?err=' + encodeURIComponent(delivered.error || 'Não foi possível entregar o kit.'));
+  }
+
+  return res.redirect('/shop?ok=' + encodeURIComponent(`Kit comprado: ${kit.name} (${kit.items.length} itens +15 entregues no baú).`));
 });
 
 app.get('/account/character/:name', requireUser, async (req, res) => {
