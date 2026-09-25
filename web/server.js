@@ -1142,6 +1142,7 @@ const SHOP_KITS = [
     name: 'Kit Magic Gladiator',
     weapon: { section: 0, index: 31 },  // Rune Blade
     setIndex: 20,                        // conjunto Thunder Hawk
+    setParts: [8, 9, 10, 11],            // sem elmo: o MG nao tem elmo disponivel na base
     wings: { section: 12, index: 6 }     // Wings of Darkness
   }
 ];
@@ -1244,7 +1245,7 @@ function getShopKits() {
   return SHOP_KITS.map((kit) => {
     const refs = [
       kit.weapon,
-      ...SHOP_SET_PARTS.map((section) => ({ section, index: kit.setIndex })),
+      ...(kit.setParts || SHOP_SET_PARTS).map((section) => ({ section, index: kit.setIndex })),
       kit.wings
     ];
 
