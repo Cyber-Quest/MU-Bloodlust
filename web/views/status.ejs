@@ -38,7 +38,7 @@ function statusText(ok) {
               <strong>ConnectServer</strong>
             </div>
             <div class="status-card-body">
-              <span class="status-port">Porta <%= connectServerPort %>/TCP</span>
+              <span class="status-port">Serviço de conexão</span>
               <span class="status-state" id="state-connect"><%= statusText(status.connectServer) %></span>
             </div>
           </div>
@@ -51,7 +51,7 @@ function statusText(ok) {
               <strong>GameServer</strong>
             </div>
             <div class="status-card-body">
-              <span class="status-port">Porta <%= gameServerPort %>/TCP</span>
+              <span class="status-port">Serviço de jogo</span>
               <span class="status-state" id="state-game"><%= statusText(status.gameServer) %></span>
             </div>
           </div>
@@ -64,7 +64,7 @@ function statusText(ok) {
               <strong>Banco de dados</strong>
             </div>
             <div class="status-card-body">
-              <span class="status-port">MySQL</span>
+              <span class="status-port">Serviço de dados</span>
               <span class="status-state" id="state-database"><%= statusText(status.database) %></span>
             </div>
           </div>

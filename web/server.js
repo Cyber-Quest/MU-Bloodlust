@@ -904,8 +904,6 @@ app.get('/status', async (req, res) => {
   const status = await getServerStatus();
   res.render('status', {
     status,
-    connectServerPort: CONNECT_SERVER_PORT,
-    gameServerPort: GAME_SERVER_PORT,
     page: 'status',
     pageTitle: 'Bloodlust - Status dos servidores'
   });
