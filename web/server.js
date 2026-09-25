@@ -1379,27 +1379,47 @@ app.get('/admin/server-editor/character', requireAdmin, requireAdminPasswordChan
 });
 
 app.get('/admin/server-editor/bloodcastle', requireAdmin, requireAdminPasswordChange, (req, res) => {
-  res.render('admin_config_editor', { title: 'CFG Blood Castle', kind: 'bloodcastle', reload: 'event' });
+  res.render('admin_raw_editor', { title: 'CFG Blood Castle', kind: 'bloodcastle', reload: 'event', hint: 'Formato tabular: WarningTime, NotifyTime, EventTime, CloseTime (em minutos).' });
 });
 
 app.get('/admin/server-editor/devilsquare', requireAdmin, requireAdminPasswordChange, (req, res) => {
-  res.render('admin_config_editor', { title: 'CFG Devil Square', kind: 'devilsquare', reload: 'event' });
+  res.render('admin_raw_editor', { title: 'CFG Devil Square', kind: 'devilsquare', reload: 'event', hint: 'Formato tabular: horários e duração do evento (em minutos).' });
 });
 
 app.get('/admin/server-editor/invasion', requireAdmin, requireAdminPasswordChange, (req, res) => {
-  res.render('admin_config_editor', { title: 'CFG invasões', kind: 'invasion', reload: 'event' });
+  res.render('admin_raw_editor', { title: 'CFG invasões', kind: 'invasion', reload: 'event', hint: 'Formato tabular: Index, Year, Month, Day, DoW, Hour, Minute, Second. A primeira linha é o mapa.' });
 });
 
 app.get('/admin/server-editor/bonus', requireAdmin, requireAdminPasswordChange, (req, res) => {
-  res.render('admin_config_editor', { title: 'CFG bônus', kind: 'bonus', reload: 'event' });
+  res.render('admin_raw_editor', { title: 'CFG bônus', kind: 'bonus', reload: 'event', hint: 'Formato tabular: eventos de bônus (XP/zen extra).' });
 });
 
 app.get('/admin/server-editor/eventspawn', requireAdmin, requireAdminPasswordChange, (req, res) => {
-  res.render('admin_config_editor', { title: 'CFG spawn de eventos', kind: 'eventspawn', reload: 'event' });
+  res.render('admin_raw_editor', { title: 'CFG spawn de eventos', kind: 'eventspawn', reload: 'event', hint: 'Formato tabular: spawns de monstros de evento.' });
 });
 
 app.get('/admin/server-editor/goldenarcher', requireAdmin, requireAdminPasswordChange, (req, res) => {
-  res.render('admin_config_editor', { title: 'CFG Golden Archer / Bingo', kind: 'goldenarcher', reload: 'event' });
+  res.render('admin_raw_editor', { title: 'CFG Golden Archer / Bingo', kind: 'goldenarcher', reload: 'event', hint: 'Formato tabular: configuração do evento do Arqueiro Dourado.' });
+});
+
+app.get('/admin/server-editor/message-eng', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_raw_editor', { title: 'Mensagens (Inglês)', kind: 'message_eng', reload: 'util', hint: 'Mensagens do servidor em inglês. Salve em ANSI/Windows-1252 sem BOM.' });
+});
+
+app.get('/admin/server-editor/message-spn', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_raw_editor', { title: 'Mensagens (Espanhol)', kind: 'message_spn', reload: 'util', hint: 'Mensagens do servidor em espanhol. Salve em ANSI/Windows-1252 sem BOM.' });
+});
+
+app.get('/admin/server-editor/message-por', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_raw_editor', { title: 'Mensagens (Português)', kind: 'message_por', reload: 'util', hint: 'Mensagens do servidor em português. Salve em ANSI/Windows-1252 sem BOM.' });
+});
+
+app.get('/admin/server-editor/shopmanager', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_raw_editor', { title: 'CFG ShopManager', kind: 'shopmanager', reload: 'shop', hint: 'Lista de lojas do servidor (ShopManager.txt).' });
+});
+
+app.get('/admin/server-editor/hackpacket', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_raw_editor', { title: 'CFG anti-hack (pacotes)', kind: 'hackpacket', reload: 'hack', hint: 'Checagem de pacotes do anti-hack (HackPacketCheck.txt).' });
 });
 
 app.get('/admin/server-editor/event-item-bag', requireAdmin, requireAdminPasswordChange, (req, res) => {
@@ -1917,6 +1937,16 @@ function getConfigFilePath(kind) {
       return 'Data/Event/EventSpawnMonster.dat';
     case 'goldenarcher':
       return 'Data/Event/GoldenArcherBingo.dat';
+    case 'message_eng':
+      return 'Data/Message_Eng.txt';
+    case 'message_spn':
+      return 'Data/Message_Spn.txt';
+    case 'message_por':
+      return 'Data/Message_Por.txt';
+    case 'shopmanager':
+      return 'Data/ShopManager.txt';
+    case 'hackpacket':
+      return 'Data/Hack/HackPacketCheck.txt';
     default:
       return null;
   }
