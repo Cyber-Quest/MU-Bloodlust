@@ -1161,3 +1161,261 @@ body.site-body .class-icon-lg {
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
+
+/* ------------------------------------------------------------------
+   Perfil da conta (hero + cards de personagem)
+   ------------------------------------------------------------------ */
+.profile-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding: 26px 28px;
+  background: var(--mu-panel);
+  border: 1px solid var(--mu-gold-line);
+  border-radius: var(--mu-radius);
+  box-shadow: var(--mu-shadow);
+  overflow: hidden;
+}
+
+.profile-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 150% at 0% 0%, var(--mu-gold-glow), transparent 55%);
+}
+
+.profile-hero-avatar {
+  position: relative;
+  z-index: 1;
+  width: 86px;
+  height: 86px;
+  flex: 0 0 86px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 42px;
+  color: var(--mu-gold-bright);
+  background: linear-gradient(180deg, #131a26, #0a0e15);
+  border: 2px solid var(--mu-gold-line);
+  box-shadow: 0 0 0 6px rgba(224, 176, 97, 0.06), inset 0 0 26px rgba(224, 176, 97, 0.10);
+}
+
+.profile-hero-main {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-width: 200px;
+}
+
+.profile-hero-kicker {
+  display: inline-block;
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--mu-gold);
+  margin-bottom: 4px;
+}
+
+.profile-hero-name {
+  font-family: var(--mu-font-title);
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  line-height: 1.05;
+  margin: 0 0 8px;
+  color: var(--mu-gold-bright);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.profile-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  color: var(--mu-text-dim);
+  font-size: 0.9rem;
+}
+
+.profile-hero-meta i {
+  color: var(--mu-gold);
+  margin-right: 7px;
+}
+
+.profile-hero-stats {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.profile-stat {
+  min-width: 92px;
+  text-align: center;
+  padding: 12px 14px;
+  border-radius: var(--mu-radius-sm);
+  background: var(--mu-panel-deep);
+  border: 1px solid var(--mu-line);
+}
+
+.profile-stat-value {
+  display: block;
+  font-family: var(--mu-font-title);
+  font-size: 1.4rem;
+  line-height: 1.1;
+  color: var(--mu-gold-bright);
+}
+
+.profile-stat-label {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mu-text-dim);
+}
+
+.profile-hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+/* Cards de personagem */
+.char-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.char-card {
+  background: var(--mu-panel);
+  border: 1px solid var(--mu-line);
+  border-radius: var(--mu-radius);
+  padding: 18px;
+  box-shadow: var(--mu-shadow);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.char-card:hover {
+  border-color: var(--mu-gold-line);
+  transform: translateY(-2px);
+}
+
+.char-card-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.char-card-icon {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--mu-radius-sm);
+  background: radial-gradient(circle at 50% 30%, #1a2331, #0a0e15);
+  border: 1px solid var(--mu-gold-line);
+}
+
+.char-card-icon img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+}
+
+.char-card-head {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.char-card-name {
+  font-family: var(--mu-font-title);
+  font-size: 1.2rem;
+  margin: 0;
+  color: var(--mu-gold-bright);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.char-card-class {
+  color: var(--mu-text-dim);
+  font-size: 0.85rem;
+}
+
+.char-card-level {
+  text-align: center;
+  padding-left: 12px;
+  border-left: 1px solid var(--mu-line);
+}
+
+.char-card-level span {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mu-text-dim);
+}
+
+.char-card-level strong {
+  font-family: var(--mu-font-title);
+  font-size: 1.5rem;
+  color: var(--mu-gold);
+}
+
+.char-card-meta {
+  margin-top: 12px;
+  color: var(--mu-text-dim);
+  font-size: 0.9rem;
+}
+
+.char-card-meta i {
+  color: var(--mu-gold);
+  margin-right: 7px;
+}
+
+.char-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.char-card-actions .btn {
+  flex: 1 1 auto;
+}
+
+.char-card-more {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.profile-empty {
+  padding: 28px;
+  text-align: center;
+  color: var(--mu-text-dim);
+  background: var(--mu-panel-soft);
+  border: 1px dashed var(--mu-line);
+  border-radius: var(--mu-radius);
+}
+
+@media (max-width: 575.98px) {
+  .profile-hero {
+    padding: 20px;
+    gap: 16px;
+  }
+  .profile-hero-stats {
+    width: 100%;
+  }
+  .profile-stat {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
