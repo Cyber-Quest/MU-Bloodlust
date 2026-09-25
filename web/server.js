@@ -910,6 +910,114 @@ app.get('/account', requireUser, async (req, res) => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// Perfil do personagem (inventario / equipamento / bau)
+// ---------------------------------------------------------------------------
+const PROFILE_EQUIP_LABELS = [
+  'Arma', 'Escudo', 'Elmo', 'Armadura', 'Calça', 'Luvas',
+  'Botas', 'Asas', 'Pet', 'Pingente', 'Anel 1', 'Anel 2'
+];
+
+function buildItemTitle(item) {
+  const parts = [item.name];
+  if (item.level > 0) parts.push(`+${item.level}`);
+  if (item.add > 0) parts.push(`+${item.add} opção`);
+  if (item.skill) parts.push('Skill');
+  if (item.luck) parts.push('Luck');
+  if (item.excellent > 0) parts.push('Excellent');
+  if (item.durability > 0 && item.durability < 255) parts.push(`Dur ${item.durability}`);
+  return parts.join(' ');
+}
+
+function decodeProfileItem(buffer, slot, equipCount, defMap) {
+  const offset = slot * 10;
+  if (offset + 10 > buffer.length) return null;
+  const chunk = buffer.subarray(offset, offset + 10);
+  const info = decodeItemBytes(chunk);
+  if (info.empty) return null;
+
+  const def = defMap.get(`${info.section}:${info.index}`);
+  const bagSlot = slot - equipCount;
+  const isEquip = slot < equipCount;
+
+  const item = {
+    slot,
+    equip: isEquip,
+    bagSlot,
+    x: isEquip ? 0 : (bagSlot % 8),
+    y: isEquip ? 0 : Math.floor(bagSlot / 8),
+    section: info.section,
+    index: info.index,
+    name: def ? def.name : `Item ${info.section}:${info.index}`,
+    width: def && def.width > 0 ? def.width : 1,
+    height: def && def.height > 0 ? def.height : 1,
+    level: (chunk[1] / 8) & 15,
+    durability: chunk[2],
+    skill: (chunk[1] / 128) & 1 ? 1 : 0,
+    luck: (chunk[1] / 4) & 1 ? 1 : 0,
+    add: (chunk[1] & 3) + ((chunk[7] & 64) / 16),
+    excellent: chunk[7] & 63,
+    serial: info.serial
+  };
+  item.title = buildItemTitle(item);
+  return item;
+}
+
+function decodeProfileItems(buffer, totalSlots, equipCount = 0) {
+  const { map } = getItemDefs();
+  const buf = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer || Buffer.alloc(totalSlots * 10, 0xff));
+  const items = [];
+  for (let slot = 0; slot < totalSlots; slot++) {
+    const item = decodeProfileItem(buf, slot, equipCount, map);
+    if (item) items.push(item);
+  }
+  return items;
+}
+
+app.get('/account/character/:name', requireUser, async (req, res) => {
+  const accountId = req.session.user.id;
+  const charName = String(req.params.name || '');
+
+  const [rows] = await pool.query(
+    'SELECT Name, cLevel, Class, MapNumber, MapPosX, MapPosY, Strength, Dexterity, Vitality, Energy, Money, PkLevel, ResetCount, GrandResetCount, Life, Mana, Inventory FROM `Character` WHERE AccountID = ? AND Name = ? LIMIT 1',
+    [accountId, charName]
+  );
+  if (rows.length === 0) {
+    return res.redirect('/account?err=' + encodeURIComponent('Personagem não encontrado.'));
+  }
+  const character = rows[0];
+
+  const [whRows] = await pool.query('SELECT Money, Items FROM warehouse WHERE AccountID = ? LIMIT 1', [accountId]);
+  const warehouse = whRows[0] || null;
+
+  const invBuffer = character.Inventory || Buffer.alloc(760, 0xff);
+  const allInventory = decodeProfileItems(invBuffer, 76, 12);
+  const equipmentBySlot = PROFILE_EQUIP_LABELS.map((_, idx) => allInventory.find((it) => it.slot === idx) || null);
+  const inventory = allInventory.filter((it) => !it.equip);
+  const warehouseItems = decodeProfileItems(warehouse ? warehouse.Items : null, 120, 0);
+  const warehouseMoney = warehouse ? (warehouse.Money ?? 0) : 0;
+
+  const [statRows] = await pool.query('SELECT ConnectStat FROM MEMB_STAT WHERE memb___id = ? LIMIT 1', [accountId]);
+  const online = statRows[0] ? statRows[0].ConnectStat === 1 : false;
+
+  res.render('character_profile', {
+    character: {
+      ...character,
+      ClassName: getClassName(character.Class),
+      ClassIcon: getClassIcon(character.Class),
+      MapName: getMapName(character.MapNumber)
+    },
+    equipmentBySlot,
+    equipLabels: PROFILE_EQUIP_LABELS,
+    inventory,
+    warehouseItems,
+    warehouseMoney,
+    online,
+    page: 'account',
+    pageTitle: `MuLinux - ${character.Name}`
+  });
+});
+
 async function ensureAccountOffline(accountId) {
   const [rows] = await pool.query(
     'SELECT ConnectStat FROM MEMB_STAT WHERE memb___id = ? LIMIT 1',

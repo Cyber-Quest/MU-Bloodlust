@@ -1,0 +1,139 @@
+<%- include('partials/site_head', { pageTitle, page }) %>
+
+<%
+function escapeHtml(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+function fmtNumber(value) {
+  return Number(value || 0).toLocaleString('pt-BR');
+}
+function renderGrid(items, cols, rows, cell) {
+  var width = cols * cell;
+  var height = rows * cell;
+  var html = '<div class="mu-grid" style="width:' + width + 'px;height:' + height + 'px;">';
+  for (var gy = 0; gy < rows; gy++) {
+    for (var gx = 0; gx < cols; gx++) {
+      html += '<div class="mu-cell" style="left:' + (gx * cell) + 'px;top:' + (gy * cell) + 'px;width:' + cell + 'px;height:' + cell + 'px;"></div>';
+    }
+  }
+  items.forEach(function (item) {
+    html += '<div class="mu-item" style="left:' + (item.x * cell) + 'px;top:' + (item.y * cell) + 'px;width:' + (item.width * cell) + 'px;height:' + (item.height * cell) + 'px;" title="' + escapeHtml(item.title) + '">';
+    html += '<img src="/assets/items/' + item.section + '/' + item.index + '.jpg" alt="' + escapeHtml(item.name) + '" loading="lazy" onerror="this.onerror=null;this.src=\'/assets/inventory/unknownItem.jpg\';" />';
+    if (item.level > 0) {
+      html += '<span class="mu-item-level">+' + item.level + '</span>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+%>
+
+<main class="flex-grow-1">
+  <div class="container my-5">
+
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+      <a class="btn btn-sm btn-outline-secondary" href="/account">&larr; Minha conta</a>
+    </div>
+
+    <!-- Cabecalho do personagem -->
+    <div class="bg-white border p-4 shadow-sm rounded-3 mb-4">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <img src="<%= character.ClassIcon %>" alt="<%= character.ClassName %>" class="class-icon-lg" />
+        <div class="me-auto">
+          <h3 class="fw-bold mb-0"><%= character.Name %></h3>
+          <div class="text-muted"><%= character.ClassName %> &bull; Nível <%= character.cLevel %></div>
+        </div>
+        <div class="text-end">
+          <span class="badge <%= online ? 'bg-success' : 'bg-secondary' %>"><%= online ? 'Online' : 'Offline' %></span>
+          <div class="small text-muted mt-1">Mapa: <%= character.MapName %></div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row text-center g-2">
+        <div class="col-6 col-md-2">
+          <div class="profile-stat"><div class="profile-stat-label">Força</div><div class="profile-stat-value"><%= fmtNumber(character.Strength) %></div></div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="profile-stat"><div class="profile-stat-label">Agilidade</div><div class="profile-stat-value"><%= fmtNumber(character.Dexterity) %></div></div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="profile-stat"><div class="profile-stat-label">Vitalidade</div><div class="profile-stat-value"><%= fmtNumber(character.Vitality) %></div></div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="profile-stat"><div class="profile-stat-label">Energia</div><div class="profile-stat-value"><%= fmtNumber(character.Energy) %></div></div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="profile-stat"><div class="profile-stat-label">Resets</div><div class="profile-stat-value"><%= fmtNumber(character.ResetCount) %></div></div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="profile-stat"><div class="profile-stat-label">Grand Reset</div><div class="profile-stat-value"><%= fmtNumber(character.GrandResetCount) %></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Equipamento -->
+      <div class="col-12 col-lg-4">
+        <div class="bg-white border p-3 shadow-sm rounded-3 h-100">
+          <h5 class="fw-bold mb-3">Equipamento</h5>
+          <div class="equip-slots">
+            <% equipLabels.forEach(function (label, idx) {
+                 var item = equipmentBySlot[idx]; %>
+              <div class="equip-slot">
+                <span class="equip-slot-label"><%= label %></span>
+                <div class="equip-slot-box" title="<%= item ? item.title : label %>">
+                  <% if (item) { %>
+                    <img src="/assets/items/<%= item.section %>/<%= item.index %>.jpg"
+                         alt="<%= item.name %>"
+                         loading="lazy"
+                         onerror="this.onerror=null;this.src='/assets/inventory/unknownItem.jpg';" />
+                    <% if (item.level > 0) { %><span class="mu-item-level">+<%= item.level %></span><% } %>
+                  <% } %>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventario -->
+      <div class="col-12 col-lg-8">
+        <div class="bg-white border p-3 shadow-sm rounded-3 h-100">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Inventário</h5>
+            <span class="text-muted small"><%= inventory.length %> item(ns)</span>
+          </div>
+          <% if (inventory.length === 0) { %>
+            <p class="text-muted mb-0">Inventário vazio.</p>
+          <% } else { %>
+            <div class="mu-grid-scroll"><%- renderGrid(inventory, 8, 8, 44) %></div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bau -->
+    <div class="bg-white border p-3 shadow-sm rounded-3 mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h5 class="fw-bold mb-0">Baú</h5>
+        <div class="text-muted">
+          Zen no baú: <strong><%= fmtNumber(warehouseMoney) %></strong>
+          <span class="ms-2"><%= warehouseItems.length %> item(ns)</span>
+        </div>
+      </div>
+      <% if (warehouseItems.length === 0) { %>
+        <p class="text-muted mb-0">Baú vazio.</p>
+      <% } else { %>
+        <div class="mu-grid-scroll"><%- renderGrid(warehouseItems, 8, 15, 44) %></div>
+      <% } %>
+    </div>
+
+  </div>
+</main>
+
+<%- include('partials/site_footer') %>
