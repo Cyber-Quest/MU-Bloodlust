@@ -30,6 +30,7 @@
 // Index	Skill		Model			Comment
 
 00,020		22		"Sword21"		// Knight Blade
+00,021		22		"Axe11"			// Apocalipse Sword
 
 //// ------------------------------------------------------------------ ////
 ////				Axes					////
