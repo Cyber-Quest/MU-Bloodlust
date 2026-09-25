@@ -22,6 +22,9 @@ EXCLUDE_DIRS = {"ScreenShots"}
 EXCLUDE_EXT = {".download", ".tmp"}
 LAUNCHER_NAME = "Launcher.exe"
 
+# zip com o cliente completo (usado pelo launcher numa instalacao nova)
+FULL_PACKAGE_PATH = "/downloads/MuOnline-97k.zip"
+
 
 def sha256_file(path: str) -> str:
     h = hashlib.sha256()
@@ -59,6 +62,8 @@ def build_manifest(client_dir: str) -> dict:
     return {
         "version": now.strftime("%Y.%m.%d.%H%M"),
         "generatedAt": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        # zip do cliente completo: o launcher usa quando quase tudo mudou
+        "full": FULL_PACKAGE_PATH,
         "files": files,
     }
 

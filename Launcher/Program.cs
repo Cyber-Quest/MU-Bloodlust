@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
@@ -26,6 +29,7 @@ namespace MuLauncher
     {
         public string version { get; set; }
         public string generatedAt { get; set; }
+        public string full { get; set; }
         public List<ManifestFile> files { get; set; }
     }
 
@@ -36,6 +40,7 @@ namespace MuLauncher
         public int Downloaded;
         public long Bytes;
         public string Error;
+        public bool UsedFullPackage;
     }
 
     // ---- Logica de atualizacao -------------------------------------------
@@ -63,11 +68,34 @@ namespace MuLauncher
             return "http://147.15.49.32:8085/updates";
         }
 
+        // downloads simultaneos (o padrao do .NET e 2 conexoes por host!)
+        private const int ParallelDownloads = 8;
+        // acima disso, baixa o pacote completo (1 zip) em vez de milhares de requisicoes
+        private const int BulkThresholdFiles = 150;
+        private const long BulkThresholdBytes = 40L * 1024 * 1024;
+
+        /// <summary>Converte um caminho relativo ("/downloads/x.zip") em URL completa.</summary>
+        public static string ResolveUrl(string updatesUrl, string caminho)
+        {
+            if (string.IsNullOrEmpty(caminho)) return null;
+            if (caminho.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                caminho.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                return caminho;
+            }
+            var uri = new Uri(updatesUrl.EndsWith("/") ? updatesUrl : updatesUrl + "/");
+            return new Uri(uri, caminho).ToString();
+        }
+
         public static async Task<UpdateResult> RunAsync(
             string baseDir,
             Action<string> onStatus,
             Action<int> onProgress)
         {
+            // o padrao do .NET Framework e 2 conexoes por host -> limita muito o paralelismo
+            ServicePointManager.DefaultConnectionLimit = 32;
+            ServicePointManager.Expect100Continue = false;
+
             var result = new UpdateResult { Success = false };
             var updatesUrl = ResolveUpdatesUrl(baseDir);
             var selfName = Path.GetFileName(Application.ExecutablePath);
@@ -109,41 +137,33 @@ namespace MuLauncher
                     return result;
                 }
 
-                long total = pending.Sum(f => f.size);
-                long done = 0;
+                long pendingBytes = pending.Sum(f => f.size);
 
-                for (int i = 0; i < pending.Count; i++)
+                // --- pacote completo quando quase tudo mudou (muito mais rapido) ---
+                var zipUrl = ResolveUrl(updatesUrl, manifest.full);
+                var bulk = !string.IsNullOrEmpty(zipUrl) &&
+                           (pending.Count >= BulkThresholdFiles || pendingBytes >= BulkThresholdBytes);
+
+                if (bulk)
                 {
-                    var file = pending[i];
-                    onStatus(string.Format("Baixando {0}/{1}: {2}", i + 1, pending.Count, file.path));
-
-                    var localPath = LocalPath(baseDir, file.path);
-                    var dir = Path.GetDirectoryName(localPath);
-                    if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
-
-                    var tempPath = localPath + ".download";
-                    using (var resp = await Http.GetAsync(FileUrl(updatesUrl, file.path), HttpCompletionOption.ResponseHeadersRead))
+                    try
                     {
-                        resp.EnsureSuccessStatusCode();
-                        using (var src = await resp.Content.ReadAsStreamAsync())
-                        using (var dst = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true))
-                        {
-                            var buffer = new byte[81920];
-                            int read;
-                            while ((read = await src.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                            {
-                                await dst.WriteAsync(buffer, 0, read);
-                                done += read;
-                                onProgress(total > 0 ? (int)(done * 100 / total) : 0);
-                            }
-                        }
+                        await DownloadFullPackageAsync(zipUrl, baseDir, manifest, onStatus, onProgress);
+                        result.UsedFullPackage = true;
+                        result.Downloaded = pending.Count;
+                        onProgress(100);
+                        onStatus("Atualização concluída! O jogo está pronto.");
+                        result.Success = true;
+                        return result;
                     }
-
-                    if (File.Exists(localPath)) File.Delete(localPath);
-                    File.Move(tempPath, localPath);
-                    result.Downloaded++;
-                    result.Bytes += file.size;
+                    catch
+                    {
+                        onStatus("Pacote completo falhou, baixando arquivos...");
+                    }
                 }
+
+                // --- arquivos em paralelo ---
+                await DownloadFilesParallelAsync(updatesUrl, baseDir, pending, onStatus, onProgress, result);
 
                 onProgress(100);
                 onStatus("Atualização concluída! O jogo está pronto.");
@@ -154,6 +174,148 @@ namespace MuLauncher
             {
                 result.Error = ex.Message;
                 return result;
+            }
+        }
+
+        /// <summary>Baixa varios arquivos ao mesmo tempo (muito mais rapido que um a um).</summary>
+        private static async Task DownloadFilesParallelAsync(
+            string updatesUrl,
+            string baseDir,
+            List<ManifestFile> pending,
+            Action<string> onStatus,
+            Action<int> onProgress,
+            UpdateResult result)
+        {
+            long total = pending.Sum(f => f.size);
+            long done = 0;
+            int baixados = 0;
+            int ultimoPct = -1;
+            var semaforo = new SemaphoreSlim(ParallelDownloads);
+
+            var tarefas = new List<Task>();
+            foreach (var item in pending)
+            {
+                await semaforo.WaitAsync();
+                var file = item;
+
+                tarefas.Add(Task.Run(async () =>
+                {
+                    try
+                    {
+                        var localPath = LocalPath(baseDir, file.path);
+                        var dir = Path.GetDirectoryName(localPath);
+                        if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
+
+                        var tempPath = localPath + ".download";
+                        using (var resp = await Http.GetAsync(FileUrl(updatesUrl, file.path), HttpCompletionOption.ResponseHeadersRead))
+                        {
+                            resp.EnsureSuccessStatusCode();
+                            using (var src = await resp.Content.ReadAsStreamAsync())
+                            using (var dst = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true))
+                            {
+                                var buffer = new byte[81920];
+                                int read;
+                                while ((read = await src.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                                {
+                                    await dst.WriteAsync(buffer, 0, read);
+                                    var atual = Interlocked.Add(ref done, read);
+                                    var pct = total > 0 ? (int)(atual * 100 / total) : 0;
+                                    if (pct != ultimoPct)
+                                    {
+                                        ultimoPct = pct;
+                                        onProgress(pct);
+                                    }
+                                }
+                            }
+                        }
+
+                        if (File.Exists(localPath)) File.Delete(localPath);
+                        File.Move(tempPath, localPath);
+
+                        var feitos = Interlocked.Increment(ref baixados);
+                        Interlocked.Add(ref result.Bytes, file.size);
+                        onStatus(string.Format("Baixando arquivos... {0}/{1}", feitos, pending.Count));
+                    }
+                    finally
+                    {
+                        semaforo.Release();
+                    }
+                }));
+            }
+
+            await Task.WhenAll(tarefas);
+            result.Downloaded = baixados;
+        }
+
+        /// <summary>Baixa o zip completo do jogo e aplica os arquivos (bem mais rapido numa instalacao nova).</summary>
+        private static async Task DownloadFullPackageAsync(
+            string zipUrl,
+            string baseDir,
+            Manifest manifest,
+            Action<string> onStatus,
+            Action<int> onProgress)
+        {
+            var tempZip = Path.Combine(Path.GetTempPath(), "bl-mu-client.zip");
+            var tempDir = Path.Combine(Path.GetTempPath(), "bl-mu-client-" + Guid.NewGuid().ToString("N"));
+
+            try
+            {
+                onStatus("Baixando pacote completo do jogo...");
+                using (var resp = await Http.GetAsync(zipUrl, HttpCompletionOption.ResponseHeadersRead))
+                {
+                    resp.EnsureSuccessStatusCode();
+                    var tamanhoTotal = resp.Content.Headers.ContentLength ?? -1;
+                    long lidos = 0;
+                    int ultimoPct = -1;
+
+                    using (var src = await resp.Content.ReadAsStreamAsync())
+                    using (var dst = new FileStream(tempZip, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true))
+                    {
+                        var buffer = new byte[81920];
+                        int read;
+                        while ((read = await src.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                        {
+                            await dst.WriteAsync(buffer, 0, read);
+                            lidos += read;
+                            if (tamanhoTotal > 0)
+                            {
+                                // 85% da barra = download do pacote
+                                var pct = (int)(lidos * 85 / tamanhoTotal);
+                                if (pct != ultimoPct) { ultimoPct = pct; onProgress(pct); }
+                            }
+                        }
+                    }
+                }
+
+                onStatus("Aplicando arquivos...");
+                Directory.CreateDirectory(tempDir);
+                ZipFile.ExtractToDirectory(tempZip, tempDir);
+
+                var arquivos = manifest.files ?? new List<ManifestFile>();
+                int copiados = 0;
+                int pctAtual = -1;
+                foreach (var file in arquivos)
+                {
+                    if (file == null || string.IsNullOrEmpty(file.path)) continue;
+                    var origem = Path.Combine(tempDir, file.path.Replace('/', Path.DirectorySeparatorChar));
+                    if (!File.Exists(origem)) continue;
+
+                    var destino = LocalPath(baseDir, file.path);
+                    var dir = Path.GetDirectoryName(destino);
+                    if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
+                    File.Copy(origem, destino, true);
+
+                    copiados++;
+                    var pct = 85 + (int)(copiados * 15L / Math.Max(1, arquivos.Count));
+                    if (pct != pctAtual) { pctAtual = pct; onProgress(pct); }
+                }
+
+                onStatus(string.Format("Pacote aplicado ({0} arquivos).", copiados));
+            }
+            finally
+            {
+                try { if (File.Exists(tempZip)) File.Delete(tempZip); } catch { }
+                try { if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true); } catch { }
             }
         }
 
