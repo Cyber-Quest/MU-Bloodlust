@@ -10,6 +10,8 @@ SERVER_CHANGED=$(git diff --name-only HEAD origin/main | grep -cE '^(Dockerfile|
 echo "==> git pull"
 git pull origin main
 
+echo "==> Deploy do commit: $(git rev-parse --short HEAD)"
+
 echo "==> Rebuild mu-web"
 docker compose up -d --build mu-web
 
