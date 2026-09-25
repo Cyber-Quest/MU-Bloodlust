@@ -142,4 +142,14 @@
 //// WINGS, RINGS AND PENDANTS REQUIRE THEIR OWN SYSTEM. DON'T ADD THEM HERE BECAUSE THEY WON'T WORK CORRECTLY ////
 //// --------------------------------------------------------------------------------------------------------- ////
 
+00,022		22		"Sword23"		// Daybreak Sword
+00,023		22		"Sword24"		// Bone Blade
+00,024		22		"Axe20"		// Majestyc Sword
+00,025		22		"Axe23"		// AwaY Sword
+00,026		22		"Axe26"		// Master Sword
+01,009		19		"Axe27"		// AwaY Axe
+03,011		22		"Spear14"		// Hero Spear
+05,011		0		"Staff13"		// AwaY Mist Staff
+06,017		0		"Shield21"		// Apocalipse Shield
+
 end
