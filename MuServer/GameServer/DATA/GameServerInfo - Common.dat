@@ -99,16 +99,16 @@ GuildWarWinPointsGain_Normal=1
 ; Experience Settings
 ;==================================================
 ; Experience rate gained in the server when killing monsters
-AddExperienceRate_AL0=100
-AddExperienceRate_AL1=100
-AddExperienceRate_AL2=100
-AddExperienceRate_AL3=100
+AddExperienceRate_AL0=1000
+AddExperienceRate_AL1=1000
+AddExperienceRate_AL2=1000
+AddExperienceRate_AL3=1000
 
 ; Experience rate gained in events reward (Devil Square, Blood Castle)
-AddEventExperienceRate_AL0=100
-AddEventExperienceRate_AL1=100
-AddEventExperienceRate_AL2=100
-AddEventExperienceRate_AL3=100
+AddEventExperienceRate_AL0=1000
+AddEventExperienceRate_AL1=1000
+AddEventExperienceRate_AL2=1000
+AddEventExperienceRate_AL3=1000
 
 ;==================================================
 ; Item Drop Settings
