@@ -79,8 +79,7 @@ body.site-body::after {
 body.site-body > nav,
 body.site-body > header,
 body.site-body > main,
-body.site-body > footer,
-body.site-body > .offcanvas {
+body.site-body > footer {
   position: relative;
   z-index: 1;
 }
