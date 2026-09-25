@@ -2,95 +2,119 @@
 
 <main class="flex-grow-1">
   <div class="container my-5">
-    <div class="row justify-content-center">
-      <div class="col-12 col-lg-6">
-        <div class="bg-white border p-4 shadow-sm rounded-4">
-          <h2 class="mu-section-title"><span class="mu-ornament">&#9670;</span> Minha conta</h2>
-          <% if (notice) { %>
-            <div class="alert alert-success"><%= notice.text %></div>
-          <% } %>
-          <% if (error) { %>
-            <div class="alert alert-danger"><%= error.text %></div>
-          <% } %>
-          <table class="table table-bordered mb-0">
-            <tbody>
-              <tr>
-                <th>Usuário</th>
-                <td><%= account?.memb___id %></td>
-              </tr>
-              <tr>
-                <th>Nome</th>
-                <td><%= account?.memb_name %></td>
-              </tr>
-              <tr>
-                <th>E-mail</th>
-                <td><%= account?.mail_addr || '-' %></td>
-              </tr>
-              <tr>
-                <th>Nível da conta</th>
-                <td><%= account?.AccountLevel %></td>
-              </tr>
-              <tr>
-                <th>Cash</th>
-                <td><strong><%= Number(cash || 0).toLocaleString('pt-BR') %></strong> <span class="text-muted">Cash</span></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="d-grid mt-3 gap-2">
-            <a class="btn btn-primary" href="/shop">Abrir Cash Shop</a>
-            <a class="btn btn-outline-secondary" href="/logout">Sair</a>
-          </div>
-        </div>
 
-        <div class="bg-white border p-4 shadow-sm rounded-4 mt-4">
-          <h2 class="mu-section-title"><span class="mu-ornament">&#9670;</span> Personagens</h2>
-          <p class="text-muted small">As ações só funcionam se a conta estiver desconectada. Cooldown: 30 min por personagem e ação.</p>
-          <div class="table-responsive">
-            <table class="table table-bordered align-middle mb-0">
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Nível</th>
-                  <th>Classe</th>
-                  <th>Mapa</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (!characters || characters.length === 0) { %>
-                  <tr>
-                    <td colspan="5" class="text-center">Sem personagens</td>
-                  </tr>
-                <% } else { %>
-                  <% characters.forEach(function(char) { %>
-                    <tr>
-                      <td><%= char.Name %></td>
-                      <td><%= char.cLevel %></td>
-                      <td class="text-center">
-                        <img src="<%= char.ClassIcon %>" alt="<%= char.ClassName %>" title="<%= char.ClassName %>" class="class-icon" />
-                      </td>
-                      <td title="Mapa <%= char.MapNumber %>"><%= char.MapName %></td>
-                      <td>
-                        <div class="d-flex flex-wrap gap-2">
-                          <a class="btn btn-sm btn-primary" href="/account/character/<%= encodeURIComponent(char.Name) %>">Ver perfil</a>
-                          <form method="post" action="/account/character/<%= encodeURIComponent(char.Name) %>/move-home">
-                            <button class="btn btn-sm btn-outline-primary" type="submit">Mover para zona segura</button>
-                          </form>
-                          <form method="post" action="/account/character/<%= encodeURIComponent(char.Name) %>/clear-inventory" data-confirm="Tem certeza de que deseja limpar o inventário de <%= char.Name %>? Esta ação não pode ser desfeita." data-confirm-title="Limpar inventário" data-confirm-ok="Limpar" data-confirm-danger="1">
-                            <button class="btn btn-sm btn-outline-danger" type="submit">Limpar inventário</button>
-                          </form>
-                        </div>
-                      </td>
-                    </tr>
-                  <% }); %>
-                <% } %>
-              </tbody>
-            </table>
-          </div>
+    <% if (notice) { %>
+      <div class="alert alert-success"><%= notice.text %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error.text %></div>
+    <% } %>
+
+    <!-- Cabecalho de perfil da conta -->
+    <section class="profile-hero">
+      <div class="profile-hero-avatar">
+        <i class="bi bi-person-fill"></i>
+      </div>
+
+      <div class="profile-hero-main">
+        <span class="profile-hero-kicker">Conta</span>
+        <h1 class="profile-hero-name"><%= account?.memb___id %></h1>
+        <div class="profile-hero-meta">
+          <span><i class="bi bi-person-badge"></i><%= account?.memb_name || '-' %></span>
+          <span><i class="bi bi-envelope"></i><%= account?.mail_addr || '-' %></span>
         </div>
       </div>
+
+      <div class="profile-hero-stats">
+        <div class="profile-stat">
+          <span class="profile-stat-value"><%= account?.AccountLevel ?? 0 %></span>
+          <span class="profile-stat-label">Nível</span>
+        </div>
+        <div class="profile-stat">
+          <span class="profile-stat-value"><%= Number(cash || 0).toLocaleString('pt-BR') %></span>
+          <span class="profile-stat-label">Cash</span>
+        </div>
+        <div class="profile-stat">
+          <span class="profile-stat-value"><%= characters ? characters.length : 0 %></span>
+          <span class="profile-stat-label">Personagens</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="profile-hero-actions">
+      <a class="btn btn-primary" href="/shop"><i class="bi bi-cart3 me-1"></i>Abrir Cash Shop</a>
+      <a class="btn btn-outline-secondary" href="/logout"><i class="bi bi-box-arrow-right me-1"></i>Sair</a>
     </div>
+
+    <!-- Personagens -->
+    <h2 class="mu-section-title mt-5"><span class="mu-ornament">&#9670;</span> Personagens</h2>
+    <p class="text-muted small mb-0">
+      As ações só funcionam se a conta estiver desconectada. Cooldown: 30 min por personagem e ação.
+    </p>
+
+    <% if (!characters || characters.length === 0) { %>
+      <div class="profile-empty mt-3">
+        Nenhum personagem ainda. Entre no jogo e crie o seu primeiro herói!
+      </div>
+    <% } else { %>
+      <div class="char-grid">
+        <% characters.forEach(function(char) { %>
+          <article class="char-card">
+            <div class="char-card-top">
+              <div class="char-card-icon">
+                <img src="<%= char.ClassIcon %>" alt="<%= char.ClassName %>" />
+              </div>
+              <div class="char-card-head">
+                <h3 class="char-card-name" title="<%= char.Name %>"><%= char.Name %></h3>
+                <span class="char-card-class"><%= char.ClassName %></span>
+              </div>
+              <div class="char-card-level">
+                <span>Nível</span>
+                <strong><%= char.cLevel %></strong>
+              </div>
+            </div>
+
+            <div class="char-card-meta">
+              <span><i class="bi bi-geo-alt"></i><%= char.MapName %></span>
+            </div>
+
+            <div class="char-card-actions">
+              <a class="btn btn-primary btn-sm" href="/account/character/<%= encodeURIComponent(char.Name) %>">
+                <i class="bi bi-person-vcard me-1"></i>Ver perfil
+              </a>
+              <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle-actions>Mais</button>
+            </div>
+
+            <div class="char-card-more" hidden>
+              <form method="post" action="/account/character/<%= encodeURIComponent(char.Name) %>/move-home">
+                <button class="btn btn-sm btn-outline-primary w-100" type="submit">Mover para zona segura</button>
+              </form>
+              <form method="post" action="/account/character/<%= encodeURIComponent(char.Name) %>/clear-inventory"
+                    data-confirm="Tem certeza de que deseja limpar o inventário de <%= char.Name %>? Esta ação não pode ser desfeita."
+                    data-confirm-title="Limpar inventário"
+                    data-confirm-ok="Limpar"
+                    data-confirm-danger="1">
+                <button class="btn btn-sm btn-outline-danger w-100" type="submit">Limpar inventário</button>
+              </form>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } %>
+
   </div>
 </main>
+
+<script>
+  document.querySelectorAll('[data-toggle-actions]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var card = btn.closest('.char-card');
+      var more = card ? card.querySelector('.char-card-more') : null;
+      if (!more) return;
+      more.hidden = !more.hidden;
+      btn.textContent = more.hidden ? 'Mais' : 'Menos';
+    });
+  });
+</script>
 
 <%- include('partials/site_footer') %>
