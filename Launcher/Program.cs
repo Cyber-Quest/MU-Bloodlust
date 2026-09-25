@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -192,102 +194,260 @@ namespace MuLauncher
         }
     }
 
-    // ---- Interface --------------------------------------------------------
+    // ---- Controles com estilo de jogo -------------------------------------
+    internal static class Ui
+    {
+        public static GraphicsPath RoundedRect(Rectangle r, int radius)
+        {
+            int d = Math.Max(2, radius * 2);
+            var path = new GraphicsPath();
+            path.AddArc(r.X, r.Y, d, d, 180, 90);
+            path.AddArc(r.Right - d, r.Y, d, d, 270, 90);
+            path.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
+            path.AddArc(r.X, r.Bottom - d, d, d, 90, 90);
+            path.CloseFigure();
+            return path;
+        }
+    }
+
+    internal sealed class GradientButton : Button
+    {
+        public Color ColorTop = Color.FromArgb(250, 228, 170);
+        public Color ColorBottom = Color.FromArgb(214, 160, 74);
+        public Color ColorTopHover = Color.FromArgb(255, 244, 210);
+        public Color ColorBottomHover = Color.FromArgb(236, 186, 104);
+        public Color BorderColor = Color.FromArgb(255, 240, 200);
+        public Color DisabledTop = Color.FromArgb(78, 74, 68);
+        public Color DisabledBottom = Color.FromArgb(52, 49, 45);
+
+        private bool _hover;
+
+        public GradientButton()
+        {
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint |
+                     ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+            FlatStyle = FlatStyle.Flat;
+            FlatAppearance.BorderSize = 0;
+            Cursor = Cursors.Hand;
+            Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            TabStop = false;
+        }
+
+        protected override void OnMouseEnter(EventArgs e) { _hover = true; Invalidate(); base.OnMouseEnter(e); }
+        protected override void OnMouseLeave(EventArgs e) { _hover = false; Invalidate(); base.OnMouseLeave(e); }
+        protected override void OnEnabledChanged(EventArgs e) { Invalidate(); base.OnEnabledChanged(e); }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            var rect = new Rectangle(0, 0, Width - 1, Height - 1);
+            using (var path = Ui.RoundedRect(rect, 12))
+            {
+                Color top = Enabled ? (_hover ? ColorTopHover : ColorTop) : DisabledTop;
+                Color bottom = Enabled ? (_hover ? ColorBottomHover : ColorBottom) : DisabledBottom;
+
+                using (var brush = new LinearGradientBrush(rect, top, bottom, 90f))
+                    g.FillPath(brush, path);
+
+                if (Enabled)
+                {
+                    using (var pen = new Pen(BorderColor, 1.6f))
+                        g.DrawPath(pen, path);
+                }
+            }
+
+            TextRenderer.DrawText(
+                g, Text, Font, rect,
+                Enabled ? Color.FromArgb(28, 20, 8) : Color.FromArgb(175, 172, 165),
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+        }
+    }
+
+    // ---- Janela principal --------------------------------------------------
     public class LauncherForm : Form
     {
+        private const int WindowWidth = 820;
+        private const int WindowHeight = 520;
+        private const string DefaultGameName = "BLOODLUST";
+
         private readonly string _baseDir;
-        private Label _statusLabel;
-        private Label _versionLabel;
-        private ProgressBar _progress;
-        private Button _playButton;
+        private Image _background;
+        private Image _logo;
+
+        private string _status = "Iniciando...";
+        private string _version = "";
+        private int _progressValue;
+        private GradientButton _playButton;
 
         public LauncherForm()
         {
             _baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            LoadEmbeddedAssets();
             BuildUi();
+        }
+
+        private static Image LoadEmbeddedImage(string suffix)
+        {
+            try
+            {
+                var asm = Assembly.GetExecutingAssembly();
+                var name = asm.GetManifestResourceNames()
+                    .FirstOrDefault(n => n.EndsWith(suffix, StringComparison.OrdinalIgnoreCase));
+                if (name == null) return null;
+
+                using (var stream = asm.GetManifestResourceStream(name))
+                {
+                    if (stream == null) return null;
+                    using (var ms = new MemoryStream())
+                    {
+                        stream.CopyTo(ms);
+                        ms.Position = 0;
+                        return Image.FromStream(ms);
+                    }
+                }
+            }
+            catch { return null; }
+        }
+
+        private void LoadEmbeddedAssets()
+        {
+            _background = LoadEmbeddedImage("launcher-bg.jpg");
+            _logo = LoadEmbeddedImage("launcher-logo.png");
         }
 
         private void BuildUi()
         {
-            Text = "MU Online 0.97k - Launcher";
-            ClientSize = new Size(520, 270);
+            Text = "Bloodlust MU Online - Launcher";
+            ClientSize = new Size(WindowWidth, WindowHeight);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
-            BackColor = Color.FromArgb(16, 14, 12);
+            BackColor = Color.FromArgb(10, 8, 7);
             ForeColor = Color.White;
             Font = new Font("Segoe UI", 9F);
+            DoubleBuffered = true;
 
-            Controls.Add(new Label
-            {
-                Text = "MU ONLINE 0.97k",
-                Font = new Font("Segoe UI", 20F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(235, 195, 95),
-                TextAlign = ContentAlignment.MiddleCenter,
-                Bounds = new Rectangle(0, 22, ClientSize.Width, 44)
-            });
+            try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
 
-            _statusLabel = new Label
-            {
-                Text = "Iniciando...",
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.Gainsboro,
-                Bounds = new Rectangle(20, 92, ClientSize.Width - 40, 22)
-            };
-            Controls.Add(_statusLabel);
-
-            _progress = new ProgressBar
-            {
-                Bounds = new Rectangle(20, 120, ClientSize.Width - 40, 22),
-                Style = ProgressBarStyle.Continuous
-            };
-            Controls.Add(_progress);
-
-            _playButton = new Button
+            _playButton = new GradientButton
             {
                 Text = "JOGAR",
                 Enabled = false,
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                BackColor = Color.FromArgb(120, 40, 40),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Bounds = new Rectangle((ClientSize.Width - 170) / 2, 162, 170, 46)
+                Bounds = new Rectangle((WindowWidth - 240) / 2, 348, 240, 62)
             };
-            _playButton.FlatAppearance.BorderColor = Color.FromArgb(200, 160, 70);
             _playButton.Click += (s, e) => LaunchGame();
             Controls.Add(_playButton);
+        }
 
-            _versionLabel = new Label
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            var rect = ClientRectangle;
+
+            using (var bg = new SolidBrush(Color.FromArgb(10, 8, 7)))
+                g.FillRectangle(bg, rect);
+
+            if (_background != null)
             {
-                Text = "verificando versão...",
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.FromArgb(120, 120, 120),
-                Bounds = new Rectangle(20, 220, ClientSize.Width - 40, 20)
-            };
-            Controls.Add(_versionLabel);
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                float scale = Math.Max((float)rect.Width / _background.Width, (float)rect.Height / _background.Height);
+                int w = (int)(_background.Width * scale);
+                int h = (int)(_background.Height * scale);
+                g.DrawImage(_background, new Rectangle((rect.Width - w) / 2, (rect.Height - h) / 2, w, h));
+            }
+
+            using (var overlay = new LinearGradientBrush(rect, Color.FromArgb(140, 0, 0, 0), Color.FromArgb(228, 0, 0, 0), 90f))
+                g.FillRectangle(overlay, rect);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            var g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+
+            if (_logo != null)
+            {
+                int logoWidth = 380;
+                int logoHeight = (int)(logoWidth * ((float)_logo.Height / _logo.Width));
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(_logo, new Rectangle((Width - logoWidth) / 2, 30, logoWidth, logoHeight));
+            }
+            else
+            {
+                using (var font = new Font("Segoe UI", 30F, FontStyle.Bold))
+                using (var brush = new SolidBrush(Color.FromArgb(244, 208, 122)))
+                {
+                    var r = new Rectangle(0, 40, Width, 60);
+                    var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                    g.DrawString(DefaultGameName, font, brush, r, sf);
+                }
+            }
+
+            // status
+            using (var font = new Font("Segoe UI", 10F))
+            using (var brush = new SolidBrush(Color.FromArgb(236, 231, 221)))
+            {
+                var r = new Rectangle(30, 268, Width - 60, 22);
+                var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                g.DrawString(_status ?? string.Empty, font, brush, r, sf);
+            }
+
+            // barra de progresso
+            var track = new Rectangle(150, 300, Width - 300, 16);
+            using (var path = Ui.RoundedRect(track, 8))
+            {
+                using (var trackBrush = new SolidBrush(Color.FromArgb(190, 0, 0, 0)))
+                    g.FillPath(trackBrush, path);
+
+                int fillWidth = (int)((track.Width - 4) * (_progressValue / 100.0));
+                if (fillWidth > 3)
+                {
+                    var fillRect = new Rectangle(track.X + 2, track.Y + 2, fillWidth, track.Height - 4);
+                    using (var fillPath = Ui.RoundedRect(fillRect, 6))
+                    using (var brush = new LinearGradientBrush(fillRect, Color.FromArgb(250, 228, 170), Color.FromArgb(214, 160, 74), 90f))
+                        g.FillPath(brush, fillPath);
+                }
+
+                using (var pen = new Pen(Color.FromArgb(130, 214, 160, 74), 1f))
+                    g.DrawPath(pen, path);
+            }
+
+            // rodape
+            using (var font = new Font("Segoe UI", 8.5F))
+            using (var brush = new SolidBrush(Color.FromArgb(170, 163, 152)))
+            {
+                var r = new Rectangle(30, Height - 44, Width - 60, 20);
+                var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+                g.DrawString(_version ?? string.Empty, font, brush, r, sf);
+            }
         }
 
         protected override async void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
+            SetStatus("Verificando atualizações...");
             var result = await Updater.RunAsync(_baseDir, SetStatus, SetProgress);
 
             if (result.Success)
             {
-                _versionLabel.Text = "versão do servidor: " + (result.Version ?? "?");
+                SetVersion("versão do servidor: " + (result.Version ?? "?"));
                 EnablePlay();
                 return;
             }
 
             var hasGame = File.Exists(Path.Combine(_baseDir, "main.exe"));
-            SetStatus(hasGame ? "Não foi possível atualizar (jogando offline)." : "Falha ao baixar o jogo.");
+            SetStatus(hasGame ? "Não foi possível atualizar — você ainda pode jogar offline." : "Falha ao baixar o jogo.");
 
             MessageBox.Show(
                 this,
                 "Não foi possível verificar/baixar as atualizações:\n\n" + result.Error +
                 (hasGame ? "\n\nVocê ainda pode iniciar o jogo com os arquivos atuais." : ""),
-                "MU Launcher",
+                "Bloodlust Launcher",
                 MessageBoxButtons.OK,
                 hasGame ? MessageBoxIcon.Warning : MessageBoxIcon.Error);
 
@@ -296,23 +456,32 @@ namespace MuLauncher
 
         private void SetStatus(string text)
         {
-            if (InvokeRequired) { BeginInvoke(new Action(() => _statusLabel.Text = text)); return; }
-            _statusLabel.Text = text;
+            if (InvokeRequired) { BeginInvoke(new Action<string>(SetStatus), text); return; }
+            _status = text;
+            Invalidate();
         }
 
         private void SetProgress(int value)
         {
-            var clamped = Math.Min(100, Math.Max(0, value));
-            if (InvokeRequired) { BeginInvoke(new Action(() => _progress.Value = clamped)); return; }
-            _progress.Value = clamped;
+            if (InvokeRequired) { BeginInvoke(new Action<int>(SetProgress), value); return; }
+            _progressValue = Math.Min(100, Math.Max(0, value));
+            Invalidate();
+        }
+
+        private void SetVersion(string text)
+        {
+            if (InvokeRequired) { BeginInvoke(new Action<string>(SetVersion), text); return; }
+            _version = text;
+            Invalidate();
         }
 
         private void EnablePlay()
         {
             if (InvokeRequired) { BeginInvoke(new Action(EnablePlay)); return; }
+            _progressValue = 100;
             _playButton.Enabled = true;
-            _playButton.BackColor = Color.FromArgb(60, 130, 60);
             _playButton.Focus();
+            Invalidate();
         }
 
         private void LaunchGame()
@@ -320,7 +489,7 @@ namespace MuLauncher
             var exe = Path.Combine(_baseDir, "main.exe");
             if (!File.Exists(exe))
             {
-                MessageBox.Show(this, "main.exe não encontrado na pasta do jogo.", "MU Launcher",
+                MessageBox.Show(this, "main.exe não encontrado na pasta do jogo.", "Bloodlust Launcher",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -337,7 +506,7 @@ namespace MuLauncher
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, "Falha ao iniciar o jogo:\n\n" + ex.Message, "MU Launcher",
+                MessageBox.Show(this, "Falha ao iniciar o jogo:\n\n" + ex.Message, "Bloodlust Launcher",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

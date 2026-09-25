@@ -7,7 +7,32 @@
     <AssemblyName>Launcher</AssemblyName>
     <RootNamespace>MuLauncher</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+
+    <!-- Metadados do executavel: identificam o programa como software legitimo
+         e ajudam a reduzir falso-positivo de antivirus. -->
+    <Company>Bloodlust MU</Company>
+    <Product>Bloodlust Launcher</Product>
+    <AssemblyTitle>Bloodlust Launcher</AssemblyTitle>
+    <Description>Launcher oficial do servidor Bloodlust MU Online 0.97k</Description>
+    <Copyright>Copyright (c) 2026 Bloodlust MU</Copyright>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <NeutralLanguage>pt-BR</NeutralLanguage>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+
+    <!-- Build limpo: sem ofuscacao, sem pacote unico (menos suspeito para AV) -->
+    <DebugType>none</DebugType>
+    <Deterministic>true</Deterministic>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\launcher-bg.jpg" />
+    <EmbeddedResource Include="Assets\launcher-logo.png" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
     <Reference Include="System.Web.Extensions" />
