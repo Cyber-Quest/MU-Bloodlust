@@ -3,21 +3,24 @@ set -euo pipefail
 
 cd "$HOME/Mu-Linux-0.97k"
 
+# Compose com o editor de servidor habilitado (view/API de config no admin)
+COMPOSE="docker compose -f docker-compose.yml -f docker-compose.editor.yml"
+
 echo "==> git pull"
 git pull origin main
 
 echo "==> Commit em deploy: $(git rev-parse --short HEAD)"
 
-# Site (sempre; o Docker usa cache quando nada mudou)
-echo "==> Rebuild mu-web"
-docker compose up -d --build mu-web
+# Site + editor (sempre; o Docker usa cache quando nada mudou)
+echo "==> Rebuild mu-web + mu-editor"
+$COMPOSE up -d --build mu-web mu-editor
 
 # Servidor: rebuild se Dockerfile / fontes / config do jogo forem mais novos
 # que o ultimo build (o config do GameServer fica embutido na imagem).
 STAMP="$HOME/.mu-server-built"
 if [ ! -f "$STAMP" ] || [ -n "$(find Dockerfile Source MuServer docker -newer "$STAMP" -print -quit 2>/dev/null)" ]; then
   echo "==> Servidor mudou -> rebuild mu-server"
-  docker compose up -d --build mu-server
+  $COMPOSE up -d --build mu-server
   touch "$STAMP"
 else
   echo "==> Servidor sem mudancas"
@@ -35,4 +38,4 @@ else
 fi
 
 echo "==> Containers:"
-docker compose ps
+$COMPOSE ps
