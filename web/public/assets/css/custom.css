@@ -79,7 +79,8 @@ body.site-body::after {
 body.site-body > nav,
 body.site-body > header,
 body.site-body > main,
-body.site-body > footer {
+body.site-body > footer,
+body.site-body > .offcanvas {
   position: relative;
   z-index: 1;
 }
@@ -1143,4 +1144,21 @@ body.site-body .download-badge {
   border-radius: 999px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
   white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------
+   Nitidez das sprites de item (pixel-art) em todo o site
+   As imagens originais tem 25px por celula; sem isso o navegador
+   aplica suavizacao (bilinear) e elas ficam borradas.
+   ------------------------------------------------------------------ */
+body.site-body .mu-item img,
+body.site-body .equip-slot-box img,
+body.site-body .shop-item-img img,
+body.site-body .inventory-item img,
+body.site-body .equip-item img,
+body.site-body .class-icon,
+body.site-body .class-icon-lg {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
