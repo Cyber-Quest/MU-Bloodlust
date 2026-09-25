@@ -866,49 +866,68 @@ body.site-body .profile-stat-value {
   color: var(--mu-gold-bright);
 }
 
-body.site-body .equip-slots {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+/* ------------------------------------------------------------------
+   Painel do inventario / bau — layout identico ao cliente do jogo
+   (moldura 237x539, equipamento 200x186, celulas de 25px)
+   ------------------------------------------------------------------ */
+body.site-body .mu-panel-scroll {
+  overflow: auto;
+  max-width: 100%;
 }
 
-@media (max-width: 575.98px) {
-  body.site-body .equip-slots {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-body.site-body .equip-slot {
-  text-align: center;
-}
-
-body.site-body .equip-slot-label {
-  display: block;
-  font-size: 0.66rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--mu-text-dim);
-  margin-bottom: 3px;
-}
-
-body.site-body .equip-slot-box {
+body.site-body .mu-panel {
   position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border: 1px solid var(--mu-gold-line);
+  margin: 0 auto;
+  background-image: url(/assets/inventory/Inventory_Back.jpg);
+  background-position: top left;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   border-radius: 8px;
-  background: #0d0a07;
+  overflow: hidden;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+}
+
+body.site-body .mu-panel--warehouse {
+  background-image: url(/assets/inventory/Warehouse_Back.jpg);
+}
+
+body.site-body .mu-overlay {
+  position: absolute;
+  z-index: 0;
+  background-position: top left;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+body.site-body .mu-overlay--equip {
+  background-image: url(/assets/inventory/Character_Equipment.jpg);
+}
+
+body.site-body .mu-overlay--bag {
+  background-image: url(/assets/inventory/Item_Boxs_8x8.jpg);
+}
+
+body.site-body .mu-overlay--warehouse {
+  background-image: url(/assets/inventory/Item_Boxs.jpg);
+}
+
+body.site-body .mu-equip-slot {
+  position: absolute;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.85);
 }
 
-body.site-body .equip-slot-box img {
+body.site-body .mu-equip-slot img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  image-rendering: pixelated;
+}
+
+body.site-body .mu-panel .mu-item {
+  z-index: 1;
 }
 
 body.site-body .mu-grid-scroll {

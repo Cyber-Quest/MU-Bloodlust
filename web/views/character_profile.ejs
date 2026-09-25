@@ -9,25 +9,38 @@ function escapeHtml(value) {
 function fmtNumber(value) {
   return Number(value || 0).toLocaleString('pt-BR');
 }
-function renderGrid(items, cols, rows, cell) {
-  var width = cols * cell;
-  var height = rows * cell;
-  var html = '<div class="mu-grid" style="width:' + width + 'px;height:' + height + 'px;">';
-  for (var gy = 0; gy < rows; gy++) {
-    for (var gx = 0; gx < cols; gx++) {
-      html += '<div class="mu-cell" style="left:' + (gx * cell) + 'px;top:' + (gy * cell) + 'px;width:' + cell + 'px;height:' + cell + 'px;"></div>';
-    }
-  }
-  items.forEach(function (item) {
-    html += '<div class="mu-item" style="left:' + (item.x * cell) + 'px;top:' + (item.y * cell) + 'px;width:' + (item.width * cell) + 'px;height:' + (item.height * cell) + 'px;" title="' + escapeHtml(item.title) + '">';
-    html += '<img src="/assets/items/' + item.section + '/' + item.index + '.jpg" alt="' + escapeHtml(item.name) + '" loading="lazy" onerror="this.onerror=null;this.src=\'/assets/inventory/unknownItem.jpg\';" />';
-    if (item.level > 0) {
-      html += '<span class="mu-item-level">+' + item.level + '</span>';
-    }
-    html += '</div>';
-  });
-  html += '</div>';
-  return html;
+
+/* ------------------------------------------------------------------
+   Layout autentico do cliente: mesmas coordenadas da janela do jogo
+   ------------------------------------------------------------------ */
+var CELL = 25;                                   // 1 celula = 25px (igual ao jogo)
+var S = 1;                                       // escala (1 = tamanho real)
+
+var FRAME_W = 237, FRAME_H = 539;                // moldura do inventario/bau
+var EQ = { x: 18, y: 55, w: 200, h: 186 };       // painel de equipamento
+var BAG = { x: 19, y: 249, w: 200, h: 200 };     // grade do inventario (8x8)
+var WH = { x: 19, y: 62, w: 200, h: 375 };       // grade do bau (8x15)
+
+// Posicoes exatas dos 12 slots de equipamento (iguais ao jogo)
+var EQUIP_RECTS = [
+  { x: 3,   y: 59,  w: 45, h: 70 },  // 0 Arma
+  { x: 152, y: 59,  w: 45, h: 70 },  // 1 Escudo
+  { x: 78,  y: 5,   w: 45, h: 45 },  // 2 Elmo
+  { x: 78,  y: 59,  w: 45, h: 70 },  // 3 Armadura
+  { x: 78,  y: 137, w: 45, h: 45 },  // 4 Calca
+  { x: 3,   y: 137, w: 45, h: 45 },  // 5 Luvas
+  { x: 152, y: 137, w: 45, h: 45 },  // 6 Botas
+  { x: 128, y: 5,   w: 70, h: 45 },  // 7 Asas
+  { x: 3,   y: 5,   w: 45, h: 45 },  // 8 Pet
+  { x: 53,  y: 59,  w: 20, h: 20 },  // 9 Pingente
+  { x: 53,  y: 137, w: 20, h: 20 },  // 10 Anel 1
+  { x: 128, y: 137, w: 20, h: 20 }   // 11 Anel 2
+];
+
+function itemImg(item) {
+  return '<img src="/assets/items/' + item.section + '/' + item.index + '.jpg" alt="' +
+    escapeHtml(item.name) + '" loading="lazy" ' +
+    'onerror="this.onerror=null;this.src=\'/assets/inventory/unknownItem.jpg\';" />';
 }
 %>
 
@@ -76,61 +89,76 @@ function renderGrid(items, cols, rows, cell) {
       </div>
     </div>
 
-    <div class="row g-4">
-      <!-- Equipamento -->
-      <div class="col-12 col-lg-4">
-        <div class="bg-white border p-3 shadow-sm rounded-4 h-100">
-          <h5 class="fw-bold mb-3">Equipamento</h5>
-          <div class="equip-slots">
-            <% equipLabels.forEach(function (label, idx) {
-                 var item = equipmentBySlot[idx]; %>
-              <div class="equip-slot">
-                <span class="equip-slot-label"><%= label %></span>
-                <div class="equip-slot-box" title="<%= item ? item.title : label %>">
-                  <% if (item) { %>
-                    <img src="/assets/items/<%= item.section %>/<%= item.index %>.jpg"
-                         alt="<%= item.name %>"
-                         loading="lazy"
-                         onerror="this.onerror=null;this.src='/assets/inventory/unknownItem.jpg';" />
-                    <% if (item.level > 0) { %><span class="mu-item-level">+<%= item.level %></span><% } %>
-                  <% } %>
+    <div class="row g-4 justify-content-center">
+      <!-- Equipamento + Inventario (painel identico ao jogo) -->
+      <div class="col-12 col-lg-auto">
+        <div class="bg-white border p-3 shadow-sm rounded-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0">Equipamento</h5>
+            <span class="text-muted small"><%= inventory.length %> item(ns) na mochila</span>
+          </div>
+
+          <div class="mu-panel-scroll">
+            <div class="mu-panel" style="width:<%= FRAME_W * S %>px;height:<%= FRAME_H * S %>px;">
+
+              <!-- Painel de equipamento (arte do jogo) -->
+              <div class="mu-overlay mu-overlay--equip"
+                   style="left:<%= EQ.x * S %>px;top:<%= EQ.y * S %>px;width:<%= EQ.w * S %>px;height:<%= EQ.h * S %>px;"></div>
+
+              <% equipLabels.forEach(function (label, idx) {
+                   var r = EQUIP_RECTS[idx];
+                   var item = equipmentBySlot[idx]; %>
+                <div class="mu-equip-slot"
+                     style="left:<%= (EQ.x + r.x) * S %>px;top:<%= (EQ.y + r.y) * S %>px;width:<%= r.w * S %>px;height:<%= r.h * S %>px;"
+                     title="<%= label %><%= item ? ' — ' + item.title : '' %>">
+                  <% if (item) { %><%- itemImg(item) %><% } %>
                 </div>
-              </div>
-            <% }); %>
+              <% }); %>
+
+              <!-- Grade da mochila -->
+              <div class="mu-overlay mu-overlay--bag"
+                   style="left:<%= BAG.x * S %>px;top:<%= BAG.y * S %>px;width:<%= BAG.w * S %>px;height:<%= BAG.h * S %>px;"></div>
+
+              <% inventory.forEach(function (item) { %>
+                <div class="mu-item"
+                     style="left:<%= (BAG.x + item.x * CELL) * S %>px;top:<%= (BAG.y + item.y * CELL) * S %>px;width:<%= item.width * CELL * S %>px;height:<%= item.height * CELL * S %>px;"
+                     title="<%= escapeHtml(item.title) %>">
+                  <%- itemImg(item) %>
+                </div>
+              <% }); %>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Inventario -->
-      <div class="col-12 col-lg-8">
-        <div class="bg-white border p-3 shadow-sm rounded-4 h-100">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold mb-0">Inventário</h5>
-            <span class="text-muted small"><%= inventory.length %> item(ns)</span>
+      <!-- Bau (painel identico ao jogo) -->
+      <div class="col-12 col-lg-auto">
+        <div class="bg-white border p-3 shadow-sm rounded-4">
+          <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+            <h5 class="fw-bold mb-0">Baú</h5>
+            <span class="text-muted small">
+              Zen: <strong><%= fmtNumber(warehouseMoney) %></strong>
+              &bull; <%= warehouseItems.length %> item(ns)
+            </span>
           </div>
-          <% if (inventory.length === 0) { %>
-            <p class="text-muted mb-0">Inventário vazio.</p>
-          <% } else { %>
-            <div class="mu-grid-scroll"><%- renderGrid(inventory, 8, 8, 44) %></div>
-          <% } %>
-        </div>
-      </div>
-    </div>
 
-    <!-- Bau -->
-    <div class="bg-white border p-3 shadow-sm rounded-4 mt-4">
-      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h5 class="fw-bold mb-0">Baú</h5>
-        <div class="text-muted">
-          Zen no baú: <strong><%= fmtNumber(warehouseMoney) %></strong>
-          <span class="ms-2"><%= warehouseItems.length %> item(ns)</span>
+          <div class="mu-panel-scroll">
+            <div class="mu-panel mu-panel--warehouse" style="width:<%= FRAME_W * S %>px;height:<%= FRAME_H * S %>px;">
+
+              <div class="mu-overlay mu-overlay--warehouse"
+                   style="left:<%= WH.x * S %>px;top:<%= WH.y * S %>px;width:<%= WH.w * S %>px;height:<%= WH.h * S %>px;"></div>
+
+              <% warehouseItems.forEach(function (item) { %>
+                <div class="mu-item"
+                     style="left:<%= (WH.x + item.x * CELL) * S %>px;top:<%= (WH.y + item.y * CELL) * S %>px;width:<%= item.width * CELL * S %>px;height:<%= item.height * CELL * S %>px;"
+                     title="<%= escapeHtml(item.title) %>">
+                  <%- itemImg(item) %>
+                </div>
+              <% }); %>
+            </div>
+          </div>
         </div>
       </div>
-      <% if (warehouseItems.length === 0) { %>
-        <p class="text-muted mb-0">Baú vazio.</p>
-      <% } else { %>
-        <div class="mu-grid-scroll"><%- renderGrid(warehouseItems, 8, 15, 44) %></div>
-      <% } %>
     </div>
 
   </div>
