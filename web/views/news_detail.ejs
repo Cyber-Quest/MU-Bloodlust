@@ -2,13 +2,16 @@
 
 <main class="flex-grow-1">
   <div class="container my-5">
-    <div class="p-4 bg-light shadow-lg">
-      <div class="bg-white border p-4 shadow-sm">
+    <div class="p-4 bg-light shadow-lg rounded-4">
+      <div class="bg-white border p-4 shadow-sm rounded-3">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+          <a href="/news" class="btn btn-sm btn-outline-secondary">&larr; Notícias</a>
+        </div>
         <% if (!item.hide_title) { %>
-          <h2 class="fw-bold mb-3 text-dark"><%= item.title %></h2>
+          <h2 class="mu-section-title"><span class="mu-ornament">&#9670;</span> <%= item.title %></h2>
         <% } %>
-        <p class="text-muted mb-4"><%= new Date(item.created_at).toLocaleDateString('pt-BR') %></p>
-        <div class="text-muted mb-4 news-content"><%- item.body %></div>
+        <p class="text-muted mb-4 text-center"><%= new Date(item.created_at).toLocaleDateString('pt-BR') %></p>
+        <div class="mb-4 news-content"><%- item.body %></div>
         <a href="/news" class="btn btn-outline-secondary">Voltar</a>
       </div>
     </div>

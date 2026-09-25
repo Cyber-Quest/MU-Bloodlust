@@ -1,95 +1,109 @@
 <%- include('partials/site_head', { pageTitle, page }) %>
 
 <main class="flex-grow-1">
-  <div class="container mt-5">
-    <div class="row justify-content-left">
-      <div class="col-lg-4">
-        <div class="bg-dark bg-opacity-50 rounded-4 p-3 shadow-lg overflow-hidden">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="flex-shrink-0 rounded-full p-2">
-              <img src="/assets/images/icon.png" width="130" height="70" alt="Server Icon" class="img-fluid">
-            </div>
-            <div class="flex-1 text-end ms-4">
-              <p class="text-light text-sm mb-2">Jogadores online: <span class="badge bg-primary text-white text-xs font-semibold" id="players-online"><%= playersOnline %></span></p>
-              <p class="text-light text-sm mb-2">Hora do servidor: <span class="badge bg-danger text-white text-xs font-semibold" id="server-time" data-tz="<%= timeZone || '' %>"><%= serverTime %></span></p>
-              <p class="text-light text-sm mb-2">Sua hora: <span class="badge bg-success text-white text-xs font-semibold" id="user-time">--:--:--</span></p>
-            </div>
-          </div>
+  <div class="container">
+    <section class="mu-hero">
+      <img src="/assets/images/icon.png" width="132" height="99" alt="<%= appName %>" class="mu-hero-emblem">
+      <h1 class="mu-hero-title"><%= appName %></h1>
+      <p class="mu-hero-sub">Servidor MU Online 0.97k &bull; Servidor aberto para todos</p>
+
+      <div class="mu-hero-actions">
+        <a class="btn btn-primary" href="/download"><i class="bi bi-download me-2"></i>Baixar o jogo</a>
+        <% if (session && session.user) { %>
+          <a class="btn btn-outline-primary" href="/account"><i class="bi bi-person-circle me-2"></i>Minha conta</a>
+        <% } else { %>
+          <a class="btn btn-outline-primary" href="/register"><i class="bi bi-person-plus me-2"></i>Criar conta</a>
+        <% } %>
+        <a class="btn btn-outline-primary" href="/rankings"><i class="bi bi-trophy me-2"></i>Ver rankings</a>
+      </div>
+
+      <div class="mu-stat-row">
+        <div class="mu-stat">
+          <span class="mu-stat-label">Jogadores online</span>
+          <span class="mu-stat-value is-online" id="players-online"><%= playersOnline %></span>
+        </div>
+        <div class="mu-stat">
+          <span class="mu-stat-label">Hora do servidor</span>
+          <span class="mu-stat-value" id="server-time" data-tz="<%= timeZone || '' %>"><%= serverTime %></span>
+        </div>
+        <div class="mu-stat">
+          <span class="mu-stat-label">Sua hora</span>
+          <span class="mu-stat-value" id="user-time">--:--:--</span>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 
   <div class="container my-5">
-    <div class="p-4 bg-light shadow-lg">
-      <div class="row">
-        <div class="col-12 col-lg-8 bg-white border p-3 shadow-sm">
-          <h2 class="fw-bold mb-5 text-center text-dark">Últimas notícias</h2>
+    <div class="p-4 bg-light shadow-lg rounded-4">
+      <div class="row g-4">
+        <div class="col-12 col-lg-8">
+          <div class="bg-white border p-4 shadow-sm rounded-3 h-100">
+            <h2 class="mu-section-title"><span class="mu-ornament">&#9670;</span> Últimas notícias</h2>
 
-          <% if (!news || news.length === 0) { %>
-            <div class="news-item mb-4 p-4 border rounded-3 shadow-sm">
-              <p class="text-muted mb-0">Ainda não há notícias publicadas.</p>
-            </div>
-          <% } else { %>
-            <% news.forEach(function(item) { %>
-              <% const hasImage = item.featuredImage && item.featuredImage.length > 0; %>
-              <% const hasText = item.excerpt && item.excerpt.trim().length > 0; %>
-              <div class="news-item mb-4 p-4 border rounded-3 shadow-sm">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="text-muted fs-6"><%= new Date(item.created_at).toLocaleDateString('pt-BR') %></span>
-                  <span class="badge text-bg-primary rounded-pill px-3 py-2">Notícia</span>
-                </div>
-                <div class="news-body <%= hasImage && hasText ? 'news-body--thumb' : '' %>">
-                  <% if (hasImage) { %>
-                    <div class="<%= hasText ? 'news-thumb' : 'news-banner' %>">
-                      <img src="<%= item.featuredImage %>" alt="<%= item.title %>" loading="lazy" />
+            <% if (!news || news.length === 0) { %>
+              <div class="news-item mb-4 p-4 rounded-3">
+                <p class="text-muted mb-0">Ainda não há notícias publicadas.</p>
+              </div>
+            <% } else { %>
+              <% news.forEach(function(item) { %>
+                <% const hasImage = item.featuredImage && item.featuredImage.length > 0; %>
+                <% const hasText = item.excerpt && item.excerpt.trim().length > 0; %>
+                <div class="news-item mb-4 p-4 rounded-3">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted fs-6"><%= new Date(item.created_at).toLocaleDateString('pt-BR') %></span>
+                    <span class="badge text-bg-primary">Notícia</span>
+                  </div>
+                  <div class="news-body <%= hasImage && hasText ? 'news-body--thumb' : '' %>">
+                    <% if (hasImage) { %>
+                      <div class="<%= hasText ? 'news-thumb' : 'news-banner' %>">
+                        <img src="<%= item.featuredImage %>" alt="<%= item.title %>" loading="lazy" />
+                      </div>
+                    <% } %>
+                    <div class="news-text">
+                      <% if (!item.hide_title) { %>
+                        <h5 class="news-title fs-5 fw-bold mb-2"><%= item.title %></h5>
+                      <% } %>
+                      <% if (hasText) { %>
+                        <p class="news-description mb-3"><%= item.excerpt %></p>
+                      <% } %>
+                      <a href="/news/<%= item.id %>" class="fs-6">Ler mais &rarr;</a>
                     </div>
-                  <% } %>
-                  <div class="news-text">
-                    <% if (!item.hide_title) { %>
-                      <h5 class="news-title text-dark fs-5 fw-bold mb-2"><%= item.title %></h5>
-                    <% } %>
-                    <% if (hasText) { %>
-                      <p class="news-description text-muted mb-3"><%= item.excerpt %></p>
-                    <% } %>
-                    <a href="/news/<%= item.id %>" class="text-decoration-none text-primary fs-6">Ler mais</a>
                   </div>
                 </div>
-              </div>
-            <% }); %>
-          <% } %>
+              <% }); %>
+            <% } %>
+          </div>
         </div>
 
-        <div class="col-12 col-lg-4 bg-white border p-3 shadow-sm">
-          <div class="bg-white mb-4 p-4 border rounded-3 shadow-sm">
+        <div class="col-12 col-lg-4">
+          <div class="bg-white border p-4 shadow-sm rounded-3 mb-4">
             <% if (session && session.user) { %>
-              <p class="text-center mb-3 fs-5 fw-bold">Sessão iniciada</p>
+              <h2 class="mu-section-title"><span class="mu-ornament">&#9670;</span> Sessão</h2>
               <p class="text-center mb-3 text-muted">Conta: <strong><%= session.user.id %></strong></p>
               <div class="d-grid gap-2">
                 <a class="btn btn-primary" href="/account">Ver conta</a>
                 <a class="btn btn-outline-secondary" href="/logout">Sair</a>
               </div>
             <% } else { %>
-              <p class="text-center mb-4 fs-5 fw-bold">Entrar</p>
+              <h2 class="mu-section-title"><span class="mu-ornament">&#9670;</span> Entrar</h2>
               <form action="/login" method="POST">
                 <div class="mb-3">
-                  <input type="text" class="form-control border-2 rounded-3 shadow-sm" name="account" placeholder="Usuário" required>
+                  <input type="text" class="form-control" name="account" placeholder="Usuário" required>
                 </div>
                 <div class="mb-3">
-                  <input type="password" class="form-control border-2 rounded-3 shadow-sm" name="password" placeholder="Senha" required>
+                  <input type="password" class="form-control" name="password" placeholder="Senha" required>
                 </div>
-                <div class="text-center">
-                  <button type="submit" class="btn btn-primary w-100 py-2 px-4 rounded-pill shadow-sm">Entrar</button>
-                </div>
+                <button type="submit" class="btn btn-primary w-100">Entrar</button>
               </form>
               <div class="text-center mt-3">
-                <a href="/register" class="text-decoration-none">Criar conta</a>
+                <a href="/register">Criar conta</a>
               </div>
             <% } %>
           </div>
 
-          <div class="col-12 bg-white p-4 border rounded-3 shadow-sm">
-            <h5 class="text-center mb-4 text-dark fw-bold">Top 10 Rankings</h5>
+          <div class="bg-white p-4 border rounded-3 shadow-sm mb-4">
+            <h2 class="mu-section-title"><span class="mu-ornament">&#9670;</span> Top 10</h2>
             <div class="table-responsive">
               <table class="table table-bordered table-striped mb-0">
                 <thead>
@@ -126,8 +140,8 @@
             </div>
           </div>
 
-          <div class="col-12 bg-white p-4 border rounded-3 shadow-sm mt-4">
-            <h5 class="text-center mb-4 text-dark fw-bold">Próximos eventos</h5>
+          <div class="bg-white p-4 border rounded-3 shadow-sm">
+            <h2 class="mu-section-title"><span class="mu-ornament">&#9670;</span> Próximos eventos</h2>
             <div class="table-responsive">
               <table class="table table-bordered table-striped mb-0">
                 <thead>

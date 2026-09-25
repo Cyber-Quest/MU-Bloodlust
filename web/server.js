@@ -740,7 +740,7 @@ async function verifyTurnstile(token, remoteIp) {
 app.use((req, res, next) => {
   res.locals.turnstileSiteKey = TURNSTILE_SITE_KEY;
   res.locals.session = req.session;
-  res.locals.appName = 'MuLinux';
+  res.locals.appName = 'Bloodlust';
   res.locals.year = new Date().getFullYear();
   res.locals.timeZone = resolvedTimeZone;
   res.locals.assetsVersion = resolvedAssetVersion;
@@ -792,32 +792,32 @@ app.get('/', async (req, res) => {
     };
   }).filter(Boolean);
 
-  res.render('home', { news, ranking: rankingView, playersOnline, serverTime, events, page: 'home', pageTitle: 'MuLinux - Início' });
+  res.render('home', { news, ranking: rankingView, playersOnline, serverTime, events, page: 'home', pageTitle: 'Bloodlust - Início' });
 });
 
 app.get('/register', (req, res) => {
-  res.render('register', { error: null, page: 'register', pageTitle: 'MuLinux - Cadastro' });
+  res.render('register', { error: null, page: 'register', pageTitle: 'Bloodlust - Cadastro' });
 });
 
 app.post('/register', authLimiter, async (req, res) => {
   const { account, password, confirm, email, name } = req.body;
 
   if (!account || !password || !confirm || !email) {
-    return res.render('register', { error: 'Preencha todos os campos.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
+    return res.render('register', { error: 'Preencha todos os campos.', page: 'register', pageTitle: 'Bloodlust - Cadastro' });
   }
 
   if (!/^[a-zA-Z0-9]{4,10}$/.test(account)) {
-    return res.render('register', { error: 'O usuário deve ter 4-10 caracteres alfanuméricos.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
+    return res.render('register', { error: 'O usuário deve ter 4-10 caracteres alfanuméricos.', page: 'register', pageTitle: 'Bloodlust - Cadastro' });
   }
 
   if (password.length < 6 || password !== confirm) {
-    return res.render('register', { error: 'A senha deve ter pelo menos 6 caracteres e coincidir.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
+    return res.render('register', { error: 'A senha deve ter pelo menos 6 caracteres e coincidir.', page: 'register', pageTitle: 'Bloodlust - Cadastro' });
   }
 
   const turnstileToken = req.body['cf-turnstile-response'];
   const turnstileOk = await verifyTurnstile(turnstileToken, req.ip);
   if (!turnstileOk) {
-    return res.render('register', { error: 'Captcha inválido. Tente novamente.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
+    return res.render('register', { error: 'Captcha inválido. Tente novamente.', page: 'register', pageTitle: 'Bloodlust - Cadastro' });
   }
 
   const conn = await pool.getConnection();
@@ -826,7 +826,7 @@ app.post('/register', authLimiter, async (req, res) => {
     const [existing] = await conn.query('SELECT memb___id FROM MEMB_INFO WHERE memb___id = ? LIMIT 1', [account]);
     if (existing.length > 0) {
       await conn.rollback();
-      return res.render('register', { error: 'A conta já existe.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
+      return res.render('register', { error: 'A conta já existe.', page: 'register', pageTitle: 'Bloodlust - Cadastro' });
     }
 
     const membName = name && name.trim().length > 0 ? name.trim().slice(0, 10) : account;
@@ -853,20 +853,20 @@ app.post('/register', authLimiter, async (req, res) => {
     return res.redirect('/login');
   } catch (err) {
     await conn.rollback();
-    return res.render('register', { error: 'Erro ao criar a conta.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
+    return res.render('register', { error: 'Erro ao criar a conta.', page: 'register', pageTitle: 'Bloodlust - Cadastro' });
   } finally {
     conn.release();
   }
 });
 
 app.get('/login', (req, res) => {
-  res.render('login', { error: null, page: 'login', pageTitle: 'MuLinux - Entrar' });
+  res.render('login', { error: null, page: 'login', pageTitle: 'Bloodlust - Entrar' });
 });
 
 app.post('/login', authLimiter, async (req, res) => {
   const { account, password } = req.body;
   if (!account || !password) {
-    return res.render('login', { error: 'Preencha usuário e senha.', page: 'login', pageTitle: 'MuLinux - Entrar' });
+    return res.render('login', { error: 'Preencha usuário e senha.', page: 'login', pageTitle: 'Bloodlust - Entrar' });
   }
 
   const [rows] = await pool.query(
@@ -875,7 +875,7 @@ app.post('/login', authLimiter, async (req, res) => {
   );
 
   if (rows.length === 0) {
-    return res.render('login', { error: 'Credenciais inválidas.', page: 'login', pageTitle: 'MuLinux - Entrar' });
+    return res.render('login', { error: 'Credenciais inválidas.', page: 'login', pageTitle: 'Bloodlust - Entrar' });
   }
 
   req.session.user = { id: account };
@@ -906,7 +906,7 @@ app.get('/account', requireUser, async (req, res) => {
     notice,
     error,
     page: 'account',
-    pageTitle: 'MuLinux - Conta'
+    pageTitle: 'Bloodlust - Conta'
   });
 });
 
@@ -1014,7 +1014,7 @@ app.get('/account/character/:name', requireUser, async (req, res) => {
     warehouseMoney,
     online,
     page: 'account',
-    pageTitle: `MuLinux - ${character.Name}`
+    pageTitle: `Bloodlust - ${character.Name}`
   });
 });
 
@@ -1151,7 +1151,7 @@ app.get('/rankings', async (req, res) => {
       classOptions,
       rows,
       page: 'rankings',
-      pageTitle: 'MuLinux - Rankings'
+      pageTitle: 'Bloodlust - Rankings'
     });
   }
 
@@ -1194,13 +1194,13 @@ app.get('/rankings', async (req, res) => {
     classOptions,
     rows: viewRows,
     page: 'rankings',
-    pageTitle: 'MuLinux - Rankings'
+    pageTitle: 'Bloodlust - Rankings'
   });
 });
 
 app.get('/download', (req, res) => {
   const downloads = loadDownloadsConfig();
-  res.render('download', { page: 'download', pageTitle: 'MuLinux - Downloads', downloads });
+  res.render('download', { page: 'download', pageTitle: 'Bloodlust - Downloads', downloads });
 });
 
 app.get('/news', async (req, res) => {
@@ -1209,13 +1209,13 @@ app.get('/news', async (req, res) => {
     ...row,
     excerpt: makeExcerpt(row.body)
   }));
-  res.render('news', { news, page: 'news', pageTitle: 'MuLinux - Notícias' });
+  res.render('news', { news, page: 'news', pageTitle: 'Bloodlust - Notícias' });
 });
 
 app.get('/news/:id', async (req, res) => {
   const [rows] = await pool.query('SELECT id, title, body, body_is_html, hide_title, created_at FROM web_news WHERE published = 1 AND id = ? LIMIT 1', [req.params.id]);
   if (rows.length === 0) return res.redirect('/news');
-  res.render('news_detail', { item: rows[0], page: 'news', pageTitle: `MuLinux - ${rows[0].title}` });
+  res.render('news_detail', { item: rows[0], page: 'news', pageTitle: `Bloodlust - ${rows[0].title}` });
 });
 
 app.get('/admin/login', (req, res) => {
@@ -1368,6 +1368,38 @@ app.get('/admin/server-editor/events', requireAdmin, requireAdminPasswordChange,
 
 app.get('/admin/server-editor/chaosmix', requireAdmin, requireAdminPasswordChange, (req, res) => {
   res.render('admin_config_editor', { title: 'CFG chaos mix', kind: 'chaosmix', reload: 'chaosmix' });
+});
+
+app.get('/admin/server-editor/startup', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_config_editor', { title: 'CFG inicial (StartUp)', kind: 'startup', reload: 'all' });
+});
+
+app.get('/admin/server-editor/character', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_config_editor', { title: 'CFG personagem', kind: 'character', reload: 'character' });
+});
+
+app.get('/admin/server-editor/bloodcastle', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_config_editor', { title: 'CFG Blood Castle', kind: 'bloodcastle', reload: 'event' });
+});
+
+app.get('/admin/server-editor/devilsquare', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_config_editor', { title: 'CFG Devil Square', kind: 'devilsquare', reload: 'event' });
+});
+
+app.get('/admin/server-editor/invasion', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_config_editor', { title: 'CFG invasões', kind: 'invasion', reload: 'event' });
+});
+
+app.get('/admin/server-editor/bonus', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_config_editor', { title: 'CFG bônus', kind: 'bonus', reload: 'event' });
+});
+
+app.get('/admin/server-editor/eventspawn', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_config_editor', { title: 'CFG spawn de eventos', kind: 'eventspawn', reload: 'event' });
+});
+
+app.get('/admin/server-editor/goldenarcher', requireAdmin, requireAdminPasswordChange, (req, res) => {
+  res.render('admin_config_editor', { title: 'CFG Golden Archer / Bingo', kind: 'goldenarcher', reload: 'event' });
 });
 
 app.get('/admin/server-editor/event-item-bag', requireAdmin, requireAdminPasswordChange, (req, res) => {
@@ -1869,6 +1901,22 @@ function getConfigFilePath(kind) {
       return 'GameServer/Data/GameServerInfo - Event.dat';
     case 'chaosmix':
       return 'GameServer/Data/GameServerInfo - ChaosMix.dat';
+    case 'startup':
+      return 'GameServer/Data/GameServerInfo - StartUp.dat';
+    case 'character':
+      return 'GameServer/Data/GameServerInfo - Character.dat';
+    case 'bloodcastle':
+      return 'Data/Event/BloodCastle.dat';
+    case 'devilsquare':
+      return 'Data/Event/DevilSquare.dat';
+    case 'invasion':
+      return 'Data/Event/InvasionManager.dat';
+    case 'bonus':
+      return 'Data/Event/BonusManager.dat';
+    case 'eventspawn':
+      return 'Data/Event/EventSpawnMonster.dat';
+    case 'goldenarcher':
+      return 'Data/Event/GoldenArcherBingo.dat';
     default:
       return null;
   }
