@@ -2,19 +2,19 @@
 
 <section class="card">
   <div class="row-between">
-    <h2>Editor del servidor</h2>
+    <h2>Editor do servidor</h2>
     <div class="admin-links">
-      <a class="button-link" href="/admin/accounts">Cuentas</a>
-      <a class="button-link" href="/admin/downloads">Descargas</a>
-      <a class="button-link" href="/admin/news">Noticias</a>
-      <a class="button-link" href="/admin/logout">Salir</a>
+      <a class="button-link" href="/admin/accounts">Contas</a>
+      <a class="button-link" href="/admin/downloads">Downloads</a>
+      <a class="button-link" href="/admin/news">Notícias</a>
+      <a class="button-link" href="/admin/logout">Sair</a>
     </div>
   </div>
 
   <% if (!editorEnabled) { %>
     <div class="alert">
-      El editor del servidor esta deshabilitado. Para activarlo, inicia el stack con
-      <code>EDITOR_ENABLED=1</code> y el compose del editor.
+      O editor do servidor está desabilitado. Para ativá-lo, inicie o stack com
+      <code>EDITOR_ENABLED=1</code> e o compose do editor.
     </div>
   <% } else { %>
     <div class="alert success">
@@ -22,89 +22,89 @@
     </div>
 
     <div class="card-sub">
-      <h3>Editor de shops</h3>
-      <p class="muted">Edita los archivos <code>MuServer/Data/Shop</code> con grid grafico.</p>
-      <a class="button-link" href="/admin/server-editor/shops">Abrir editor de shops</a>
+      <h3>Editor de lojas</h3>
+      <p class="muted">Edita os arquivos <code>MuServer/Data/Shop</code> com grid gráfico.</p>
+      <a class="button-link" href="/admin/server-editor/shops">Abrir editor de lojas</a>
     </div>
 
     <div class="card-sub">
       <h3>Editor de spawns</h3>
-      <p class="muted">Edita <code>MonsterSetBase.txt</code> con mapa y posiciones.</p>
+      <p class="muted">Edita <code>MonsterSetBase.txt</code> com mapa e posições.</p>
       <a class="button-link" href="/admin/server-editor/spawns">Abrir editor de spawns</a>
     </div>
 
     <div class="card-sub">
-      <h3>Editor de monsters</h3>
-      <p class="muted">Edita <code>Monster.txt</code> (HP, da�o, exp, etc).</p>
-      <a class="button-link" href="/admin/server-editor/monsters">Abrir editor de monsters</a>
+      <h3>Editor de monstros</h3>
+      <p class="muted">Edita <code>Monster.txt</code> (HP, dano, exp, etc).</p>
+      <a class="button-link" href="/admin/server-editor/monsters">Abrir editor de monstros</a>
     </div>
 
     <div class="card-sub">
-      <h3>Editor de gates</h3>
-      <p class="muted">Edita <code>Gate.txt</code> con mapa y rectangulos.</p>
-      <a class="button-link" href="/admin/server-editor/gates">Abrir editor de gates</a>
+      <h3>Editor de portais</h3>
+      <p class="muted">Edita <code>Gate.txt</code> com mapa e retângulos.</p>
+      <a class="button-link" href="/admin/server-editor/gates">Abrir editor de portais</a>
     </div>
 
     <div class="card-sub">
-      <h3>Editor de moves</h3>
-      <p class="muted">Edita <code>Move.txt</code> (lista del boton M).</p>
-      <a class="button-link" href="/admin/server-editor/moves">Abrir editor de moves</a>
+      <h3>Editor de movimentações</h3>
+      <p class="muted">Edita <code>Move.txt</code> (lista do botão M).</p>
+      <a class="button-link" href="/admin/server-editor/moves">Abrir editor de movimentações</a>
     </div>
 
     <div class="card-sub">
       <h3>Customs</h3>
       <p class="muted">
-        Edita <code>CustomSafeZone.txt</code>, <code>CustomPkFree.txt</code> y <code>CustomNpcMove.txt</code>.
+        Edita <code>CustomSafeZone.txt</code>, <code>CustomPkFree.txt</code> e <code>CustomNpcMove.txt</code>.
       </p>
       <a class="button-link" href="/admin/server-editor/customs">Abrir customs</a>
     </div>
 
     <div class="card-sub">
-      <h3>Editor de items base</h3>
-      <p class="muted">Edita <code>Item.txt</code>, <code>ItemValue.txt</code> y <code>ItemStack.txt</code>.</p>
-      <a class="button-link" href="/admin/server-editor/items">Abrir editor de items</a>
+      <h3>Editor de itens base</h3>
+      <p class="muted">Edita <code>Item.txt</code>, <code>ItemValue.txt</code> e <code>ItemStack.txt</code>.</p>
+      <a class="button-link" href="/admin/server-editor/items">Abrir editor de itens</a>
     </div>
 
     <div class="card-sub">
       <h3>Editor de drop</h3>
-      <p class="muted">Edita <code>ItemDrop.txt</code> (drops especiales por mapa/monster).</p>
+      <p class="muted">Edita <code>ItemDrop.txt</code> (drops especiais por mapa/monstro).</p>
       <a class="button-link" href="/admin/server-editor/drop">Abrir editor de drop</a>
     </div>
 
     <div class="card-sub">
       <h3>Editor de reset/exp</h3>
-      <p class="muted">Edita <code>ResetTable.txt</code> y <code>ExperienceTable.txt</code>.</p>
+      <p class="muted">Edita <code>ResetTable.txt</code> e <code>ExperienceTable.txt</code>.</p>
       <a class="button-link" href="/admin/server-editor/reset-exp">Abrir editor de reset/exp</a>
     </div>
 
     <div class="card-sub">
       <h3>Editor de mapas</h3>
-      <p class="muted">Edita <code>MapManager.txt</code> (indices y rates de mapas).</p>
+      <p class="muted">Edita <code>MapManager.txt</code> (índices e taxas de mapas).</p>
       <a class="button-link" href="/admin/server-editor/mapmanager">Abrir editor de mapas</a>
     </div>
 
     <div class="card-sub">
       <h3>Editor de GM</h3>
-      <p class="muted">Edita <code>GameMaster.txt</code> con niveles por personaje.</p>
+      <p class="muted">Edita <code>GameMaster.txt</code> com níveis por personagem.</p>
       <a class="button-link" href="/admin/server-editor/gms">Abrir editor de GM</a>
     </div>
 
     <div class="card-sub">
-      <h3>Editor de notices</h3>
-      <p class="muted">Edita <code>Notice.txt</code> (mensajes automaticos).</p>
-      <a class="button-link" href="/admin/server-editor/notices">Abrir editor de notices</a>
+      <h3>Editor de avisos</h3>
+      <p class="muted">Edita <code>Notice.txt</code> (mensagens automáticas).</p>
+      <a class="button-link" href="/admin/server-editor/notices">Abrir editor de avisos</a>
     </div>
 
     <div class="card-sub">
       <h3>Editor de blacklist</h3>
-      <p class="muted">Edita <code>Blacklist.dat</code> (IP y HWID).</p>
+      <p class="muted">Edita <code>Blacklist.dat</code> (IP e HWID).</p>
       <a class="button-link" href="/admin/server-editor/blacklist">Abrir editor de blacklist</a>
     </div>
 
     <div class="card-sub">
-      <h3>CFG general</h3>
-      <p class="muted">Edita toda la configuracion del <code>GameServerInfo - Common.dat</code>.</p>
-      <a class="button-link" href="/admin/server-editor/rates">Abrir CFG general</a>
+      <h3>CFG geral</h3>
+      <p class="muted">Edita toda a configuração do <code>GameServerInfo - Common.dat</code>.</p>
+      <a class="button-link" href="/admin/server-editor/rates">Abrir CFG geral</a>
     </div>
 
     <div class="card-sub">
@@ -127,29 +127,29 @@
 
     <div class="card-sub">
       <h3>CFG chaos mix</h3>
-      <p class="muted">Edita <code>GameServerInfo - ChaosMix.dat</code> (maquina del chaos).</p>
+      <p class="muted">Edita <code>GameServerInfo - ChaosMix.dat</code> (máquina do chaos).</p>
       <a class="button-link" href="/admin/server-editor/chaosmix">Abrir CFG chaos mix</a>
     </div>
 
     <div class="card-sub">
       <h3>Event ItemBag</h3>
       <p class="muted">
-        Edita <code>EventItemBagManager.txt</code> y los bags de <code>Data/EventItemBag</code>.
+        Edita <code>EventItemBagManager.txt</code> e os bags de <code>Data/EventItemBag</code>.
       </p>
       <a class="button-link" href="/admin/server-editor/event-item-bag">Abrir Event ItemBag</a>
     </div>
 
     <div class="card-sub">
-      <h3>Backups del servidor</h3>
+      <h3>Backups do servidor</h3>
       <p class="muted">
-        Se guardan hasta <strong><%= editorMaxBackups %></strong> backups por archivo y
-        hasta <strong><%= editorMaxSnapshots %></strong> snapshots completos.
+        São salvos até <strong><%= editorMaxBackups %></strong> backups por arquivo e
+        até <strong><%= editorMaxSnapshots %></strong> snapshots completos.
       </p>
 
       <div class="backup-actions">
-        <label>Nombre (opcional)</label>
-        <input type="text" id="backupLabel" placeholder="ej: antes-de-spawns" maxlength="40" />
-        <button type="button" id="createBackupBtn">Crear backup</button>
+        <label>Nome (opcional)</label>
+        <input type="text" id="backupLabel" placeholder="ex: antes-de-spawns" maxlength="40" />
+        <button type="button" id="createBackupBtn">Criar backup</button>
       </div>
 
       <div class="backup-restore">
@@ -164,8 +164,8 @@
     <div class="card-sub">
       <h3>Notas</h3>
       <ul>
-        <li>Restaurar un snapshot sobrescribe <code>Data</code> y <code>GameServer/Data</code> dentro del contenedor.</li>
-        <li>Recomendado reiniciar el contenedor del GameServer despues de restaurar.</li>
+        <li>Restaurar um snapshot sobrescreve <code>Data</code> e <code>GameServer/Data</code> dentro do contêiner.</li>
+        <li>Recomendado reiniciar o contêiner do GameServer depois de restaurar.</li>
       </ul>
     </div>
   <% } %>
@@ -188,13 +188,13 @@
     try {
       const res = await fetch('/admin/server-editor/api/backups');
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
       const snapshots = data.snapshots || [];
       selectEl.innerHTML = '';
       if (snapshots.length === 0) {
         const option = document.createElement('option');
         option.value = '';
-        option.textContent = 'No hay backups';
+        option.textContent = 'Não há backups';
         selectEl.appendChild(option);
         restoreBtn.disabled = true;
         return;
@@ -213,7 +213,7 @@
   }
 
   createBtn?.addEventListener('click', async () => {
-    setMessage('Creando backup...', false);
+    setMessage('Criando backup...', false);
     try {
       const res = await fetch('/admin/server-editor/api/backups/create', {
         method: 'POST',
@@ -221,8 +221,8 @@
         body: JSON.stringify({ label: labelEl.value })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo crear');
-      setMessage('Backup creado correctamente.', false);
+      if (!res.ok) throw new Error(data.error || 'Não foi possível criar');
+      setMessage('Backup criado com sucesso.', false);
       await loadSnapshots();
     } catch (err) {
       setMessage(err.message, true);
@@ -232,7 +232,7 @@
   restoreBtn?.addEventListener('click', async () => {
     const name = selectEl.value;
     if (!name) return;
-    if (!confirm(`Restaurar el snapshot ${name}? Esto sobrescribira los datos actuales.`)) return;
+    if (!confirm(`Restaurar o snapshot ${name}? Isto sobrescreverá os dados atuais.`)) return;
     setMessage('Restaurando backup...', false);
     try {
       const res = await fetch('/admin/server-editor/api/backups/restore', {
@@ -241,8 +241,8 @@
         body: JSON.stringify({ name })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo restaurar');
-      setMessage('Backup restaurado. Reinicia el GameServer.', false);
+      if (!res.ok) throw new Error(data.error || 'Não foi possível restaurar');
+      setMessage('Backup restaurado. Reinicie o GameServer.', false);
       await loadSnapshots();
     } catch (err) {
       setMessage(err.message, true);

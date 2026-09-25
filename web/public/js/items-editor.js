@@ -99,7 +99,7 @@
           <button type="button" class="tab-btn" data-tab="stack">ItemStack</button>
         </div>
         <div class="spawn-toolbar-group">
-          <button type="button" id="save-items">Guardar</button>
+          <button type="button" id="save-items">Salvar</button>
         </div>
       </div>
       <div id="items-content"></div>
@@ -110,7 +110,7 @@
     const container = root.querySelector('#items-content');
     container.innerHTML = `
       <div class="alert warning">
-        Item.txt es avanzado. Cualquier error puede romper el server.
+        Item.txt é avançado. Qualquer erro pode quebrar o servidor.
       </div>
       <textarea id="item-raw" class="raw-editor" rows="24"></textarea>
     `;
@@ -124,10 +124,10 @@
         <div class="spawn-list">
           <h3>ItemValue</h3>
           <ul id="value-list" class="simple-list"></ul>
-          <button type="button" id="add-value">Agregar</button>
+          <button type="button" id="add-value">Adicionar</button>
         </div>
         <div class="spawn-form">
-          <h3>Detalle</h3>
+          <h3>Detalhe</h3>
           <label>Index (grupo,item)</label>
           <input type="text" id="value-index" placeholder="04,007" />
           <label>Level</label>
@@ -136,11 +136,11 @@
           <input type="text" id="value-buy" />
           <label>SellValue</label>
           <input type="text" id="value-sell" />
-          <label>Comentario</label>
+          <label>Comentário</label>
           <input type="text" id="value-comment" />
           <div class="spawn-actions">
-            <button type="button" id="update-value">Actualizar</button>
-            <button type="button" id="delete-value" class="link-button">Eliminar</button>
+            <button type="button" id="update-value">Atualizar</button>
+            <button type="button" id="delete-value" class="link-button">Excluir</button>
           </div>
         </div>
       </div>
@@ -155,10 +155,10 @@
         <div class="spawn-list">
           <h3>ItemStack</h3>
           <ul id="stack-list" class="simple-list"></ul>
-          <button type="button" id="add-stack">Agregar</button>
+          <button type="button" id="add-stack">Adicionar</button>
         </div>
         <div class="spawn-form">
-          <h3>Detalle</h3>
+          <h3>Detalhe</h3>
           <label>Index (grupo,item)</label>
           <input type="text" id="stack-index" placeholder="04,007" />
           <label>Level</label>
@@ -167,11 +167,11 @@
           <input type="text" id="stack-max" />
           <label>CreateIndex</label>
           <input type="text" id="stack-create" />
-          <label>Comentario</label>
+          <label>Comentário</label>
           <input type="text" id="stack-comment" />
           <div class="spawn-actions">
-            <button type="button" id="update-stack">Actualizar</button>
-            <button type="button" id="delete-stack" class="link-button">Eliminar</button>
+            <button type="button" id="update-stack">Atualizar</button>
+            <button type="button" id="delete-stack" class="link-button">Excluir</button>
           </div>
         </div>
       </div>
@@ -351,16 +351,16 @@
         body: JSON.stringify({ content })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
       const reload = await fetch('/admin/server-editor/api/reload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target: 'item' })
       });
       if (!reload.ok) {
-        setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+        setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
       } else {
-        setMessage('Guardado y recargado en el servidor.', 'success');
+        setMessage('Salvo e recarregado no servidor.', 'success');
       }
     } catch (err) {
       setMessage(err.message, 'error');
@@ -376,9 +376,9 @@
     const itemData = await itemRes.json();
     const valueData = await valueRes.json();
     const stackData = await stackRes.json();
-    if (!itemRes.ok) throw new Error(itemData.error || 'No se pudo cargar Item.txt');
-    if (!valueRes.ok) throw new Error(valueData.error || 'No se pudo cargar ItemValue.txt');
-    if (!stackRes.ok) throw new Error(stackData.error || 'No se pudo cargar ItemStack.txt');
+    if (!itemRes.ok) throw new Error(itemData.error || 'Não foi possível carregar Item.txt');
+    if (!valueRes.ok) throw new Error(valueData.error || 'Não foi possível carregar ItemValue.txt');
+    if (!stackRes.ok) throw new Error(stackData.error || 'Não foi possível carregar ItemStack.txt');
     state.itemRaw = itemData.content || '';
     state.valueRows = parseItemValue(valueData.content || '');
     state.stackRows = parseItemStack(stackData.content || '');

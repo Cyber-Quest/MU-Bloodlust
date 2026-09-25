@@ -209,18 +209,18 @@
   function validateBagData() {
     activateTab('bag');
     const headerOk = validateHeader();
-    if (!headerOk) return { ok: false, message: 'Completa los campos generales del bag.' };
+    if (!headerOk) return { ok: false, message: 'Preencha os campos gerais do bag.' };
 
     const invalidNormal = state.normalItems.findIndex((item) => !validateNormalItem(item));
     if (invalidNormal >= 0) {
       selectNormalItem(invalidNormal);
-      return { ok: false, message: 'Hay items normales con valores inválidos.' };
+      return { ok: false, message: 'Há itens normais com valores inválidos.' };
     }
 
     if (state.mode === 'advanced') {
       const advResult = validateAdvanced();
       if (!advResult.ok) {
-        return { ok: false, message: 'Hay datos avanzados inválidos en el bag.' };
+        return { ok: false, message: 'Há dados avançados inválidos no bag.' };
       }
     }
 
@@ -595,7 +595,7 @@
   }
 
   function buildPresetOptions(list) {
-    const options = ['<option value="">Sin Option</option>'];
+    const options = ['<option value="">Sem Option</option>'];
     if (!list || !list.length) return options.join('');
     list.forEach((entry) => {
       options.push(`<option value="${entry.index}">${presetLabel(entry)}</option>`);
@@ -614,7 +614,7 @@
     if (!exists) {
       const opt = document.createElement('option');
       opt.value = raw;
-      opt.textContent = `Preset ${raw} (no encontrado)`;
+      opt.textContent = `Preset ${raw} (não encontrado)`;
       select.appendChild(opt);
     }
     select.value = raw;
@@ -627,12 +627,12 @@
         <div class="spawn-toolbar-group">
           <label>Bag</label>
           <select id="bag-file"></select>
-          <button type="button" id="load-bag">Cargar</button>
-          <button type="button" id="save-bag">Guardar</button>
+          <button type="button" id="load-bag">Carregar</button>
+          <button type="button" id="save-bag">Salvar</button>
         </div>
         <div class="spawn-toolbar-group">
           <span id="bag-mode" class="muted"></span>
-          <button type="button" id="convert-mode" class="btn-danger">Convertir</button>
+          <button type="button" id="convert-mode" class="btn-danger">Converter</button>
         </div>
         <div class="spawn-toolbar-group">
           <button type="button" class="tab-btn active" data-tab="bag">Bag</button>
@@ -650,15 +650,15 @@
     const noteEl = root.querySelector('#mode-note');
     const convertBtn = root.querySelector('#convert-mode');
     if (!modeEl || !noteEl || !convertBtn) return;
-    modeEl.textContent = `Modo actual: ${state.mode === 'advanced' ? 'Avanzado' : 'Normal'}`;
+    modeEl.textContent = `Modo atual: ${state.mode === 'advanced' ? 'Avançado' : 'Normal'}`;
     if (state.mode === 'advanced') {
-      convertBtn.textContent = 'Convertir a Normal';
+      convertBtn.textContent = 'Converter para Normal';
       noteEl.textContent =
-        'Este bag esta en modo avanzado. Al convertir, se simplifican los items y se pierden rates detallados.';
+        'Este bag está em modo avançado. Ao converter, os itens são simplificados e os rates detalhados são perdidos.';
     } else {
-      convertBtn.textContent = 'Convertir a Avanzado';
+      convertBtn.textContent = 'Converter para Avançado';
       noteEl.textContent =
-        'Este bag esta en modo normal. Al convertir, se generan secciones avanzadas con valores por defecto.';
+        'Este bag está em modo normal. Ao converter, são geradas seções avançadas com valores padrão.';
     }
   }
 
@@ -673,7 +673,7 @@
     if (state.mode === 'advanced') {
       panel.innerHTML = `
         <div class="spawn-form">
-          <h3>Configuracion general</h3>
+          <h3>Configuração geral</h3>
           <div class="custom-form-grid">
             <div class="field"><label>EventName</label><input id="bag-event-name" type="text"></div>
             <div class="field"><label>DropZen</label><input id="bag-drop-zen" type="number"></div>
@@ -688,36 +688,36 @@
           <div class="spawn-list">
             <h3>Section 2 - Rates</h3>
             <ul id="adv-rate-list" class="simple-list"></ul>
-            <button type="button" id="add-adv-rate">Agregar rate</button>
+            <button type="button" id="add-adv-rate">Adicionar rate</button>
           </div>
           <div class="spawn-form">
-            <h3>Detalle rate</h3>
+            <h3>Detalhe rate</h3>
             <div class="custom-form-grid">
               <div class="field"><label>Index</label><input id="adv-rate-index" type="number"></div>
               <div class="field"><label>DropRate</label><input id="adv-rate-value" type="number"></div>
             </div>
             <div class="spawn-actions">
-              <button type="button" id="update-adv-rate">Actualizar</button>
-              <button type="button" id="delete-adv-rate" class="link-button">Eliminar</button>
+              <button type="button" id="update-adv-rate">Atualizar</button>
+              <button type="button" id="delete-adv-rate" class="link-button">Excluir</button>
             </div>
           </div>
         </div>
 
         <div class="spawn-editor">
           <div class="spawn-list">
-            <h3>Section 3 - Reglas</h3>
+            <h3>Section 3 - Regras</h3>
             <ul id="adv-section-list" class="simple-list"></ul>
-            <button type="button" id="add-adv-section">Agregar regla</button>
+            <button type="button" id="add-adv-section">Adicionar regra</button>
           </div>
           <div class="spawn-form">
-            <h3>Detalle regla</h3>
+            <h3>Detalhe regra</h3>
             <div class="custom-form-grid">
               <div class="field"><label>Index</label><input id="adv-section-index" type="number"></div>
               <div class="field"><label>Section</label><input id="adv-section-number" type="number"></div>
               <div class="field"><label>SectionRate</label><input id="adv-section-rate" type="number"></div>
               <div class="field"><label>MoneyAmount</label><input id="adv-section-money" type="number"></div>
               <div class="field"><label>OptionValue</label><input id="adv-section-option" type="number"></div>
-              <div class="field"><label>Comentario</label><input id="adv-section-comment" type="text"></div>
+              <div class="field"><label>Comentário</label><input id="adv-section-comment" type="text"></div>
             </div>
             <div class="custom-form-grid">
               <div class="field"><label>DW</label><input id="adv-section-dw" type="number"></div>
@@ -726,8 +726,8 @@
               <div class="field"><label>MG</label><input id="adv-section-mg" type="number"></div>
             </div>
             <div class="spawn-actions">
-              <button type="button" id="update-adv-section">Actualizar</button>
-              <button type="button" id="delete-adv-section" class="link-button">Eliminar</button>
+              <button type="button" id="update-adv-section">Atualizar</button>
+              <button type="button" id="delete-adv-section" class="link-button">Excluir</button>
             </div>
           </div>
         </div>
@@ -736,10 +736,10 @@
           <div class="spawn-list">
             <h3>Section 4 - Items</h3>
             <ul id="adv-item-list" class="simple-list"></ul>
-            <button type="button" id="add-adv-item">Agregar item</button>
+            <button type="button" id="add-adv-item">Adicionar item</button>
           </div>
           <div class="spawn-form">
-            <h3>Detalle item</h3>
+            <h3>Detalhe item</h3>
             <div class="custom-form-grid">
               <div class="field"><label>ItemType</label><input id="adv-item-type" type="number"></div>
               <div class="field"><label>ItemIndex</label><input id="adv-item-index" type="number"></div>
@@ -750,16 +750,16 @@
               <div class="field"><label>LuckRate (preset)</label><select id="adv-item-luck-rate">${luckOptions}</select></div>
               <div class="field"><label>OptionRate (preset)</label><select id="adv-item-option-rate">${optionOptions}</select></div>
               <div class="field"><label>ExcellentRate (preset)</label><select id="adv-item-exc-rate">${excellentOptions}</select></div>
-              <div class="field"><label>Comentario</label><input id="adv-item-comment" type="text"></div>
+              <div class="field"><label>Comentário</label><input id="adv-item-comment" type="text"></div>
             </div>
             <div class="item-picker">
-              <label>Explorador de items</label>
+              <label>Explorador de itens</label>
               <input type="text" id="adv-item-search" placeholder="Buscar item..." />
               <ul id="adv-item-picker" class="simple-list"></ul>
             </div>
             <div class="spawn-actions">
-              <button type="button" id="update-adv-item">Actualizar</button>
-              <button type="button" id="delete-adv-item" class="link-button">Eliminar</button>
+              <button type="button" id="update-adv-item">Atualizar</button>
+              <button type="button" id="delete-adv-item" class="link-button">Excluir</button>
             </div>
           </div>
         </div>
@@ -770,7 +770,7 @@
     } else {
       panel.innerHTML = `
         <div class="spawn-form">
-          <h3>Configuracion general</h3>
+          <h3>Configuração geral</h3>
           <div class="custom-form-grid">
             <div class="field"><label>EventName</label><input id="bag-event-name" type="text"></div>
             <div class="field"><label>DropZen</label><input id="bag-drop-zen" type="number"></div>
@@ -784,10 +784,10 @@
           <div class="spawn-list">
             <h3>Items</h3>
             <ul id="normal-item-list" class="simple-list"></ul>
-            <button type="button" id="add-normal-item">Agregar item</button>
+            <button type="button" id="add-normal-item">Adicionar item</button>
           </div>
           <div class="spawn-form">
-            <h3>Detalle</h3>
+            <h3>Detalhe</h3>
             <div class="custom-form-grid">
               <div class="field"><label>ItemType</label><input id="normal-item-type" type="number"></div>
               <div class="field"><label>ItemIndex</label><input id="normal-item-index" type="number"></div>
@@ -797,16 +797,16 @@
               <div class="field"><label>Luck</label><input id="normal-item-luck" type="number"></div>
               <div class="field"><label>Opt</label><input id="normal-item-opt" type="number"></div>
               <div class="field"><label>Exce</label><input id="normal-item-exce" type="number"></div>
-              <div class="field"><label>Comentario</label><input id="normal-item-comment" type="text"></div>
+              <div class="field"><label>Comentário</label><input id="normal-item-comment" type="text"></div>
             </div>
             <div class="item-picker">
-              <label>Explorador de items</label>
+              <label>Explorador de itens</label>
               <input type="text" id="normal-item-search" placeholder="Buscar item..." />
               <ul id="normal-item-picker" class="simple-list"></ul>
             </div>
             <div class="spawn-actions">
-              <button type="button" id="update-normal-item">Actualizar</button>
-              <button type="button" id="delete-normal-item" class="link-button">Eliminar</button>
+              <button type="button" id="update-normal-item">Atualizar</button>
+              <button type="button" id="delete-normal-item" class="link-button">Excluir</button>
             </div>
           </div>
         </div>
@@ -827,23 +827,23 @@
         <div class="spawn-list">
           <h3>EventItemBagManager</h3>
           <ul id="manager-list" class="simple-list"></ul>
-          <button type="button" id="add-manager">Agregar regla</button>
+          <button type="button" id="add-manager">Adicionar regra</button>
         </div>
         <div class="spawn-form">
-          <h3>Detalle</h3>
+          <h3>Detalhe</h3>
           <div class="custom-form-grid">
             <div class="field"><label>ItemIndex</label><input id="manager-item-index" type="text"></div>
             <div class="field"><label>ItemLevel</label><input id="manager-item-level" type="text"></div>
             <div class="field"><label>MonsterClass</label><input id="manager-monster-class" type="text"></div>
             <div class="field"><label>SpecialValue</label><input id="manager-special-value" type="text"></div>
-            <div class="field"><label>Comentario</label><input id="manager-comment" type="text"></div>
+            <div class="field"><label>Comentário</label><input id="manager-comment" type="text"></div>
           </div>
           <div class="spawn-actions">
-            <button type="button" id="update-manager">Actualizar</button>
-            <button type="button" id="delete-manager" class="link-button">Eliminar</button>
+            <button type="button" id="update-manager">Atualizar</button>
+            <button type="button" id="delete-manager" class="link-button">Excluir</button>
           </div>
           <div class="spawn-actions">
-            <button type="button" id="save-manager">Guardar manager</button>
+            <button type="button" id="save-manager">Salvar manager</button>
           </div>
         </div>
       </div>
@@ -958,7 +958,7 @@
       item.exce = String(root.querySelector('#normal-item-exce')?.value || '0').trim();
       item.comment = String(root.querySelector('#normal-item-comment')?.value || '').trim();
       renderNormalList();
-      setMessage('Item actualizado.', 'success');
+      setMessage('Item atualizado.', 'success');
     });
 
     deleteBtn?.addEventListener('click', () => {
@@ -967,7 +967,7 @@
       state.normalItems.splice(idx, 1);
       state.selected.normalItem = null;
       renderNormalList();
-      setMessage('Item eliminado.', 'success');
+      setMessage('Item excluído.', 'success');
     });
 
     if (pickerInput && pickerList) {
@@ -1293,7 +1293,7 @@
   async function loadBagList() {
     const res = await fetch('/admin/server-editor/api/event-item-bag/list');
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo cargar la lista');
+    if (!res.ok) throw new Error(data.error || 'Não foi possível carregar a lista');
     state.bagFiles = Array.isArray(data.files) ? data.files : [];
     const select = root.querySelector('#bag-file');
     if (!select) return;
@@ -1317,7 +1317,7 @@
     if (!name) return;
     const res = await fetch(`/admin/server-editor/api/event-item-bag/file?name=${encodeURIComponent(name)}`);
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo cargar el bag');
+    if (!res.ok) throw new Error(data.error || 'Não foi possível carregar o bag');
     const parsed = parseBag(data.content || '');
     state.header = parsed.header;
     state.normalItems = parsed.normalItems;
@@ -1335,7 +1335,7 @@
   async function loadManager() {
     const res = await fetch('/admin/server-editor/api/event-item-bag/manager');
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo cargar el manager');
+    if (!res.ok) throw new Error(data.error || 'Não foi possível carregar o manager');
     state.manager = parseManager(data.content || '');
   }
 
@@ -1353,16 +1353,16 @@
         body: JSON.stringify({ name: state.currentFile, content })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
       const reload = await fetch('/admin/server-editor/api/reload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target: 'eventitembag' })
       });
       if (!reload.ok) {
-        setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+        setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
       } else {
-        setMessage('Bag guardado y recargado en el servidor.', 'success');
+        setMessage('Bag salvo e recarregado no servidor.', 'success');
       }
     } catch (err) {
       setMessage(err.message, 'error');
@@ -1373,7 +1373,7 @@
     try {
       activateTab('manager');
       if (!validateManagerRows()) {
-        setMessage('Hay reglas del manager con valores inválidos.', 'error');
+        setMessage('Há regras do manager com valores inválidos.', 'error');
         return;
       }
       const content = buildManagerContent();
@@ -1383,16 +1383,16 @@
         body: JSON.stringify({ content })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
       const reload = await fetch('/admin/server-editor/api/reload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target: 'eventitembag' })
       });
       if (!reload.ok) {
-        setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+        setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
       } else {
-        setMessage('Manager guardado y recargado.', 'success');
+        setMessage('Manager salvo e recarregado.', 'success');
       }
     } catch (err) {
       setMessage(err.message, 'error');
@@ -1418,11 +1418,11 @@
 
     root.querySelector('#convert-mode')?.addEventListener('click', () => {
       if (state.mode === 'advanced') {
-        if (!confirm('Convertir a modo normal? Se pierden rates detallados.')) return;
+        if (!confirm('Converter para o modo normal? Os rates detalhados serão perdidos.')) return;
         convertAdvancedToNormal();
         state.mode = 'normal';
       } else {
-        if (!confirm('Convertir a modo avanzado? Se generan valores por defecto.')) return;
+        if (!confirm('Converter para o modo avançado? Serão gerados valores padrão.')) return;
         convertNormalToAdvanced();
         state.mode = 'advanced';
       }
@@ -1449,7 +1449,7 @@
       state.itemDefs = Array.isArray(data.items) ? data.items : [];
       state.itemMap = new Map(state.itemDefs.map((item) => [itemKey(item.section, item.index), item]));
     } catch {
-      setMessage('No se pudo cargar la lista de items.', 'error');
+      setMessage('Não foi possível carregar a lista de itens.', 'error');
     }
   }
 
@@ -1457,7 +1457,7 @@
     try {
       const res = await fetch('/admin/server-editor/api/item-option-rate');
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo cargar ItemOptionRate');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível carregar ItemOptionRate');
       const sections = parseOptionRate(data.content || '');
       state.optionPresets.level = sections[0] || [];
       state.optionPresets.skill = sections[1] || [];

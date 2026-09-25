@@ -5,7 +5,7 @@
   const FLAG_LABELS = {
     0: 'Normal',
     1: 'Entrada',
-    2: 'Salida'
+    2: 'Saída'
   };
 
   const state = {
@@ -294,9 +294,9 @@
           <input type="range" id="zoom-range" min="1" max="3" step="1" value="2" />
         </div>
         <div class="spawn-toolbar-group">
-          <button type="button" id="add-gate">Agregar gate</button>
-          <button type="button" id="resize-gate">Ajustar area</button>
-          <button type="button" id="save-gates">Guardar</button>
+          <button type="button" id="add-gate">Adicionar gate</button>
+          <button type="button" id="resize-gate">Ajustar área</button>
+          <button type="button" id="save-gates">Salvar</button>
         </div>
       </div>
       <div class="spawn-editor">
@@ -306,7 +306,7 @@
           <div class="spawn-map-legend">
             <span class="legend legend-block">Bloqueado</span>
             <span class="legend legend-safe">Safe</span>
-            <span class="legend legend-water">Agua</span>
+            <span class="legend legend-water">Água</span>
           </div>
         </div>
         <div class="spawn-panel">
@@ -315,14 +315,14 @@
             <ul id="gate-list"></ul>
           </div>
           <div class="spawn-form">
-            <h3>Detalle</h3>
+            <h3>Detalhe</h3>
             <label>Index</label>
             <input type="number" id="gate-index" min="0" max="65535" />
             <label>Flag</label>
             <select id="gate-flag">
               <option value="0">0 - Normal</option>
               <option value="1">1 - Entrada</option>
-              <option value="2">2 - Salida</option>
+              <option value="2">2 - Saída</option>
             </select>
             <label>Map</label>
             <input type="number" id="gate-map" min="0" max="255" />
@@ -349,8 +349,8 @@
             <label>Account Lvl</label>
             <input type="number" id="gate-acclvl" min="0" max="3" />
             <div class="spawn-actions">
-              <button type="button" id="update-gate">Actualizar</button>
-              <button type="button" id="delete-gate" class="link-button">Eliminar</button>
+              <button type="button" id="update-gate">Atualizar</button>
+              <button type="button" id="delete-gate" class="link-button">Excluir</button>
             </div>
           </div>
         </div>
@@ -506,9 +506,9 @@
     const labels = [];
     if (attr & 0x04) labels.push('Bloqueado');
     if (attr & 0x01) labels.push('Safe');
-    if (attr & 0x10) labels.push('Agua');
-    if (attr & 0x08) labels.push('Hueco');
-    if (labels.length === 0) return 'Libre';
+    if (attr & 0x10) labels.push('Água');
+    if (attr & 0x08) labels.push('Buraco');
+    if (labels.length === 0) return 'Livre';
     return labels.join(', ');
   }
 
@@ -534,16 +534,16 @@
 
     root.querySelector('#add-gate').addEventListener('click', () => {
       state.placeMode = true;
-      setMessage('Arrastra en el mapa para crear el gate.', 'success');
+      setMessage('Arraste no mapa para criar o gate.', 'success');
     });
 
     root.querySelector('#resize-gate').addEventListener('click', () => {
       if (!state.selectedGate) {
-        setMessage('Selecciona un gate para ajustar.', 'error');
+        setMessage('Selecione um gate para ajustar.', 'error');
         return;
       }
       state.resizeMode = true;
-      setMessage('Arrastra en el mapa para ajustar el area.', 'success');
+      setMessage('Arraste no mapa para ajustar a área.', 'success');
     });
 
     root.querySelector('#save-gates').addEventListener('click', async () => {
@@ -554,7 +554,7 @@
           root.querySelector('#map-select').value = String(state.selectedMap);
           await loadTerrain(state.selectedMap);
           selectGate(invalidGate);
-          setMessage('Hay gates con valores inválidos. Revisar el detalle antes de guardar.', 'error');
+          setMessage('Há gates com valores inválidos. Revise o detalhe antes de salvar.', 'error');
           return;
         }
         const content = buildGateTxt();
@@ -564,16 +564,16 @@
           body: JSON.stringify({ content })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
         const reload = await fetch('/admin/server-editor/api/reload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ target: 'move' })
         });
         if (!reload.ok) {
-          setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+          setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
         } else {
-          setMessage('Guardado y recargado en el servidor.', 'success');
+          setMessage('Salvo e recarregado no servidor.', 'success');
         }
       } catch (err) {
         setMessage(err.message, 'error');
@@ -584,7 +584,7 @@
       if (!state.selectedGate) return;
       const validation = validateGateForm();
       if (!validation.ok) {
-        setMessage('Hay campos inválidos. Revisar resaltados.', 'error');
+        setMessage('Há campos inválidos. Revise os destacados.', 'error');
         return;
       }
       const gate = state.selectedGate;
@@ -607,7 +607,7 @@
       root.querySelector('#map-select').value = String(state.selectedMap);
       renderGateList();
       drawMap();
-      setMessage('Gate actualizado.', 'success');
+      setMessage('Gate atualizado.', 'success');
     });
 
     root.querySelector('#delete-gate').addEventListener('click', () => {
@@ -659,7 +659,7 @@
         coordLabel.textContent = 'X: -- Y: --';
         return;
       }
-      let attrText = 'Libre';
+      let attrText = 'Livre';
       if (terrain && terrain.data) {
         const index = y * (terrain.width || 256) + x;
         const attr = terrain.data[index] || 0;
@@ -701,7 +701,7 @@
         state.gates.push(newGate);
         selectGate(newGate);
         state.placeMode = false;
-        setMessage('Gate creado.', 'success');
+        setMessage('Gate criado.', 'success');
       } else if (state.resizeMode || state.selectedGate) {
         const gate = state.selectedGate;
         if (gate) {
@@ -710,7 +710,7 @@
           gate.tx = x2;
           gate.ty = y2;
           selectGate(gate);
-          setMessage('Area ajustada.', 'success');
+          setMessage('Área ajustada.', 'success');
         }
       }
 
@@ -730,7 +730,7 @@
     try {
       const res = await fetch(`/admin/server-editor/api/terrain?map=${mapId}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
       const terrain = decodeTerrain(data.base64);
       state.terrainCache.set(mapId, terrain);
       drawMap();
@@ -747,8 +747,8 @@
     ]);
     const mapsData = await mapsRes.json();
     const gatesData = await gatesRes.json();
-    if (!mapsRes.ok) throw new Error(mapsData.error || 'No se pudo cargar mapas');
-    if (!gatesRes.ok) throw new Error(gatesData.error || 'No se pudo cargar gates');
+    if (!mapsRes.ok) throw new Error(mapsData.error || 'Não foi possível carregar mapas');
+    if (!gatesRes.ok) throw new Error(gatesData.error || 'Não foi possível carregar gates');
     state.maps = Array.isArray(mapsData.maps) ? mapsData.maps : [];
     state.gates = parseGateTxt(gatesData.content || '');
     state.selectedMap = state.maps[0]?.id ?? 0;

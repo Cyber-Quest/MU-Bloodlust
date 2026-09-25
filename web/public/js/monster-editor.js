@@ -5,7 +5,7 @@
   const FIELD_ORDER = [
     { key: 'index', label: 'Index' },
     { key: 'rate', label: 'Rate' },
-    { key: 'name', label: 'Nombre' },
+    { key: 'name', label: 'Nome' },
     { key: 'level', label: 'Level' },
     { key: 'maxLife', label: 'MaxLife' },
     { key: 'maxMana', label: 'MaxMana' },
@@ -124,24 +124,24 @@
       <div class="spawn-toolbar">
         <div class="spawn-toolbar-group">
           <label>Buscar</label>
-          <input type="text" id="monster-search" placeholder="Buscar monster..." />
+          <input type="text" id="monster-search" placeholder="Buscar monstro..." />
         </div>
         <div class="spawn-toolbar-group">
-          <button type="button" id="add-monster">Agregar</button>
-          <button type="button" id="save-monsters">Guardar</button>
+          <button type="button" id="add-monster">Adicionar</button>
+          <button type="button" id="save-monsters">Salvar</button>
         </div>
       </div>
       <div class="spawn-editor">
         <div class="spawn-list">
-          <h3>Monsters</h3>
+          <h3>Monstros</h3>
           <ul id="monster-list" class="simple-list"></ul>
         </div>
         <div class="spawn-form">
-          <h3>Detalle</h3>
+          <h3>Detalhe</h3>
           <div id="monster-form"></div>
           <div class="spawn-actions">
-            <button type="button" id="update-monster">Actualizar</button>
-            <button type="button" id="delete-monster" class="link-button">Eliminar</button>
+            <button type="button" id="update-monster">Atualizar</button>
+            <button type="button" id="delete-monster" class="link-button">Excluir</button>
           </div>
         </div>
       </div>
@@ -216,7 +216,7 @@
       const monster = {
         index: nextIndex,
         rate: 1,
-        name: 'Nuevo Monster',
+        name: 'Novo Monstro',
         level: 1,
         maxLife: 100,
         maxMana: 0,
@@ -245,7 +245,7 @@
       };
       state.monsters.push(monster);
       selectMonster(monster);
-      setMessage('Monster agregado.', 'success');
+      setMessage('Monstro adicionado.', 'success');
     });
 
     root.querySelector('#update-monster').addEventListener('click', () => {
@@ -261,7 +261,7 @@
         }
       });
       renderList();
-      setMessage('Monster actualizado.', 'success');
+      setMessage('Monstro atualizado.', 'success');
     });
 
     root.querySelector('#delete-monster').addEventListener('click', () => {
@@ -270,7 +270,7 @@
       state.selected = null;
       renderList();
       renderForm(null);
-      setMessage('Monster eliminado.', 'success');
+      setMessage('Monstro excluído.', 'success');
     });
 
     root.querySelector('#save-monsters').addEventListener('click', async () => {
@@ -282,16 +282,16 @@
           body: JSON.stringify({ content })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
         const reload = await fetch('/admin/server-editor/api/reload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ target: 'monster' })
         });
         if (!reload.ok) {
-          setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+          setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
         } else {
-          setMessage('Guardado y recargado en el servidor.', 'success');
+          setMessage('Salvo e recarregado no servidor.', 'success');
         }
       } catch (err) {
         setMessage(err.message, 'error');
@@ -302,7 +302,7 @@
   async function loadInitialData() {
     const res = await fetch('/admin/server-editor/api/monster-file');
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+    if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
     state.monsters = parseMonsterTxt(data.content || '');
   }
 

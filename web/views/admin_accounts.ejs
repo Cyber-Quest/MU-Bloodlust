@@ -2,15 +2,15 @@
 
 <section class="card">
   <div class="row-between">
-    <h2>Cuentas</h2>
+    <h2>Contas</h2>
     <div class="admin-links">
-      <a class="button-link" href="/admin/accounts/new">Nueva cuenta</a>
+      <a class="button-link" href="/admin/accounts/new">Nova conta</a>
       <% if (editorEnabled) { %>
         <a class="button-link" href="/admin/server-editor">Editor servidor</a>
       <% } %>
-      <a class="button-link" href="/admin/downloads">Descargas</a>
-      <a class="button-link" href="/admin/news">Noticias</a>
-      <a class="button-link" href="/admin/logout">Salir</a>
+      <a class="button-link" href="/admin/downloads">Downloads</a>
+      <a class="button-link" href="/admin/news">Notícias</a>
+      <a class="button-link" href="/admin/logout">Sair</a>
     </div>
   </div>
 
@@ -22,24 +22,24 @@
   <% } %>
 
   <form method="get" action="/admin/accounts">
-    <label>Buscar (usuario, nombre o email)</label>
+    <label>Buscar (usuário, nome ou e-mail)</label>
     <input type="text" name="q" value="<%= q %>" maxlength="50" />
     <button type="submit">Buscar</button>
   </form>
 
   <% if (accounts.length === 0) { %>
-    <p class="muted">No hay cuentas para mostrar.</p>
+    <p class="muted">Não há contas para exibir.</p>
   <% } else { %>
     <table class="table">
       <thead>
         <tr>
-          <th>Usuario</th>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Nivel</th>
-          <th>Estado</th>
+          <th>Usuário</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Nível</th>
+          <th>Status</th>
           <th>Online</th>
-          <th>Acciones</th>
+          <th>Ações</th>
         </tr>
       </thead>
       <tbody>

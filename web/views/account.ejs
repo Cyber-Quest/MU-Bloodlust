@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
       <div class="col-12 col-lg-6">
         <div class="bg-white border p-4 shadow-sm rounded-3">
-          <h3 class="fw-bold mb-3 text-center">Mi cuenta</h3>
+          <h3 class="fw-bold mb-3 text-center">Minha conta</h3>
           <% if (notice) { %>
             <div class="alert alert-success"><%= notice.text %></div>
           <% } %>
@@ -15,46 +15,46 @@
           <table class="table table-bordered mb-0">
             <tbody>
               <tr>
-                <th>Usuario</th>
+                <th>Usuário</th>
                 <td><%= account?.memb___id %></td>
               </tr>
               <tr>
-                <th>Nombre</th>
+                <th>Nome</th>
                 <td><%= account?.memb_name %></td>
               </tr>
               <tr>
-                <th>Email</th>
+                <th>E-mail</th>
                 <td><%= account?.mail_addr || '-' %></td>
               </tr>
               <tr>
-                <th>Nivel cuenta</th>
+                <th>Nível da conta</th>
                 <td><%= account?.AccountLevel %></td>
               </tr>
             </tbody>
           </table>
           <div class="d-grid mt-3">
-            <a class="btn btn-outline-secondary" href="/logout">Salir</a>
+            <a class="btn btn-outline-secondary" href="/logout">Sair</a>
           </div>
         </div>
 
         <div class="bg-white border p-4 shadow-sm rounded-3 mt-4">
-          <h4 class="fw-bold mb-3 text-center">Personajes</h4>
-          <p class="text-muted small">Las acciones solo funcionan si la cuenta esta desconectada. Cooldown: 30 min por personaje y accion.</p>
+          <h4 class="fw-bold mb-3 text-center">Personagens</h4>
+          <p class="text-muted small">As ações só funcionam se a conta estiver desconectada. Cooldown: 30 min por personagem e ação.</p>
           <div class="table-responsive">
             <table class="table table-bordered align-middle mb-0">
               <thead>
                 <tr>
-                  <th>Nombre</th>
-                  <th>Nivel</th>
-                  <th>Clase</th>
+                  <th>Nome</th>
+                  <th>Nível</th>
+                  <th>Classe</th>
                   <th>Mapa</th>
-                  <th>Acciones</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 <% if (!characters || characters.length === 0) { %>
                   <tr>
-                    <td colspan="5" class="text-center">Sin personajes</td>
+                    <td colspan="5" class="text-center">Sem personagens</td>
                   </tr>
                 <% } else { %>
                   <% characters.forEach(function(char) { %>
@@ -68,10 +68,10 @@
                       <td>
                         <div class="d-flex flex-wrap gap-2">
                           <form method="post" action="/account/character/<%= encodeURIComponent(char.Name) %>/move-home">
-                            <button class="btn btn-sm btn-outline-primary" type="submit">Mover a zona segura</button>
+                            <button class="btn btn-sm btn-outline-primary" type="submit">Mover para zona segura</button>
                           </form>
-                          <form method="post" action="/account/character/<%= encodeURIComponent(char.Name) %>/clear-inventory" onsubmit="return confirm('Seguro que queres borrar el inventario de este personaje?');">
-                            <button class="btn btn-sm btn-outline-danger" type="submit">Borrar inventario</button>
+                          <form method="post" action="/account/character/<%= encodeURIComponent(char.Name) %>/clear-inventory" onsubmit="return confirm('Tem certeza de que deseja limpar o inventário deste personagem?');">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Limpar inventário</button>
                           </form>
                         </div>
                       </td>

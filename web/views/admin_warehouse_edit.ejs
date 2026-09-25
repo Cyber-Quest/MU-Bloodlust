@@ -2,15 +2,15 @@
 
 <section class="card">
   <div class="row-between">
-    <h2>Editar baul</h2>
+    <h2>Editar baú</h2>
     <div class="admin-links">
-      <a class="button-link" href="/admin/accounts/<%= accountId %>">Cuenta</a>
-      <a class="button-link" href="/admin/accounts">Cuentas</a>
+      <a class="button-link" href="/admin/accounts/<%= accountId %>">Conta</a>
+      <a class="button-link" href="/admin/accounts">Contas</a>
       <% if (editorEnabled) { %>
         <a class="button-link" href="/admin/server-editor">Editor servidor</a>
       <% } %>
-      <a class="button-link" href="/admin/downloads">Descargas</a>
-      <a class="button-link" href="/admin/logout">Salir</a>
+      <a class="button-link" href="/admin/downloads">Downloads</a>
+      <a class="button-link" href="/admin/logout">Sair</a>
     </div>
   </div>
 
@@ -21,24 +21,24 @@
     <div class="alert"><%= error.text %></div>
   <% } %>
 
-  <p class="muted">Para editar, la cuenta debe estar desconectada. Si dejas el hex vacio, se completa con FF.</p>
+  <p class="muted">Para editar, a conta deve estar desconectada. Se deixar o hex vazio, será preenchido com FF.</p>
 
   <form method="post" action="/admin/accounts/<%= accountId %>/warehouse">
-    <label>Cuenta</label>
+    <label>Conta</label>
     <input type="text" value="<%= accountId %>" readonly />
 
     <label>Zen</label>
     <input type="number" name="money" value="<%= warehouse.Money %>" min="0" />
 
-    <label>Password</label>
+    <label>Senha</label>
     <input type="number" name="pw" value="<%= warehouse.pw %>" min="0" max="65535" />
 
-    <label>Items (hex 2400 chars)</label>
+    <label>Itens (hex 2400 caracteres)</label>
     <textarea name="items_hex" rows="6" spellcheck="false"><%= warehouse.ItemsHex %></textarea>
 
     <div class="row-between">
-      <button type="submit" name="action" value="save">Guardar</button>
-      <button type="submit" name="action" value="clear" class="link-button">Vaciar baul</button>
+      <button type="submit" name="action" value="save">Salvar</button>
+      <button type="submit" name="action" value="clear" class="link-button">Esvaziar baú</button>
     </div>
   </form>
 </section>

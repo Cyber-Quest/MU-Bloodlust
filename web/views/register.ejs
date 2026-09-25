@@ -5,25 +5,25 @@
     <div class="row justify-content-center">
       <div class="col-12 col-lg-6">
         <div class="bg-white border p-4 shadow-sm rounded-3">
-          <h3 class="fw-bold mb-3 text-center">Crear cuenta</h3>
+          <h3 class="fw-bold mb-3 text-center">Criar conta</h3>
           <% if (error) { %>
             <div class="alert alert-danger"><%= error %></div>
           <% } %>
           <form action="/register" method="POST">
             <div class="mb-3">
-              <input type="text" class="form-control" name="account" placeholder="Usuario (4-10 caracteres)" required>
+              <input type="text" class="form-control" name="account" placeholder="Usuário (4-10 caracteres)" required>
             </div>
             <div class="mb-3">
-              <input type="text" class="form-control" name="name" placeholder="Nombre (opcional)">
+              <input type="text" class="form-control" name="name" placeholder="Nome (opcional)">
             </div>
             <div class="mb-3">
-              <input type="email" class="form-control" name="email" placeholder="Email" required>
+              <input type="email" class="form-control" name="email" placeholder="E-mail" required>
             </div>
             <div class="mb-3">
-              <input type="password" class="form-control" name="password" placeholder="Contrasena" required>
+              <input type="password" class="form-control" name="password" placeholder="Senha" required>
             </div>
             <div class="mb-3">
-              <input type="password" class="form-control" name="confirm" placeholder="Repetir contrasena" required>
+              <input type="password" class="form-control" name="confirm" placeholder="Repetir senha" required>
             </div>
 
             <% if (turnstileSiteKey) { %>
@@ -32,10 +32,10 @@
               </div>
             <% } %>
 
-            <button type="submit" class="btn btn-primary w-100">Crear cuenta</button>
+            <button type="submit" class="btn btn-primary w-100">Criar conta</button>
           </form>
           <div class="text-center mt-3">
-            <a href="/login">Ya tengo cuenta</a>
+            <a href="/login">Já tenho conta</a>
           </div>
         </div>
       </div>

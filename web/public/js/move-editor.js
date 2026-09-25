@@ -255,8 +255,8 @@
           <input type="text" id="move-search" placeholder="Buscar move..." />
         </div>
         <div class="spawn-toolbar-group">
-          <button type="button" id="add-move">Agregar move</button>
-          <button type="button" id="save-moves">Guardar</button>
+          <button type="button" id="add-move">Adicionar move</button>
+          <button type="button" id="save-moves">Salvar</button>
         </div>
       </div>
       <div class="spawn-editor">
@@ -265,12 +265,12 @@
           <ul id="move-list"></ul>
         </div>
         <div class="spawn-form">
-          <h3>Detalle</h3>
+          <h3>Detalhe</h3>
           <label>Index</label>
           <input type="number" id="move-index" min="0" max="65535" />
-          <label>Nombre</label>
+          <label>Nome</label>
           <input type="text" id="move-name" />
-          <label>Costo (Zen)</label>
+          <label>Custo (Zen)</label>
           <input type="number" id="move-money" min="0" />
           <label>Min Lvl</label>
           <input type="number" id="move-minlvl" min="0" />
@@ -286,8 +286,8 @@
           <input type="number" id="move-gate" min="0" max="65535" />
           <div class="muted" id="move-gate-hint"></div>
           <div class="spawn-actions">
-            <button type="button" id="update-move">Actualizar</button>
-            <button type="button" id="delete-move" class="link-button">Eliminar</button>
+            <button type="button" id="update-move">Atualizar</button>
+            <button type="button" id="delete-move" class="link-button">Excluir</button>
           </div>
         </div>
       </div>
@@ -353,7 +353,7 @@
       const nextIndex = state.moves.reduce((max, m) => Math.max(max, m.index), 0) + 1;
       const newMove = {
         index: nextIndex,
-        name: 'NuevoMove',
+        name: 'NovoMove',
         money: 0,
         minLvl: 0,
         maxLvl: '*',
@@ -364,7 +364,7 @@
       };
       state.moves.push(newMove);
       selectMove(newMove);
-      setMessage('Move creado.', 'success');
+      setMessage('Move criado.', 'success');
     });
 
     root.querySelector('#save-moves').addEventListener('click', async () => {
@@ -372,7 +372,7 @@
         const invalidMove = state.moves.find((move) => !isMoveValid(move));
         if (invalidMove) {
           selectMove(invalidMove);
-          setMessage('Hay moves con valores inválidos. Revisar el detalle antes de guardar.', 'error');
+          setMessage('Há moves com valores inválidos. Revise o detalhe antes de salvar.', 'error');
           return;
         }
         const content = buildMoveTxt();
@@ -382,16 +382,16 @@
           body: JSON.stringify({ content })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
         const reload = await fetch('/admin/server-editor/api/reload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ target: 'move' })
         });
         if (!reload.ok) {
-          setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+          setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
         } else {
-          setMessage('Guardado y recargado en el servidor.', 'success');
+          setMessage('Salvo e recarregado no servidor.', 'success');
         }
       } catch (err) {
         setMessage(err.message, 'error');
@@ -402,7 +402,7 @@
       if (!state.selectedMove) return;
       const validation = validateMoveForm();
       if (!validation.ok) {
-        setMessage('Hay campos inválidos. Revisar resaltados.', 'error');
+        setMessage('Há campos inválidos. Revise os destacados.', 'error');
         return;
       }
       const move = state.selectedMove;
@@ -418,7 +418,7 @@
       move.gate = formMove.gate;
       updateGateHint();
       renderMoveList();
-      setMessage('Move actualizado.', 'success');
+      setMessage('Move atualizado.', 'success');
     });
 
     root.querySelector('#delete-move').addEventListener('click', () => {
@@ -426,7 +426,7 @@
       state.moves = state.moves.filter((m) => m.index !== state.selectedMove.index);
       state.selectedMove = null;
       renderMoveList();
-      setMessage('Move eliminado.', 'success');
+      setMessage('Move excluído.', 'success');
     });
 
     root.querySelector('#move-list').addEventListener('click', (event) => {
@@ -449,9 +449,9 @@
     const movesData = await movesRes.json();
     const gatesData = await gatesRes.json();
     const mapsData = await mapsRes.json();
-    if (!movesRes.ok) throw new Error(movesData.error || 'No se pudo cargar moves');
-    if (!gatesRes.ok) throw new Error(gatesData.error || 'No se pudo cargar gates');
-    if (!mapsRes.ok) throw new Error(mapsData.error || 'No se pudo cargar mapas');
+    if (!movesRes.ok) throw new Error(movesData.error || 'Não foi possível carregar moves');
+    if (!gatesRes.ok) throw new Error(gatesData.error || 'Não foi possível carregar gates');
+    if (!mapsRes.ok) throw new Error(mapsData.error || 'Não foi possível carregar mapas');
     state.moves = parseMoveTxt(movesData.content || '');
     state.gates = parseGateTxt(gatesData.content || '');
     state.maps = Array.isArray(mapsData.maps) ? mapsData.maps : [];

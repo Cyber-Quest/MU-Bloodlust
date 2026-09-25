@@ -12,7 +12,7 @@
         { key: 'y', label: 'Y', type: 'number' },
         { key: 'tx', label: 'TX', type: 'number' },
         { key: 'ty', label: 'TY', type: 'number' },
-        { key: 'comment', label: 'Comentario', type: 'text' }
+        { key: 'comment', label: 'Comentário', type: 'text' }
       ],
       listLabel: (row) => `Mapa ${row.map} (${row.x},${row.y}) -> (${row.tx},${row.ty})`
     },
@@ -25,7 +25,7 @@
         { key: 'y', label: 'Y', type: 'number' },
         { key: 'tx', label: 'TX', type: 'number' },
         { key: 'ty', label: 'TY', type: 'number' },
-        { key: 'comment', label: 'Comentario', type: 'text' }
+        { key: 'comment', label: 'Comentário', type: 'text' }
       ],
       listLabel: (row) => `Mapa ${row.map} (${row.x},${row.y}) -> (${row.tx},${row.ty})`
     },
@@ -46,7 +46,7 @@
         { key: 'maxRes', label: 'Max Reset', type: 'text', placeholder: '*' },
         { key: 'vipLvl', label: 'VIP', type: 'number' },
         { key: 'pkMove', label: 'PK Move', type: 'number' },
-        { key: 'comment', label: 'Comentario', type: 'text' }
+        { key: 'comment', label: 'Comentário', type: 'text' }
       ],
       listLabel: (row) =>
         `Npc ${row.npc} (${row.npcMap}:${row.npcX},${row.npcY}) -> ${row.moveMap}:${row.moveX},${row.moveY}`
@@ -232,12 +232,12 @@
           ${buttons}
         </div>
         <div class="spawn-toolbar-group">
-          <button type="button" id="add-row">Agregar</button>
-          <button type="button" id="save-customs">Guardar</button>
+          <button type="button" id="add-row">Adicionar</button>
+          <button type="button" id="save-customs">Salvar</button>
         </div>
       </div>
       <div class="muted custom-note">
-        Estos archivos se aplican solo del lado servidor. Recorda recargar <code>custom</code> luego de guardar.
+        Estes arquivos são aplicados apenas no lado do servidor. Lembre-se de recarregar <code>custom</code> após salvar.
       </div>
       ${panels}
     `;
@@ -260,11 +260,11 @@
       .join('');
 
     form.innerHTML = `
-      <h3>Detalle</h3>
+      <h3>Detalhe</h3>
       <div class="custom-form-grid">${fields}</div>
       <div class="spawn-actions">
-        <button type="button" data-action="update">Actualizar</button>
-        <button type="button" class="link-button" data-action="delete">Eliminar</button>
+        <button type="button" data-action="update">Atualizar</button>
+        <button type="button" class="link-button" data-action="delete">Excluir</button>
       </div>
     `;
 
@@ -358,27 +358,27 @@
   function updateSelected(tabKey) {
     const idx = state[tabKey].selected;
     if (idx == null) {
-      setMessage('Selecciona un registro para actualizar.', 'error');
+      setMessage('Selecione um registro para atualizar.', 'error');
       return;
     }
     const data = readForm(tabKey);
     if (!data) return;
     state[tabKey].rows[idx] = data;
     renderList(tabKey);
-    setMessage('Registro actualizado.', 'success');
+    setMessage('Registro atualizado.', 'success');
   }
 
   function deleteSelected(tabKey) {
     const idx = state[tabKey].selected;
     if (idx == null) {
-      setMessage('Selecciona un registro para eliminar.', 'error');
+      setMessage('Selecione um registro para excluir.', 'error');
       return;
     }
     state[tabKey].rows.splice(idx, 1);
     state[tabKey].selected = null;
     renderList(tabKey);
     fillForm(tabKey, null);
-    setMessage('Registro eliminado.', 'success');
+    setMessage('Registro excluído.', 'success');
   }
 
   async function saveAll() {
@@ -408,7 +408,7 @@
       const responses = await Promise.all(requests);
       for (const res of responses) {
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
       }
 
       const reload = await fetch('/admin/server-editor/api/reload', {
@@ -417,9 +417,9 @@
         body: JSON.stringify({ target: 'custom' })
       });
       if (!reload.ok) {
-        setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+        setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
       } else {
-        setMessage('Guardado y recargado en el servidor.', 'success');
+        setMessage('Salvo e recarregado no servidor.', 'success');
       }
     } catch (err) {
       setMessage(err.message, 'error');
@@ -443,9 +443,9 @@
     const safeData = await safeRes.json();
     const pkData = await pkRes.json();
     const npcData = await npcRes.json();
-    if (!safeRes.ok) throw new Error(safeData.error || 'No se pudo cargar SafeZone');
-    if (!pkRes.ok) throw new Error(pkData.error || 'No se pudo cargar PKFree');
-    if (!npcRes.ok) throw new Error(npcData.error || 'No se pudo cargar NpcMove');
+    if (!safeRes.ok) throw new Error(safeData.error || 'Não foi possível carregar SafeZone');
+    if (!pkRes.ok) throw new Error(pkData.error || 'Não foi possível carregar PKFree');
+    if (!npcRes.ok) throw new Error(npcData.error || 'Não foi possível carregar NpcMove');
     state.safezone.rows = parseZone(safeData.content || '');
     state.pkfree.rows = parseZone(pkData.content || '');
     state.npcmove.rows = parseNpcMove(npcData.content || '');

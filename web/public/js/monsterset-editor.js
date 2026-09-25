@@ -5,8 +5,8 @@
   const TYPE_META = [
     { type: 0, label: 'NPCs', mode: 'point' },
     { type: 1, label: 'Spots', mode: 'box' },
-    { type: 2, label: 'Monsters', mode: 'point-random' },
-    { type: 3, label: 'Invasiones', mode: 'box-value' },
+    { type: 2, label: 'Monstros', mode: 'point-random' },
+    { type: 3, label: 'Invasões', mode: 'box-value' },
     { type: 4, label: 'Eventos', mode: 'point' }
   ];
 
@@ -256,7 +256,7 @@
 
   function getMonsterName(monsterId) {
     const found = state.monsters.find((m) => m.id === monsterId);
-    return found ? found.name : `Monster ${monsterId}`;
+    return found ? found.name : `Monstro ${monsterId}`;
   }
 
   function getMapName(mapId) {
@@ -331,9 +331,9 @@
           <input type="range" id="zoom-range" min="1" max="3" step="1" value="2" />
         </div>
         <div class="spawn-toolbar-group">
-          <button type="button" id="add-spawn">Agregar spawn</button>
-          <button type="button" id="resize-area">Ajustar area</button>
-          <button type="button" id="save-spawns">Guardar</button>
+          <button type="button" id="add-spawn">Adicionar spawn</button>
+          <button type="button" id="resize-area">Ajustar área</button>
+          <button type="button" id="save-spawns">Salvar</button>
         </div>
       </div>
       <div class="spawn-editor">
@@ -343,7 +343,7 @@
           <div class="spawn-map-legend">
             <span class="legend legend-block">Bloqueado</span>
             <span class="legend legend-safe">Safe</span>
-            <span class="legend legend-water">Agua</span>
+            <span class="legend legend-water">Água</span>
           </div>
         </div>
         <div class="spawn-panel">
@@ -352,8 +352,8 @@
             <ul id="spawn-list"></ul>
           </div>
           <div class="spawn-form">
-            <h3>Detalle</h3>
-            <label>Monster</label>
+            <h3>Detalhe</h3>
+            <label>Monstro</label>
             <select id="monster-select"></select>
             <label>Map</label>
             <input type="number" id="spawn-map" min="0" max="255" />
@@ -367,15 +367,15 @@
             <input type="number" id="spawn-x2" min="0" max="255" />
             <label class="spawn-field-box">Y2</label>
             <input type="number" id="spawn-y2" min="0" max="255" />
-            <label class="spawn-field-count">Cantidad</label>
+            <label class="spawn-field-count">Quantidade</label>
             <input type="number" id="spawn-count" min="1" max="255" />
             <label class="spawn-field-value">Value</label>
             <input type="number" id="spawn-value" min="0" max="255" />
             <label>Dir</label>
             <input type="number" id="spawn-dir" min="-1" max="7" />
             <div class="spawn-actions">
-              <button type="button" id="update-spawn">Actualizar</button>
-              <button type="button" id="delete-spawn" class="link-button">Eliminar</button>
+              <button type="button" id="update-spawn">Atualizar</button>
+              <button type="button" id="delete-spawn" class="link-button">Excluir</button>
             </div>
           </div>
         </div>
@@ -489,9 +489,9 @@
     const labels = [];
     if (attr & 0x04) labels.push('Bloqueado');
     if (attr & 0x01) labels.push('Safe');
-    if (attr & 0x10) labels.push('Agua');
-    if (attr & 0x08) labels.push('Hueco');
-    if (labels.length === 0) return 'Libre';
+    if (attr & 0x10) labels.push('Água');
+    if (attr & 0x08) labels.push('Buraco');
+    if (labels.length === 0) return 'Livre';
     return labels.join(', ');
   }
 
@@ -670,16 +670,16 @@
 
     root.querySelector('#add-spawn').addEventListener('click', () => {
       state.placeMode = true;
-      setMessage('Selecciona una posicion en el mapa para crear el spawn.', 'success');
+      setMessage('Selecione uma posição no mapa para criar o spawn.', 'success');
     });
 
     root.querySelector('#resize-area').addEventListener('click', () => {
       if (!state.selectedEntry || !isBoxType(state.selectedType)) {
-        setMessage('Selecciona un spawn de area (Spots/Invasiones) para ajustar.', 'error');
+        setMessage('Selecione um spawn de área (Spots/Invasões) para ajustar.', 'error');
         return;
       }
       state.resizeMode = true;
-      setMessage('Arrastra en el mapa para definir el area.', 'success');
+      setMessage('Arraste no mapa para definir a área.', 'success');
     });
 
     root.querySelector('#save-spawns').addEventListener('click', async () => {
@@ -694,7 +694,7 @@
           renderSpawnList();
           await loadTerrain(state.selectedMap);
           selectEntry(invalidEntry);
-          setMessage('Hay spawns con valores inválidos. Revisar el detalle antes de guardar.', 'error');
+          setMessage('Há spawns com valores inválidos. Revise o detalhe antes de salvar.', 'error');
           return;
         }
         const content = buildMonsterSet();
@@ -704,16 +704,16 @@
           body: JSON.stringify({ content })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
         const reload = await fetch('/admin/server-editor/api/reload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ target: 'monster' })
         });
         if (!reload.ok) {
-          setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+          setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
         } else {
-          setMessage('Guardado y recargado en el servidor.', 'success');
+          setMessage('Salvo e recarregado no servidor.', 'success');
         }
       } catch (err) {
         setMessage(err.message, 'error');
@@ -722,12 +722,12 @@
 
     root.querySelector('#update-spawn').addEventListener('click', () => {
       if (!state.selectedEntry) {
-        setMessage('Selecciona un spawn.', 'error');
+        setMessage('Selecione um spawn.', 'error');
         return;
       }
       const validation = validateEntryForm();
       if (!validation.ok) {
-        setMessage('Hay campos inválidos. Revisar resaltados.', 'error');
+        setMessage('Há campos inválidos. Revise os destacados.', 'error');
         return;
       }
       const entry = state.selectedEntry;
@@ -750,7 +750,7 @@
       root.querySelector('#map-select').value = String(state.selectedMap);
       renderSpawnList();
       drawMap();
-      setMessage('Spawn actualizado.', 'success');
+      setMessage('Spawn atualizado.', 'success');
     });
 
     root.querySelector('#delete-spawn').addEventListener('click', () => {
@@ -785,7 +785,7 @@
       if (state.placeMode) {
         state.placeMode = false;
         createEntryAt(x, y);
-        setMessage('Spawn creado.', 'success');
+        setMessage('Spawn criado.', 'success');
         return;
       }
       const entry = getEntryAt(x, y);
@@ -811,7 +811,7 @@
         coordLabel.textContent = 'X: -- Y: --';
         return;
       }
-      let attrText = 'Libre';
+      let attrText = 'Livre';
       if (terrain && terrain.data) {
         const index = y * (terrain.width || 256) + x;
         const attr = terrain.data[index] || 0;
@@ -849,7 +849,7 @@
       state.resizeMode = false;
       renderSpawnList();
       drawMap();
-      setMessage('Area ajustada.', 'success');
+      setMessage('Área ajustada.', 'success');
     });
   }
 
@@ -861,7 +861,7 @@
     try {
       const res = await fetch(`/admin/server-editor/api/terrain?map=${mapId}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
       const terrain = decodeTerrain(data.base64);
       state.terrainCache.set(mapId, terrain);
       drawMap();
@@ -882,9 +882,9 @@
     const monstersData = await monstersRes.json();
     const setData = await setRes.json();
 
-    if (!mapsRes.ok) throw new Error(mapsData.error || 'No se pudo cargar mapas');
-    if (!monstersRes.ok) throw new Error(monstersData.error || 'No se pudo cargar monstruos');
-    if (!setRes.ok) throw new Error(setData.error || 'No se pudo cargar MonsterSetBase');
+    if (!mapsRes.ok) throw new Error(mapsData.error || 'Não foi possível carregar mapas');
+    if (!monstersRes.ok) throw new Error(monstersData.error || 'Não foi possível carregar monstros');
+    if (!setRes.ok) throw new Error(setData.error || 'Não foi possível carregar MonsterSetBase');
 
     state.maps = Array.isArray(mapsData.maps) ? mapsData.maps : [];
     state.monsters = Array.isArray(monstersData.monsters) ? monstersData.monsters : [];

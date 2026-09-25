@@ -178,8 +178,8 @@ const MAP_NAMES = {
 
 function getClassName(value) {
   const id = Number(value);
-  if (Number.isNaN(id)) return 'Desconocida';
-  return CLASS_NAMES[id] || `Clase ${id}`;
+  if (Number.isNaN(id)) return 'Desconhecida';
+  return CLASS_NAMES[id] || `Classe ${id}`;
 }
 
 function getClassIcon(value) {
@@ -190,7 +190,7 @@ function getClassIcon(value) {
 
 function getMapName(value) {
   const id = Number(value);
-  if (Number.isNaN(id)) return 'Desconocido';
+  if (Number.isNaN(id)) return 'Desconhecido';
   return MAP_NAMES[id] || `Mapa ${id}`;
 }
 
@@ -463,14 +463,14 @@ function normalizeHexInput(raw, expectedBytes) {
   }
   value = value.replace(/\s+/g, '');
   if (!/^[0-9a-fA-F]*$/.test(value)) {
-    return { ok: false, buffer: null, error: 'Hex invalido: solo 0-9 y A-F.' };
+    return { ok: false, buffer: null, error: 'Hex inválido: somente 0-9 e A-F.' };
   }
   if (value.length % 2 !== 0) {
-    return { ok: false, buffer: null, error: 'Hex invalido: longitud impar.' };
+    return { ok: false, buffer: null, error: 'Hex inválido: comprimento ímpar.' };
   }
   const maxLen = expectedBytes * 2;
   if (value.length > maxLen) {
-    return { ok: false, buffer: null, error: `Hex invalido: maximo ${maxLen} caracteres.` };
+    return { ok: false, buffer: null, error: `Hex inválido: máximo ${maxLen} caracteres.` };
   }
   if (value.length < maxLen) {
     value = value.padEnd(maxLen, 'F');
@@ -772,7 +772,7 @@ app.get('/', async (req, res) => {
   const timeOptions = resolvedTimeZone
     ? { hour12: false, timeZone: resolvedTimeZone }
     : { hour12: false };
-  const serverTime = new Date().toLocaleTimeString('es-ES', timeOptions);
+  const serverTime = new Date().toLocaleTimeString('pt-BR', timeOptions);
   const eventConfig = loadEventConfig();
   const now = new Date();
   const events = (eventConfig.events || []).map((ev) => {
@@ -782,7 +782,7 @@ app.get('/', async (req, res) => {
     return {
       name: ev.name,
       nextAt: nextAt.toISOString(),
-      nextTime: nextAt.toLocaleTimeString('es-ES', {
+      nextTime: nextAt.toLocaleTimeString('pt-BR', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: false,
@@ -792,32 +792,32 @@ app.get('/', async (req, res) => {
     };
   }).filter(Boolean);
 
-  res.render('home', { news, ranking: rankingView, playersOnline, serverTime, events, page: 'home', pageTitle: 'MuLinux - Inicio' });
+  res.render('home', { news, ranking: rankingView, playersOnline, serverTime, events, page: 'home', pageTitle: 'MuLinux - Início' });
 });
 
 app.get('/register', (req, res) => {
-  res.render('register', { error: null, page: 'register', pageTitle: 'MuLinux - Registro' });
+  res.render('register', { error: null, page: 'register', pageTitle: 'MuLinux - Cadastro' });
 });
 
 app.post('/register', authLimiter, async (req, res) => {
   const { account, password, confirm, email, name } = req.body;
 
   if (!account || !password || !confirm || !email) {
-    return res.render('register', { error: 'Completa todos los campos.', page: 'register', pageTitle: 'MuLinux - Registro' });
+    return res.render('register', { error: 'Preencha todos os campos.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
   }
 
   if (!/^[a-zA-Z0-9]{4,10}$/.test(account)) {
-    return res.render('register', { error: 'El usuario debe tener 4-10 caracteres alfanumericos.', page: 'register', pageTitle: 'MuLinux - Registro' });
+    return res.render('register', { error: 'O usuário deve ter 4-10 caracteres alfanuméricos.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
   }
 
   if (password.length < 6 || password !== confirm) {
-    return res.render('register', { error: 'La contrasena debe tener al menos 6 caracteres y coincidir.', page: 'register', pageTitle: 'MuLinux - Registro' });
+    return res.render('register', { error: 'A senha deve ter pelo menos 6 caracteres e coincidir.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
   }
 
   const turnstileToken = req.body['cf-turnstile-response'];
   const turnstileOk = await verifyTurnstile(turnstileToken, req.ip);
   if (!turnstileOk) {
-    return res.render('register', { error: 'Captcha invalido. Intenta nuevamente.', page: 'register', pageTitle: 'MuLinux - Registro' });
+    return res.render('register', { error: 'Captcha inválido. Tente novamente.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
   }
 
   const conn = await pool.getConnection();
@@ -826,7 +826,7 @@ app.post('/register', authLimiter, async (req, res) => {
     const [existing] = await conn.query('SELECT memb___id FROM MEMB_INFO WHERE memb___id = ? LIMIT 1', [account]);
     if (existing.length > 0) {
       await conn.rollback();
-      return res.render('register', { error: 'La cuenta ya existe.', page: 'register', pageTitle: 'MuLinux - Registro' });
+      return res.render('register', { error: 'A conta já existe.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
     }
 
     const membName = name && name.trim().length > 0 ? name.trim().slice(0, 10) : account;
@@ -853,20 +853,20 @@ app.post('/register', authLimiter, async (req, res) => {
     return res.redirect('/login');
   } catch (err) {
     await conn.rollback();
-    return res.render('register', { error: 'Error al crear la cuenta.', page: 'register', pageTitle: 'MuLinux - Registro' });
+    return res.render('register', { error: 'Erro ao criar a conta.', page: 'register', pageTitle: 'MuLinux - Cadastro' });
   } finally {
     conn.release();
   }
 });
 
 app.get('/login', (req, res) => {
-  res.render('login', { error: null, page: 'login', pageTitle: 'MuLinux - Login' });
+  res.render('login', { error: null, page: 'login', pageTitle: 'MuLinux - Entrar' });
 });
 
 app.post('/login', authLimiter, async (req, res) => {
   const { account, password } = req.body;
   if (!account || !password) {
-    return res.render('login', { error: 'Completa usuario y contrasena.', page: 'login', pageTitle: 'MuLinux - Login' });
+    return res.render('login', { error: 'Preencha usuário e senha.', page: 'login', pageTitle: 'MuLinux - Entrar' });
   }
 
   const [rows] = await pool.query(
@@ -875,7 +875,7 @@ app.post('/login', authLimiter, async (req, res) => {
   );
 
   if (rows.length === 0) {
-    return res.render('login', { error: 'Credenciales invalidas.', page: 'login', pageTitle: 'MuLinux - Login' });
+    return res.render('login', { error: 'Credenciais inválidas.', page: 'login', pageTitle: 'MuLinux - Entrar' });
   }
 
   req.session.user = { id: account };
@@ -906,7 +906,7 @@ app.get('/account', requireUser, async (req, res) => {
     notice,
     error,
     page: 'account',
-    pageTitle: 'MuLinux - Cuenta'
+    pageTitle: 'MuLinux - Conta'
   });
 });
 
@@ -949,20 +949,20 @@ async function touchCooldown(accountId, charName, action) {
 
 function formatCooldown(seconds) {
   const mins = Math.ceil(seconds / 60);
-  return `Espera ${mins} minuto(s) para volver a usar esta accion.`;
+  return `Aguarde ${mins} minuto(s) para usar esta ação novamente.`;
 }
 
 app.post('/account/character/:name/clear-inventory', requireUser, async (req, res) => {
   const accountId = req.session.user.id;
   const charName = String(req.params.name || '');
   const offline = await ensureAccountOffline(accountId);
-  if (!offline) return res.redirect('/account?err=La cuenta esta en linea. Desconectate para continuar.');
+  if (!offline) return res.redirect('/account?err=A conta está online. Desconecte-se para continuar.');
 
   const [rows] = await pool.query(
     'SELECT Name FROM `Character` WHERE AccountID = ? AND Name = ? LIMIT 1',
     [accountId, charName]
   );
-  if (rows.length === 0) return res.redirect('/account?err=Personaje no encontrado.');
+  if (rows.length === 0) return res.redirect('/account?err=Personagem não encontrado.');
 
   const cd = await checkCooldown(accountId, charName, 'clear_inventory');
   if (!cd.ok) return res.redirect(`/account?err=${encodeURIComponent(formatCooldown(cd.remainingSeconds))}`);
@@ -973,23 +973,23 @@ app.post('/account/character/:name/clear-inventory', requireUser, async (req, re
     [emptyInv, accountId, charName]
   );
   if (!result || result.affectedRows === 0) {
-    return res.redirect('/account?err=No se pudo borrar el inventario. Intenta de nuevo.');
+    return res.redirect('/account?err=Não foi possível limpar o inventário. Tente novamente.');
   }
   await touchCooldown(accountId, charName, 'clear_inventory');
-  return res.redirect(`/account?ok=Inventario de ${encodeURIComponent(charName)} borrado. Cooldown: ${ACTION_COOLDOWN_MINUTES} min.`);
+  return res.redirect(`/account?ok=Inventário de ${encodeURIComponent(charName)} limpo. Cooldown: ${ACTION_COOLDOWN_MINUTES} min.`);
 });
 
 app.post('/account/character/:name/move-home', requireUser, async (req, res) => {
   const accountId = req.session.user.id;
   const charName = String(req.params.name || '');
   const offline = await ensureAccountOffline(accountId);
-  if (!offline) return res.redirect('/account?err=La cuenta esta en linea. Desconectate para continuar.');
+  if (!offline) return res.redirect('/account?err=A conta está online. Desconecte-se para continuar.');
 
   const [rows] = await pool.query(
     'SELECT Name, Class FROM `Character` WHERE AccountID = ? AND Name = ? LIMIT 1',
     [accountId, charName]
   );
-  if (rows.length === 0) return res.redirect('/account?err=Personaje no encontrado.');
+  if (rows.length === 0) return res.redirect('/account?err=Personagem não encontrado.');
 
   const cd = await checkCooldown(accountId, charName, 'move_home');
   if (!cd.ok) return res.redirect(`/account?err=${encodeURIComponent(formatCooldown(cd.remainingSeconds))}`);
@@ -1005,10 +1005,10 @@ app.post('/account/character/:name/move-home', requireUser, async (req, res) => 
     [target.map, target.x, target.y, accountId, charName]
   );
   if (!result || result.affectedRows === 0) {
-    return res.redirect('/account?err=No se pudo mover el personaje. Intenta de nuevo.');
+    return res.redirect('/account?err=Não foi possível mover o personagem. Tente novamente.');
   }
   await touchCooldown(accountId, charName, 'move_home');
-  return res.redirect(`/account?ok=Personaje ${encodeURIComponent(charName)} movido a zona segura. Cooldown: ${ACTION_COOLDOWN_MINUTES} min.`);
+  return res.redirect(`/account?ok=Personagem ${encodeURIComponent(charName)} movido para zona segura. Cooldown: ${ACTION_COOLDOWN_MINUTES} min.`);
 });
 
 app.get('/rankings', async (req, res) => {
@@ -1021,7 +1021,7 @@ app.get('/rankings', async (req, res) => {
     { value: '', label: 'Todas' },
     ...ACTIVE_CLASSES.map((id) => ({
       value: String(id),
-      label: CLASS_NAMES[id] || `Clase ${id}`
+      label: CLASS_NAMES[id] || `Classe ${id}`
     }))
   ];
 
@@ -1092,7 +1092,7 @@ app.get('/rankings', async (req, res) => {
 
 app.get('/download', (req, res) => {
   const downloads = loadDownloadsConfig();
-  res.render('download', { page: 'download', pageTitle: 'MuLinux - Descargas', downloads });
+  res.render('download', { page: 'download', pageTitle: 'MuLinux - Downloads', downloads });
 });
 
 app.get('/news', async (req, res) => {
@@ -1101,7 +1101,7 @@ app.get('/news', async (req, res) => {
     ...row,
     excerpt: makeExcerpt(row.body)
   }));
-  res.render('news', { news, page: 'news', pageTitle: 'MuLinux - Noticias' });
+  res.render('news', { news, page: 'news', pageTitle: 'MuLinux - Notícias' });
 });
 
 app.get('/news/:id', async (req, res) => {
@@ -1121,10 +1121,10 @@ app.get('/admin', (req, res) => {
 app.post('/admin/login', authLimiter, async (req, res) => {
   const { username, password } = req.body;
   const [rows] = await pool.query('SELECT id, username, password_hash, must_change_password FROM web_admin WHERE username = ? LIMIT 1', [username]);
-  if (rows.length === 0) return res.render('admin_login', { error: 'Credenciales invalidas.' });
+  if (rows.length === 0) return res.render('admin_login', { error: 'Credenciais inválidas.' });
 
   const ok = await bcrypt.compare(password || '', rows[0].password_hash);
-  if (!ok) return res.render('admin_login', { error: 'Credenciales invalidas.' });
+  if (!ok) return res.render('admin_login', { error: 'Credenciais inválidas.' });
 
   req.session.admin = {
     id: rows[0].id,
@@ -1148,7 +1148,7 @@ app.get('/admin/password', requireAdmin, (req, res) => {
 app.post('/admin/password', requireAdmin, async (req, res) => {
   const { password, confirm } = req.body;
   if (!password || password.length < 8 || password !== confirm) {
-    return res.render('admin_password', { error: 'Minimo 8 caracteres y deben coincidir.' });
+    return res.render('admin_password', { error: 'Mínimo 8 caracteres e devem coincidir.' });
   }
 
   const hash = await bcrypt.hash(password, 10);
@@ -1174,13 +1174,13 @@ app.post('/admin/downloads', requireAdmin, requireAdminPasswordChange, (req, res
   const patchUrl = sanitizeDownloadUrl(rawPatch);
 
   if (rawClient && !clientUrl) {
-    return res.redirect(`/admin/downloads?err=${encodeURIComponent('URL de cliente invalida. Usa http(s):// o una ruta /downloads/...')}`);
+    return res.redirect(`/admin/downloads?err=${encodeURIComponent('URL do cliente inválida. Use http(s):// ou um caminho /downloads/...')}`);
   }
   if (rawPatch && !patchUrl) {
-    return res.redirect(`/admin/downloads?err=${encodeURIComponent('URL de parches invalida. Usa http(s):// o una ruta /downloads/...')}`);
+    return res.redirect(`/admin/downloads?err=${encodeURIComponent('URL dos patches inválida. Use http(s):// ou um caminho /downloads/...')}`);
   }
   saveDownloadsConfig({ clientUrl, clientSubtitle, patchUrl, patchSubtitle });
-  return res.redirect(`/admin/downloads?ok=${encodeURIComponent('Links de descargas actualizados.')}`);
+  return res.redirect(`/admin/downloads?ok=${encodeURIComponent('Links de downloads atualizados.')}`);
 });
 
 app.get('/admin/accounts', requireAdmin, requireAdminPasswordChange, async (req, res) => {
@@ -1390,7 +1390,7 @@ app.get('/admin/server-editor/api/event-item-bag/file', requireAdmin, requireAdm
   try {
     const name = normalizeEventBagFileName(req.query.name);
     if (!name) {
-      return res.status(400).json({ error: 'Nombre invalido' });
+      return res.status(400).json({ error: 'Nome inválido' });
     }
     const filePath = `Data/EventItemBag/${name}`;
     const data = await editorRequest('GET', `/api/file?path=${encodeURIComponent(filePath)}`);
@@ -1407,7 +1407,7 @@ app.post('/admin/server-editor/api/event-item-bag/file', requireAdmin, requireAd
   try {
     const name = normalizeEventBagFileName(req.body?.name);
     if (!name) {
-      return res.status(400).json({ error: 'Nombre invalido' });
+      return res.status(400).json({ error: 'Nome inválido' });
     }
     const content = String(req.body?.content ?? '');
     const filePath = `Data/EventItemBag/${name}`;
@@ -1453,7 +1453,7 @@ app.get('/admin/server-editor/api/shops/file', requireAdmin, requireAdminPasswor
   try {
     const name = normalizeShopFileName(req.query?.name);
     if (!name) {
-      return res.status(400).json({ error: 'Nombre de archivo invalido.' });
+      return res.status(400).json({ error: 'Nome de arquivo inválido.' });
     }
     const pathValue = `Data/Shop/${name}`;
     const data = await editorRequest('GET', `/api/file?path=${encodeURIComponent(pathValue)}`);
@@ -1470,7 +1470,7 @@ app.post('/admin/server-editor/api/shops/file', requireAdmin, requireAdminPasswo
   try {
     const name = normalizeShopFileName(req.body?.name);
     if (!name) {
-      return res.status(400).json({ error: 'Nombre de archivo invalido.' });
+      return res.status(400).json({ error: 'Nome de arquivo inválido.' });
     }
     const content = String(req.body?.content ?? '');
     const pathValue = `Data/Shop/${name}`;
@@ -1545,7 +1545,7 @@ app.get('/admin/server-editor/api/terrain', requireAdmin, requireAdminPasswordCh
   try {
     const map = Number(req.query?.map);
     if (Number.isNaN(map) || map < 0) {
-      return res.status(400).json({ error: 'Mapa invalido.' });
+      return res.status(400).json({ error: 'Mapa inválido.' });
     }
     const fileName = `Data/Terrain/Terrain${map + 1}.att`;
     const data = await editorRequest('GET', `/api/binary?path=${encodeURIComponent(fileName)}`);
@@ -1785,7 +1785,7 @@ app.get('/admin/server-editor/api/config', requireAdmin, requireAdminPasswordCha
   }
   const path = getConfigFilePath(req.query?.kind);
   if (!path) {
-    return res.status(400).json({ error: 'Config invalida.' });
+    return res.status(400).json({ error: 'Config inválida.' });
   }
   try {
     const data = await editorRequest('GET', `/api/file?path=${encodeURIComponent(path)}`);
@@ -1801,7 +1801,7 @@ app.post('/admin/server-editor/api/config', requireAdmin, requireAdminPasswordCh
   }
   const path = getConfigFilePath(req.query?.kind);
   if (!path) {
-    return res.status(400).json({ error: 'Config invalida.' });
+    return res.status(400).json({ error: 'Config inválida.' });
   }
   try {
     const content = String(req.body?.content ?? '');
@@ -1819,7 +1819,7 @@ app.get('/admin/server-editor/api/custom', requireAdmin, requireAdminPasswordCha
   try {
     const filePath = getCustomFilePath(req.query.kind);
     if (!filePath) {
-      return res.status(400).json({ error: 'Tipo de custom invalido' });
+      return res.status(400).json({ error: 'Tipo de custom inválido' });
     }
     const data = await editorRequest('GET', `/api/file?path=${encodeURIComponent(filePath)}`);
     return res.json({ content: data.content || '' });
@@ -1835,7 +1835,7 @@ app.post('/admin/server-editor/api/custom', requireAdmin, requireAdminPasswordCh
   try {
     const filePath = getCustomFilePath(req.query.kind);
     if (!filePath) {
-      return res.status(400).json({ error: 'Tipo de custom invalido' });
+      return res.status(400).json({ error: 'Tipo de custom inválido' });
     }
     const content = String(req.body?.content ?? '');
     const data = await editorRequest('POST', '/api/file', {
@@ -1895,7 +1895,7 @@ app.get('/admin/server-editor/api/items-base', requireAdmin, requireAdminPasswor
   }
   const path = getItemBasePath(req.query?.kind);
   if (!path) {
-    return res.status(400).json({ error: 'Tipo invalido.' });
+    return res.status(400).json({ error: 'Tipo inválido.' });
   }
   try {
     const data = await editorRequest('GET', `/api/file?path=${encodeURIComponent(path)}`);
@@ -1911,7 +1911,7 @@ app.post('/admin/server-editor/api/items-base', requireAdmin, requireAdminPasswo
   }
   const path = getItemBasePath(req.query?.kind);
   if (!path) {
-    return res.status(400).json({ error: 'Tipo invalido.' });
+    return res.status(400).json({ error: 'Tipo inválido.' });
   }
   try {
     const content = String(req.body?.content ?? '');
@@ -1979,7 +1979,7 @@ app.get('/admin/server-editor/api/reset-exp', requireAdmin, requireAdminPassword
   }
   const path = getResetExpPath(req.query?.kind);
   if (!path) {
-    return res.status(400).json({ error: 'Tipo invalido.' });
+    return res.status(400).json({ error: 'Tipo inválido.' });
   }
   try {
     const data = await editorRequest('GET', `/api/file?path=${encodeURIComponent(path)}`);
@@ -1995,7 +1995,7 @@ app.post('/admin/server-editor/api/reset-exp', requireAdmin, requireAdminPasswor
   }
   const path = getResetExpPath(req.query?.kind);
   if (!path) {
-    return res.status(400).json({ error: 'Tipo invalido.' });
+    return res.status(400).json({ error: 'Tipo inválido.' });
   }
   try {
     const content = String(req.body?.content ?? '');
@@ -2012,7 +2012,7 @@ app.get('/admin/server-editor/api/characters', requireAdmin, requireAdminPasswor
   }
   const account = String(req.query?.account || '').trim();
   if (!account) {
-    return res.status(400).json({ error: 'Cuenta requerida.' });
+    return res.status(400).json({ error: 'Conta necessária.' });
   }
   try {
     const [rows] = await pool.query(
@@ -2022,7 +2022,7 @@ app.get('/admin/server-editor/api/characters', requireAdmin, requireAdminPasswor
     const characters = rows.map((row) => row.Name);
     return res.json({ characters });
   } catch (err) {
-    return res.status(500).json({ error: 'No se pudieron cargar los personajes.' });
+    return res.status(500).json({ error: 'Não foi possível carregar os personagens.' });
   }
 });
 
@@ -2047,7 +2047,7 @@ app.get('/admin/server-editor/api/accounts', requireAdmin, requireAdminPasswordC
     const accounts = rows.map((row) => row.memb___id);
     return res.json({ accounts });
   } catch (err) {
-    return res.status(500).json({ error: 'No se pudieron cargar las cuentas.' });
+    return res.status(500).json({ error: 'Não foi possível carregar as contas.' });
   }
 });
 
@@ -2104,31 +2104,31 @@ app.post('/admin/accounts/new', requireAdmin, requireAdminPasswordChange, async 
   };
 
   if (!validateAccountId(account)) {
-    return res.render('admin_account_new', { error: 'El usuario debe tener 4-10 caracteres (letras, numeros o _).', form });
+    return res.render('admin_account_new', { error: 'O usuário deve ter 4-10 caracteres (letras, números ou _).', form });
   }
   if (!validatePassword(password) || password !== confirm) {
-    return res.render('admin_account_new', { error: 'La contrasena debe tener 4-10 caracteres y coincidir.', form });
+    return res.render('admin_account_new', { error: 'A senha deve ter 4-10 caracteres e coincidir.', form });
   }
   if (!validateName(name)) {
-    return res.render('admin_account_new', { error: 'El nombre debe tener 4-10 caracteres (letras, numeros o _).', form });
+    return res.render('admin_account_new', { error: 'O nome deve ter 4-10 caracteres (letras, números ou _).', form });
   }
   if (!validateCode(code)) {
-    return res.render('admin_account_new', { error: 'El codigo debe tener 18 numeros.', form });
+    return res.render('admin_account_new', { error: 'O código deve ter 18 números.', form });
   }
   if (!validateEmail(email)) {
-    return res.render('admin_account_new', { error: 'El email no es valido.', form });
+    return res.render('admin_account_new', { error: 'O e-mail não é válido.', form });
   }
   if (!accountLevelField.ok) {
-    return res.render('admin_account_new', { error: 'Account Level invalido (0-3).', form });
+    return res.render('admin_account_new', { error: 'Account Level inválido (0-3).', form });
   }
   if (!accountExpire.ok) {
-    return res.render('admin_account_new', { error: 'Fecha de expiracion invalida.', form });
+    return res.render('admin_account_new', { error: 'Data de expiração inválida.', form });
   }
   if (blocked && !blockExpire.ok) {
-    return res.render('admin_account_new', { error: 'Fecha de bloqueo invalida.', form });
+    return res.render('admin_account_new', { error: 'Data de bloqueio inválida.', form });
   }
   if (blocked && !blockExpire.value) {
-    return res.render('admin_account_new', { error: 'Debes indicar fecha de bloqueo.', form });
+    return res.render('admin_account_new', { error: 'Você deve indicar a data de bloqueio.', form });
   }
 
   const conn = await pool.getConnection();
@@ -2137,7 +2137,7 @@ app.post('/admin/accounts/new', requireAdmin, requireAdminPasswordChange, async 
     const [existing] = await conn.query('SELECT memb___id FROM MEMB_INFO WHERE memb___id = ? LIMIT 1', [account]);
     if (existing.length > 0) {
       await conn.rollback();
-      return res.render('admin_account_new', { error: 'La cuenta ya existe.', form });
+      return res.render('admin_account_new', { error: 'A conta já existe.', form });
     }
 
     const accountExpireValue = accountExpire.value ? accountExpire.value : new Date();
@@ -2161,10 +2161,10 @@ app.post('/admin/accounts/new', requireAdmin, requireAdminPasswordChange, async 
     );
 
     await conn.commit();
-    return res.redirect(`/admin/accounts/${encodeURIComponent(account)}?ok=${encodeURIComponent('Cuenta creada')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(account)}?ok=${encodeURIComponent('Conta criada')}`);
   } catch {
     await conn.rollback();
-    return res.render('admin_account_new', { error: 'No se pudo crear la cuenta.', form });
+    return res.render('admin_account_new', { error: 'Não foi possível criar a conta.', form });
   } finally {
     conn.release();
   }
@@ -2180,7 +2180,7 @@ app.get('/admin/accounts/:id', requireAdmin, requireAdminPasswordChange, async (
     [accountId]
   );
   if (rows.length === 0) {
-    return res.redirect('/admin/accounts?err=Cuenta no encontrada.');
+    return res.redirect('/admin/accounts?err=Conta não encontrada.');
   }
 
   const [chars] = await pool.query(
@@ -2244,39 +2244,39 @@ app.post('/admin/accounts/:id', requireAdmin, requireAdminPasswordChange, async 
     [accountId]
   );
   if (rows.length === 0) {
-    return res.redirect('/admin/accounts?err=Cuenta no encontrada.');
+    return res.redirect('/admin/accounts?err=Conta não encontrada.');
   }
 
   const offline = await ensureAccountOffline(accountId);
   if (!offline) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('La cuenta esta en linea. Desconectala para editar.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('A conta está online. Desconecte-a para editar.')}`);
   }
 
   if (!validateName(name)) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Nombre invalido (4-10, letras/numeros/_).')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Nome inválido (4-10, letras/números/_).')}`);
   }
   if (!validateCode(code)) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Codigo invalido (18 numeros).')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Código inválido (18 números).')}`);
   }
   if (!validateEmail(email)) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Email invalido.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('E-mail inválido.')}`);
   }
   if (!accountLevelField.ok) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Account Level invalido (0-3).')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Account Level inválido (0-3).')}`);
   }
   if (password) {
     if (!validatePassword(password) || password !== confirm) {
-      return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Contrasena invalida o no coincide.')}`);
+      return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Senha inválida ou não coincide.')}`);
     }
   }
   if (!accountExpire.ok) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Fecha de expiracion invalida.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Data de expiração inválida.')}`);
   }
   if (blocked && !blockExpire.ok) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Fecha de bloqueo invalida.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Data de bloqueio inválida.')}`);
   }
   if (blocked && !blockExpire.value) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Debes indicar fecha de bloqueo.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Você deve indicar a data de bloqueio.')}`);
   }
 
   const fields = [
@@ -2307,7 +2307,7 @@ app.post('/admin/accounts/:id', requireAdmin, requireAdminPasswordChange, async 
 
   await pool.query(`UPDATE MEMB_INFO SET ${fields.join(', ')} WHERE memb___id = ?`, params);
 
-  return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?ok=${encodeURIComponent('Cuenta actualizada')}`);
+  return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?ok=${encodeURIComponent('Conta atualizada')}`);
 });
 
 app.get('/admin/accounts/:id/characters/:name', requireAdmin, requireAdminPasswordChange, async (req, res) => {
@@ -2325,7 +2325,7 @@ app.get('/admin/accounts/:id/characters/:name', requireAdmin, requireAdminPasswo
     [accountId, charName]
   );
   if (rows.length === 0) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Personaje no encontrado.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Personagem não encontrado.')}`);
   }
 
   const character = {
@@ -2355,7 +2355,7 @@ app.get('/admin/accounts/:id/characters/:name', requireAdmin, requireAdminPasswo
   ];
 
   if (!CLASS_NAMES[character.Class]) {
-    classOptions.unshift({ value: character.Class, label: `Clase ${character.Class}` });
+    classOptions.unshift({ value: character.Class, label: `Classe ${character.Class}` });
   }
   if (!MAP_NAMES[character.MapNumber]) {
     mapOptions.unshift({ value: character.MapNumber, label: `Mapa ${character.MapNumber}` });
@@ -2383,7 +2383,7 @@ app.get('/admin/accounts/:id/characters/:name/inventory', requireAdmin, requireA
     [accountId, charName]
   );
   if (rows.length === 0) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Personaje no encontrado.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Personagem não encontrado.')}`);
   }
 
   const inventoryHex = bufferToHex(rows[0].Inventory, 760);
@@ -2405,7 +2405,7 @@ app.post('/admin/accounts/:id/characters/:name/inventory', requireAdmin, require
 
   const offline = await ensureAccountOffline(accountId);
   if (!offline) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}/inventory?err=${encodeURIComponent('La cuenta esta en linea. Desconectala para editar.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}/inventory?err=${encodeURIComponent('A conta está online. Desconecte-a para editar.')}`);
   }
 
   const [rows] = await pool.query(
@@ -2413,12 +2413,12 @@ app.post('/admin/accounts/:id/characters/:name/inventory', requireAdmin, require
     [accountId, charName]
   );
   if (rows.length === 0) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Personaje no encontrado.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Personagem não encontrado.')}`);
   }
 
   const parsed = normalizeHexInput(req.body.inventory_hex, 760);
   if (!parsed.ok) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}/inventory?err=${encodeURIComponent(parsed.error || 'Hex invalido.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}/inventory?err=${encodeURIComponent(parsed.error || 'Hex inválido.')}`);
   }
 
   await applySerialsIfNeeded(parsed.buffer);
@@ -2428,7 +2428,7 @@ app.post('/admin/accounts/:id/characters/:name/inventory', requireAdmin, require
     [parsed.buffer, accountId, charName]
   );
 
-  return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}/inventory?ok=${encodeURIComponent('Inventario actualizado')}`);
+  return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}/inventory?ok=${encodeURIComponent('Inventário atualizado')}`);
 });
 
 app.post('/admin/accounts/:id/characters/:name', requireAdmin, requireAdminPasswordChange, async (req, res) => {
@@ -2437,7 +2437,7 @@ app.post('/admin/accounts/:id/characters/:name', requireAdmin, requireAdminPassw
 
   const offline = await ensureAccountOffline(accountId);
   if (!offline) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}?err=${encodeURIComponent('La cuenta esta en linea. Desconectala para editar.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}?err=${encodeURIComponent('A conta está online. Desconecte-a para editar.')}`);
   }
 
   const [rows] = await pool.query(
@@ -2445,7 +2445,7 @@ app.post('/admin/accounts/:id/characters/:name', requireAdmin, requireAdminPassw
     [accountId, charName]
   );
   if (rows.length === 0) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Personaje no encontrado.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}?err=${encodeURIComponent('Personagem não encontrado.')}`);
   }
 
   const level = parseIntField(req.body.level, { min: 1, max: 2147483647 });
@@ -2465,7 +2465,7 @@ app.post('/admin/accounts/:id/characters/:name', requireAdmin, requireAdminPassw
   const mapDir = parseIntField(req.body.map_dir, { min: 0, max: 255 });
 
   if (!level.ok || !reset.ok || !grandReset.ok || !classId.ok || !ctlCode.ok || !points.ok || !strength.ok || !dexterity.ok || !vitality.ok || !energy.ok || !money.ok || !mapNumber.ok || !posX.ok || !posY.ok || !mapDir.ok) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}?err=${encodeURIComponent('Hay valores invalidos.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}?err=${encodeURIComponent('Há valores inválidos.')}`);
   }
 
   await pool.query(
@@ -2495,7 +2495,7 @@ app.post('/admin/accounts/:id/characters/:name', requireAdmin, requireAdminPassw
     ]
   );
 
-  return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}?ok=${encodeURIComponent('Personaje actualizado')}`);
+  return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/characters/${encodeURIComponent(charName)}?ok=${encodeURIComponent('Personagem atualizado')}`);
 });
 
 app.get('/admin/accounts/:id/warehouse', requireAdmin, requireAdminPasswordChange, async (req, res) => {
@@ -2550,12 +2550,12 @@ app.post('/admin/accounts/:id/warehouse/editor', requireAdmin, requireAdminPassw
 
   const offline = await ensureAccountOffline(accountId);
   if (!offline) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse/editor?err=${encodeURIComponent('La cuenta esta en linea. Desconectala para editar.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse/editor?err=${encodeURIComponent('A conta está online. Desconecte-a para editar.')}`);
   }
 
   const parsed = normalizeHexInput(req.body.items_hex, 1200);
   if (!parsed.ok) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse/editor?err=${encodeURIComponent(parsed.error || 'Hex invalido.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse/editor?err=${encodeURIComponent(parsed.error || 'Hex inválido.')}`);
   }
 
   await applySerialsIfNeeded(parsed.buffer);
@@ -2567,7 +2567,7 @@ app.post('/admin/accounts/:id/warehouse/editor', requireAdmin, requireAdminPassw
     [accountId, parsed.buffer]
   );
 
-  return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse/editor?ok=${encodeURIComponent('Baul actualizado')}`);
+  return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse/editor?ok=${encodeURIComponent('Baú atualizado')}`);
 });
 
 app.get('/admin/item-defs.json', requireAdmin, requireAdminPasswordChange, (req, res) => {
@@ -2581,13 +2581,13 @@ app.post('/admin/accounts/:id/warehouse', requireAdmin, requireAdminPasswordChan
 
   const offline = await ensureAccountOffline(accountId);
   if (!offline) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse?err=${encodeURIComponent('La cuenta esta en linea. Desconectala para editar.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse?err=${encodeURIComponent('A conta está online. Desconecte-a para editar.')}`);
   }
 
   const money = parseIntField(req.body.money, { min: 0, max: 2147483647 });
   const pw = parseIntField(req.body.pw, { min: 0, max: 65535 });
   if (!money.ok || !pw.ok) {
-    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse?err=${encodeURIComponent('Zen o password invalidos.')}`);
+    return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse?err=${encodeURIComponent('Zen ou senha inválidos.')}`);
   }
 
   let itemsBuffer = null;
@@ -2600,7 +2600,7 @@ app.post('/admin/accounts/:id/warehouse', requireAdmin, requireAdminPasswordChan
   } else {
     const parsed = normalizeHexInput(req.body.items_hex, 1200);
     if (!parsed.ok) {
-      return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse?err=${encodeURIComponent(parsed.error || 'Hex invalido.')}`);
+      return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse?err=${encodeURIComponent(parsed.error || 'Hex inválido.')}`);
     }
     itemsBuffer = parsed.buffer;
   }
@@ -2612,7 +2612,7 @@ app.post('/admin/accounts/:id/warehouse', requireAdmin, requireAdminPasswordChan
     [accountId, itemsBuffer, finalMoney, finalPw]
   );
 
-  const message = action === 'clear' ? 'Baul vaciado' : 'Baul actualizado';
+  const message = action === 'clear' ? 'Baú esvaziado' : 'Baú atualizado';
   return res.redirect(`/admin/accounts/${encodeURIComponent(accountId)}/warehouse?ok=${encodeURIComponent(message)}`);
 });
 
@@ -2627,7 +2627,7 @@ app.get('/admin/news/new', requireAdmin, requireAdminPasswordChange, (req, res) 
 
 app.post('/admin/news/new', requireAdmin, requireAdminPasswordChange, async (req, res) => {
   const { title, body, published, allow_html, hide_title } = req.body;
-  if (!title || !body) return res.render('admin_news_form', { item: null, error: 'Titulo y contenido son obligatorios.' });
+  if (!title || !body) return res.render('admin_news_form', { item: null, error: 'Título e conteúdo são obrigatórios.' });
   const allowHtml = allow_html === '1' || allow_html === 'on';
   const safeBody = sanitizeNewsBody(body, allowHtml);
   const hideTitle = hide_title === '1' || hide_title === 'on';
@@ -2661,7 +2661,7 @@ app.post('/admin/news/:id/edit', requireAdmin, requireAdminPasswordChange, async
         body_is_html: allow_html === '1' || allow_html === 'on' ? 1 : 0,
         hide_title: hide_title === '1' || hide_title === 'on' ? 1 : 0
       },
-      error: 'Titulo y contenido son obligatorios.'
+      error: 'Título e conteúdo são obrigatórios.'
     });
   }
   const allowHtml = allow_html === '1' || allow_html === 'on';

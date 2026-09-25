@@ -94,8 +94,8 @@
           <input type="text" id="map-search" placeholder="Buscar mapa..." />
         </div>
         <div class="spawn-toolbar-group">
-          <button type="button" id="add-map">Agregar mapa</button>
-          <button type="button" id="save-map">Guardar</button>
+          <button type="button" id="add-map">Adicionar mapa</button>
+          <button type="button" id="save-map">Salvar</button>
         </div>
       </div>
       <div class="spawn-editor">
@@ -104,10 +104,10 @@
           <ul id="map-list" class="simple-list"></ul>
         </div>
         <div class="spawn-form">
-          <h3>Detalle</h3>
+          <h3>Detalhe</h3>
           <label>Index</label>
           <input type="number" id="map-index" min="0" max="255" />
-          <label>Nombre</label>
+          <label>Nome</label>
           <input type="text" id="map-name" />
           <label>NonPK</label>
           <input type="text" id="map-nonpk" placeholder="*" />
@@ -126,8 +126,8 @@
           <label>Flying Dragons</label>
           <input type="number" id="map-dragons" min="0" max="1" />
           <div class="spawn-actions">
-            <button type="button" id="update-map">Actualizar</button>
-            <button type="button" id="delete-map" class="link-button">Eliminar</button>
+            <button type="button" id="update-map">Atualizar</button>
+            <button type="button" id="delete-map" class="link-button">Excluir</button>
           </div>
         </div>
       </div>
@@ -198,11 +198,11 @@
         deadGate: 0,
         spawnInPlace: 0,
         flyingDragons: 1,
-        name: 'NuevoMapa'
+        name: 'NovoMapa'
       };
       state.maps.push(newMap);
       selectMap(newMap);
-      setMessage('Mapa creado.', 'success');
+      setMessage('Mapa criado.', 'success');
     });
 
     root.querySelector('#update-map').addEventListener('click', () => {
@@ -219,7 +219,7 @@
       map.spawnInPlace = Number(root.querySelector('#map-spawn').value);
       map.flyingDragons = Number(root.querySelector('#map-dragons').value);
       renderList();
-      setMessage('Mapa actualizado.', 'success');
+      setMessage('Mapa atualizado.', 'success');
     });
 
     root.querySelector('#delete-map').addEventListener('click', () => {
@@ -227,7 +227,7 @@
       state.maps = state.maps.filter((m) => m.index !== state.selected.index);
       state.selected = null;
       renderList();
-      setMessage('Mapa eliminado.', 'success');
+      setMessage('Mapa excluído.', 'success');
     });
 
     root.querySelector('#save-map').addEventListener('click', async () => {
@@ -239,16 +239,16 @@
           body: JSON.stringify({ content })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
         const reload = await fetch('/admin/server-editor/api/reload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ target: 'map' })
         });
         if (!reload.ok) {
-          setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+          setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
         } else {
-          setMessage('Guardado y recargado en el servidor.', 'success');
+          setMessage('Salvo e recarregado no servidor.', 'success');
         }
       } catch (err) {
         setMessage(err.message, 'error');
@@ -259,7 +259,7 @@
   async function loadInitialData() {
     const res = await fetch('/admin/server-editor/api/mapmanager');
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+    if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
     state.maps = parseMapManager(data.content || '');
   }
 

@@ -4,23 +4,23 @@
   <div class="row-between">
     <h2>Editor de mapas</h2>
     <div class="admin-links">
-      <a class="button-link" href="/admin/server-editor">Editor servidor</a>
-      <a class="button-link" href="/admin/accounts">Cuentas</a>
-      <a class="button-link" href="/admin/downloads">Descargas</a>
-      <a class="button-link" href="/admin/news">Noticias</a>
-      <a class="button-link" href="/admin/logout">Salir</a>
+      <a class="button-link" href="/admin/server-editor">Editor do servidor</a>
+      <a class="button-link" href="/admin/accounts">Contas</a>
+      <a class="button-link" href="/admin/downloads">Downloads</a>
+      <a class="button-link" href="/admin/news">Notícias</a>
+      <a class="button-link" href="/admin/logout">Sair</a>
     </div>
   </div>
 
   <% if (!editorEnabled) { %>
     <div class="alert">
-      El editor del servidor esta deshabilitado. Para activarlo, inicia el stack con
-      <code>EDITOR_ENABLED=1</code> y el compose del editor.
+      O editor do servidor está desabilitado. Para ativá-lo, inicie o stack com
+      <code>EDITOR_ENABLED=1</code> e o compose do editor.
     </div>
   <% } else { %>
     <div class="alert warning" style="margin-bottom: 12px;">
-      Nota: los indices de <code>MapManager.txt</code> deben estar alineados con Terrain, Gate,
-      Move y MonsterSetBase. Cambiar indices rompe teleports y spawns.
+      Nota: os índices de <code>MapManager.txt</code> devem estar alinhados com Terrain, Gate,
+      Move e MonsterSetBase. Alterar índices quebra teleports e spawns.
     </div>
     <div id="mapmanager-editor"></div>
   <% } %>

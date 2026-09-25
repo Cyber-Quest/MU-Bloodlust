@@ -76,8 +76,8 @@
           <button type="button" class="tab-btn" data-tab="experience">ExperienceTable</button>
         </div>
         <div class="spawn-toolbar-group">
-          <button type="button" id="add-row">Agregar fila</button>
-          <button type="button" id="save-table">Guardar</button>
+          <button type="button" id="add-row">Adicionar linha</button>
+          <button type="button" id="save-table">Salvar</button>
         </div>
       </div>
       <div id="table-container"></div>
@@ -138,16 +138,16 @@
         body: JSON.stringify({ content })
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || 'No se pudo guardar');
+      if (!res.ok) throw new Error(json.error || 'Não foi possível salvar');
       const reload = await fetch('/admin/server-editor/api/reload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target: 'util' })
       });
       if (!reload.ok) {
-        setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+        setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
       } else {
-        setMessage('Guardado y recargado en el servidor.', 'success');
+        setMessage('Salvo e recarregado no servidor.', 'success');
       }
     } catch (err) {
       setMessage(err.message, 'error');
@@ -161,8 +161,8 @@
     ]);
     const resetData = await resetRes.json();
     const expData = await expRes.json();
-    if (!resetRes.ok) throw new Error(resetData.error || 'No se pudo cargar ResetTable');
-    if (!expRes.ok) throw new Error(expData.error || 'No se pudo cargar ExperienceTable');
+    if (!resetRes.ok) throw new Error(resetData.error || 'Não foi possível carregar ResetTable');
+    if (!expRes.ok) throw new Error(expData.error || 'Não foi possível carregar ExperienceTable');
     state.reset = parseTable(resetData.content || '');
     state.experience = parseTable(expData.content || '');
   }

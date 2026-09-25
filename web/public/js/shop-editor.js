@@ -228,10 +228,10 @@
     renderItems();
     if (filename) currentFile = filename;
     if (autoPlaced > 0) {
-      setMessage(`Se auto-ubicaron ${autoPlaced} items sin slot.`, 'success');
+      setMessage(`Foram posicionados automaticamente ${autoPlaced} itens sem slot.`, 'success');
     }
     if (unplaced > 0) {
-      setMessage(`Hay ${unplaced} items sin espacio. Ajusta posiciones y guarda.`, 'error');
+      setMessage(`Há ${unplaced} itens sem espaço. Ajuste as posições e salve.`, 'error');
     }
   }
 
@@ -368,8 +368,8 @@
         <div class="shop-file">
           <label>Shop</label>
           <select id="shop-file"></select>
-          <button type="button" id="load-shop">Cargar</button>
-          <button type="button" id="save-shop">Guardar</button>
+          <button type="button" id="load-shop">Carregar</button>
+          <button type="button" id="save-shop">Salvar</button>
         </div>
         <div class="shop-io">
           <input type="file" id="import-file" accept=".txt" hidden />
@@ -389,9 +389,9 @@
           <input type="text" id="item-search" placeholder="Buscar item..." />
           <select id="item-select" size="10"></select>
           <div class="picker-fields">
-            <label>Nivel</label>
+            <label>Nível</label>
             <input type="number" id="item-level" min="0" max="15" value="0" />
-            <label>Durabilidad</label>
+            <label>Durabilidade</label>
             <input type="number" id="item-durability" min="-1" max="255" value="-1" />
             <label class="checkbox"><input type="checkbox" id="item-skill" /> Skill</label>
             <label class="checkbox"><input type="checkbox" id="item-luck" /> Luck</label>
@@ -399,15 +399,15 @@
             <input type="number" id="item-option" min="0" max="7" value="0" />
             <label>Excellent (0-63)</label>
             <input type="number" id="item-exc" min="0" max="63" value="0" />
-            <label>Comentario</label>
-            <input type="text" id="item-comment" maxlength="80" placeholder="Nombre del item en el shop" />
+            <label>Comentário</label>
+            <input type="text" id="item-comment" maxlength="80" placeholder="Nome do item no shop" />
             <label>Slot X</label>
             <input type="number" id="item-slotx" min="0" max="7" value="0" />
             <label>Slot Y</label>
             <input type="number" id="item-sloty" min="0" max="14" value="0" />
             <button type="button" id="place-item">Colocar item</button>
-            <button type="button" id="update-item">Actualizar seleccionado</button>
-            <button type="button" id="remove-item" class="link-button">Eliminar seleccionado</button>
+            <button type="button" id="update-item">Atualizar selecionado</button>
+            <button type="button" id="remove-item" class="link-button">Excluir selecionado</button>
           </div>
         </div>
       </div>
@@ -459,29 +459,29 @@
 
     root.querySelector('#place-item').addEventListener('click', () => {
       placeMode = true;
-      setMessage('Selecciona una casilla libre para colocar el item.', 'success');
+      setMessage('Selecione uma casa livre para colocar o item.', 'success');
     });
 
     root.querySelector('#update-item').addEventListener('click', () => {
       if (!selectedItemId) {
-        setMessage('Selecciona un item primero.', 'error');
+        setMessage('Selecione um item primeiro.', 'error');
         return;
       }
       const item = state.items.get(selectedItemId);
       if (!item) return;
       const newDef = getSelectedDef();
       if (!newDef) {
-        setMessage('Selecciona un item para aplicar.', 'error');
+        setMessage('Selecione um item para aplicar.', 'error');
         return;
       }
       const newSlotX = Number(root.querySelector('#item-slotx').value);
       const newSlotY = Number(root.querySelector('#item-sloty').value);
       if (Number.isNaN(newSlotX) || Number.isNaN(newSlotY)) {
-        setMessage('Slot X/Y invalidos.', 'error');
+        setMessage('Slot X/Y inválidos.', 'error');
         return;
       }
       if (newSlotX < 0 || newSlotX >= cols || newSlotY < 0 || newSlotY >= rows) {
-        setMessage('Slot X/Y fuera de rango.', 'error');
+        setMessage('Slot X/Y fora do intervalo.', 'error');
         return;
       }
 
@@ -493,7 +493,7 @@
         index: newDef.index
       };
       if (!canPlace(candidate, targetSlot, item.id)) {
-        setMessage('No hay espacio para ese item en la posicion.', 'error');
+        setMessage('Não há espaço para esse item na posição.', 'error');
         return;
       }
       clearOccupancy(item);
@@ -516,12 +516,12 @@
         ? commentInput.value.trim()
         : newDef.name;
       renderItems();
-      setMessage('Item actualizado.', 'success');
+      setMessage('Item atualizado.', 'success');
     });
 
     root.querySelector('#remove-item').addEventListener('click', () => {
       if (!selectedItemId) {
-        setMessage('Selecciona un item primero.', 'error');
+        setMessage('Selecione um item primeiro.', 'error');
         return;
       }
       const item = state.items.get(selectedItemId);
@@ -542,11 +542,11 @@
       if (placeMode) {
         const newItem = createItemFromPicker();
         if (!newItem) {
-          setMessage('Selecciona un item para colocar.', 'error');
+          setMessage('Selecione um item para colocar.', 'error');
           return;
           }
           if (!canPlace(newItem, slotIndex)) {
-            setMessage('No hay espacio para el item en esa posicion.', 'error');
+            setMessage('Não há espaço para o item nessa posição.', 'error');
             return;
           }
         newItem.slotIndex = slotIndex;
@@ -590,7 +590,7 @@
     root.querySelector('#save-shop')?.addEventListener('click', async () => {
       const fileName = root.querySelector('#shop-file').value;
       if (!fileName) {
-        setMessage('Selecciona un shop para guardar.', 'error');
+        setMessage('Selecione um shop para salvar.', 'error');
         return;
       }
       await saveShopFile(fileName);
@@ -611,7 +611,7 @@
           const option = Array.from(selectEl.options).find((opt) => opt.value === file.name);
           if (option) selectEl.value = file.name;
         }
-        setMessage('Shop importado. Guardalo para subirlo al servidor.', 'success');
+        setMessage('Shop importado. Salve-o para enviá-lo ao servidor.', 'success');
       };
       reader.readAsText(file);
       event.target.value = '';
@@ -637,7 +637,7 @@
     try {
       const res = await fetch('/admin/server-editor/api/shops');
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
       const files = Array.isArray(data.files) ? data.files : [];
       selectEl.innerHTML = '';
       files.forEach((name) => {
@@ -656,20 +656,20 @@
 
   async function loadShopFile(name) {
     if (!name) return;
-    setMessage('Cargando shop...', 'success');
+    setMessage('Carregando shop...', 'success');
     try {
       const res = await fetch(`/admin/server-editor/api/shops/file?name=${encodeURIComponent(name)}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
       loadFromContent(data.content || '', name);
-      setMessage('Shop cargado.', 'success');
+      setMessage('Shop carregado.', 'success');
     } catch (err) {
       setMessage(err.message, 'error');
     }
   }
 
   async function saveShopFile(name) {
-    setMessage('Guardando shop...', 'success');
+    setMessage('Salvando shop...', 'success');
     try {
       const content = buildShopText();
       const res = await fetch('/admin/server-editor/api/shops/file', {
@@ -678,12 +678,12 @@
         body: JSON.stringify({ name, content })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
       const reloaded = await triggerReload();
       if (reloaded) {
-        setMessage('Shop guardado y recargado en el servidor.', 'success');
+        setMessage('Shop salvo e recarregado no servidor.', 'success');
       } else {
-        setMessage('Shop guardado. No se pudo recargar automaticamente.', 'error');
+        setMessage('Shop salvo. Não foi possível recarregar automaticamente.', 'error');
       }
     } catch (err) {
       setMessage(err.message, 'error');
@@ -698,7 +698,7 @@
         body: JSON.stringify({ target: 'shop' })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo recargar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível recarregar');
       return true;
     } catch {
       return false;
@@ -715,7 +715,7 @@
       itemDefsMap = new Map(itemDefs.map((def) => [`${def.section}:${def.index}`, def]));
       populatePicker();
     } catch {
-      setMessage('No se pudo cargar la lista de items.', 'error');
+      setMessage('Não foi possível carregar a lista de itens.', 'error');
     }
     await loadShopList();
     const selectEl = root.querySelector('#shop-file');

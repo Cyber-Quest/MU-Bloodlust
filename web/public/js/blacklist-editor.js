@@ -72,13 +72,13 @@
         <div class="spawn-toolbar-group">
           <label>IP</label>
           <input type="text" id="ip-input" placeholder="127.0.0.1" />
-          <button type="button" id="add-ip">Agregar IP</button>
+          <button type="button" id="add-ip">Adicionar IP</button>
         </div>
         <div class="spawn-toolbar-group">
           <label>HWID</label>
           <input type="text" id="hwid-input" placeholder="C46A1ADE-..." />
-          <button type="button" id="add-hwid">Agregar HWID</button>
-          <button type="button" id="save-blacklist">Guardar</button>
+          <button type="button" id="add-hwid">Adicionar HWID</button>
+          <button type="button" id="save-blacklist">Salvar</button>
         </div>
       </div>
       <div class="spawn-editor">
@@ -103,7 +103,7 @@
       text.textContent = value;
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.textContent = 'Eliminar';
+      btn.textContent = 'Excluir';
       btn.className = 'link-button';
       btn.addEventListener('click', () => {
         if (type === 'ip') {
@@ -150,16 +150,16 @@
           body: JSON.stringify({ content })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
         const reload = await fetch('/admin/server-editor/api/reload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ target: 'util' })
         });
         if (!reload.ok) {
-          setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+          setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
         } else {
-          setMessage('Guardado y recargado en el servidor.', 'success');
+          setMessage('Salvo e recarregado no servidor.', 'success');
         }
       } catch (err) {
         setMessage(err.message, 'error');
@@ -170,7 +170,7 @@
   async function loadInitialData() {
     const res = await fetch('/admin/server-editor/api/blacklist');
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+    if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
     const parsed = parseBlacklist(data.content || '');
     state.ips = parsed.ips;
     state.hwids = parsed.hwids;

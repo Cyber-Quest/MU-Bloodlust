@@ -2,15 +2,15 @@
 
 <section class="card">
   <div class="row-between">
-    <h2>Editar cuenta</h2>
+    <h2>Editar conta</h2>
     <div class="admin-links">
-      <a class="button-link" href="/admin/accounts">Cuentas</a>
+      <a class="button-link" href="/admin/accounts">Contas</a>
       <% if (editorEnabled) { %>
         <a class="button-link" href="/admin/server-editor">Editor servidor</a>
       <% } %>
-      <a class="button-link" href="/admin/downloads">Descargas</a>
-      <a class="button-link" href="/admin/news">Noticias</a>
-      <a class="button-link" href="/admin/logout">Salir</a>
+      <a class="button-link" href="/admin/downloads">Downloads</a>
+      <a class="button-link" href="/admin/news">Notícias</a>
+      <a class="button-link" href="/admin/logout">Sair</a>
     </div>
   </div>
 
@@ -22,36 +22,36 @@
   <% } %>
 
   <div class="card" style="margin-top:12px">
-    <h3>Estado</h3>
+    <h3>Status</h3>
     <% if (stat) { %>
       <ul class="list">
-        <li><span>Online</span><span><%= stat.ConnectStat === 1 ? 'Si' : 'No' %></span></li>
+        <li><span>Online</span><span><%= stat.ConnectStat === 1 ? 'Sim' : 'Não' %></span></li>
         <li><span>Server</span><span><%= stat.ServerName || '-' %></span></li>
         <li><span>IP</span><span><%= stat.IP || '-' %></span></li>
-        <li><span>Conecto</span><span><%= stat.ConnectLocal || '-' %></span></li>
-        <li><span>Desconecto</span><span><%= stat.DisconnectLocal || '-' %></span></li>
+        <li><span>Conectou</span><span><%= stat.ConnectLocal || '-' %></span></li>
+        <li><span>Desconectou</span><span><%= stat.DisconnectLocal || '-' %></span></li>
       </ul>
     <% } else { %>
-      <p class="muted">Sin datos de conexion.</p>
+      <p class="muted">Sem dados de conexão.</p>
     <% } %>
   </div>
 
   <form method="post" action="/admin/accounts/<%= account.memb___id %>">
-    <label>Usuario</label>
+    <label>Usuário</label>
     <input type="text" value="<%= account.memb___id %>" readonly />
 
-    <label>Nombre</label>
+    <label>Nome</label>
     <input type="text" name="name" value="<%= account.memb_name %>" required maxlength="10" />
 
-    <label>Email</label>
+    <label>E-mail</label>
     <input type="email" name="email" value="<%= account.mail_addr || '' %>" maxlength="50" />
 
-    <label>Codigo (18 numeros)</label>
+    <label>Código (18 números)</label>
     <input type="text" name="code" value="<%= account.sno__numb %>" required maxlength="18" />
 
     <label>Account Level</label>
     <select name="account_level">
-      <option value="0" <%= Number(account.AccountLevel) === 0 ? 'selected' : '' %>>0 - Cuenta normal</option>
+      <option value="0" <%= Number(account.AccountLevel) === 0 ? 'selected' : '' %>>0 - Conta normal</option>
       <option value="1" <%= Number(account.AccountLevel) === 1 ? 'selected' : '' %>>1 - VIP 1</option>
       <option value="2" <%= Number(account.AccountLevel) === 2 ? 'selected' : '' %>>2 - VIP 2</option>
       <option value="3" <%= Number(account.AccountLevel) === 3 ? 'selected' : '' %>>3 - VIP 3</option>
@@ -65,41 +65,41 @@
       Bloqueado
     </label>
 
-    <label>Expira bloqueo</label>
+    <label>Expira bloqueio</label>
     <input type="datetime-local" name="block_expire" value="<%= account.BlocExpireLocal %>" />
 
-    <label>Nueva contraseña (opcional)</label>
+    <label>Nova senha (opcional)</label>
     <input type="password" name="password" maxlength="10" />
 
-    <label>Confirmar nueva contraseña</label>
+    <label>Confirmar nova senha</label>
     <input type="password" name="confirm" maxlength="10" />
 
     <div class="row-between">
-      <button type="submit">Guardar</button>
-      <a class="button-link" href="/admin/accounts">Volver</a>
+      <button type="submit">Salvar</button>
+      <a class="button-link" href="/admin/accounts">Voltar</a>
     </div>
   </form>
 
   <div class="card" style="margin-top:18px">
     <div class="row-between">
-      <h3>Personajes</h3>
+      <h3>Personagens</h3>
       <div class="admin-links">
-        <a class="button-link" href="/admin/accounts/<%= account.memb___id %>/warehouse">Editar baul</a>
+        <a class="button-link" href="/admin/accounts/<%= account.memb___id %>/warehouse">Editar baú</a>
       </div>
     </div>
     <% if (!characters || characters.length === 0) { %>
-      <p class="muted">Sin personajes.</p>
+      <p class="muted">Sem personagens.</p>
     <% } else { %>
       <table class="table">
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Nivel</th>
+            <th>Nome</th>
+            <th>Nível</th>
             <th>Resets</th>
             <th>Grand</th>
-            <th>Clase</th>
+            <th>Classe</th>
             <th>Mapa</th>
-            <th>Acciones</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -113,7 +113,7 @@
               <td><%= char.MapName %></td>
             <td class="actions">
               <a href="/admin/accounts/<%= account.memb___id %>/characters/<%= encodeURIComponent(char.Name) %>">Editar</a>
-              <a href="/admin/accounts/<%= account.memb___id %>/characters/<%= encodeURIComponent(char.Name) %>/inventory">Inventario</a>
+              <a href="/admin/accounts/<%= account.memb___id %>/characters/<%= encodeURIComponent(char.Name) %>/inventory">Inventário</a>
             </td>
           </tr>
         <% }) %>
@@ -124,20 +124,20 @@
 
   <div class="card" style="margin-top:18px">
     <div class="row-between">
-      <h3>Baul</h3>
+      <h3>Baú</h3>
       <div class="admin-links">
         <a class="button-link" href="/admin/accounts/<%= account.memb___id %>/warehouse">Editar</a>
-        <a class="button-link" href="/admin/accounts/<%= account.memb___id %>/warehouse/editor">Editor grafico</a>
+        <a class="button-link" href="/admin/accounts/<%= account.memb___id %>/warehouse/editor">Editor gráfico</a>
       </div>
     </div>
     <% if (warehouse) { %>
       <ul class="list">
         <li><span>Zen</span><span><%= warehouse.Money %></span></li>
-        <li><span>Password</span><span><%= warehouse.pw %></span></li>
-        <li><span>Items (bytes)</span><span><%= warehouse.itemsBytes %></span></li>
+        <li><span>Senha</span><span><%= warehouse.pw %></span></li>
+        <li><span>Itens (bytes)</span><span><%= warehouse.itemsBytes %></span></li>
       </ul>
     <% } else { %>
-      <p class="muted">No hay baul creado para esta cuenta.</p>
+      <p class="muted">Não há baú criado para esta conta.</p>
     <% } %>
   </div>
 </section>

@@ -61,22 +61,22 @@
       <div class="editor-message alert hidden"></div>
       <div class="spawn-toolbar">
         <div class="spawn-toolbar-group">
-          <label>Cuenta</label>
+          <label>Conta</label>
           <input type="text" id="gm-account" placeholder="account" list="gm-account-list" />
           <datalist id="gm-account-list"></datalist>
-          <button type="button" id="load-characters">Cargar personajes</button>
-          <label>Personaje</label>
+          <button type="button" id="load-characters">Carregar personagens</button>
+          <label>Personagem</label>
           <select id="gm-character">
             <option value="">-</option>
           </select>
-          <label>Nivel GM</label>
+          <label>Nível GM</label>
           <input type="number" id="gm-level-add" min="0" max="3" value="1" />
-          <button type="button" id="add-gm">Agregar</button>
+          <button type="button" id="add-gm">Adicionar</button>
         </div>
         <div class="spawn-toolbar-group">
           <label>Buscar</label>
           <input type="text" id="gm-search" placeholder="Buscar..." />
-          <button type="button" id="save-gm">Guardar</button>
+          <button type="button" id="save-gm">Salvar</button>
         </div>
       </div>
       <div class="spawn-editor">
@@ -85,16 +85,16 @@
           <ul id="gm-list" class="simple-list"></ul>
         </div>
         <div class="spawn-form">
-          <h3>Detalle</h3>
-          <label>Cuenta</label>
+          <h3>Detalhe</h3>
+          <label>Conta</label>
           <input type="text" id="gm-account-edit" />
-          <label>Personaje</label>
+          <label>Personagem</label>
           <input type="text" id="gm-name-edit" />
-          <label>Nivel</label>
+          <label>Nível</label>
           <input type="number" id="gm-level-edit" min="0" max="3" />
           <div class="spawn-actions">
-            <button type="button" id="update-gm">Actualizar</button>
-            <button type="button" id="delete-gm" class="link-button">Eliminar</button>
+            <button type="button" id="update-gm">Atualizar</button>
+            <button type="button" id="delete-gm" class="link-button">Excluir</button>
           </div>
         </div>
       </div>
@@ -139,15 +139,15 @@
   async function loadCharacters() {
     const account = String(root.querySelector('#gm-account').value || '').trim();
     if (!account) {
-      setMessage('Ingresa una cuenta.', 'error');
+      setMessage('Digite uma conta.', 'error');
       return;
     }
     const select = root.querySelector('#gm-character');
-    select.innerHTML = '<option value="">Cargando...</option>';
+    select.innerHTML = '<option value="">Carregando...</option>';
     try {
       const res = await fetch(`/admin/server-editor/api/characters?account=${encodeURIComponent(account)}`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
       select.innerHTML = '<option value="">-</option>';
       (data.characters || []).forEach((name) => {
         const option = document.createElement('option');
@@ -156,7 +156,7 @@
         select.appendChild(option);
       });
       if ((data.characters || []).length === 0) {
-        setMessage('No se encontraron personajes.', 'error');
+        setMessage('Nenhum personagem encontrado.', 'error');
       }
     } catch (err) {
       setMessage(err.message, 'error');
@@ -169,20 +169,20 @@
     const name = String(root.querySelector('#gm-character').value || '').trim();
     const level = Number(root.querySelector('#gm-level-add').value);
     if (!account || !name) {
-      setMessage('Selecciona cuenta y personaje.', 'error');
+      setMessage('Selecione conta e personagem.', 'error');
       return;
     }
     const existing = state.entries.find((e) => e.account === account && e.name === name);
     if (existing) {
       existing.level = level;
       selectEntry(existing);
-      setMessage('GM actualizado.', 'success');
+      setMessage('GM atualizado.', 'success');
       return;
     }
     const entry = { account, name, level };
     state.entries.push(entry);
     selectEntry(entry);
-    setMessage('GM agregado.', 'success');
+    setMessage('GM adicionado.', 'success');
   }
 
   function bindEvents() {
@@ -209,7 +209,7 @@
       state.selected.name = String(root.querySelector('#gm-name-edit').value || '').trim();
       state.selected.level = Number(root.querySelector('#gm-level-edit').value);
       renderList();
-      setMessage('GM actualizado.', 'success');
+      setMessage('GM atualizado.', 'success');
     });
 
     root.querySelector('#delete-gm').addEventListener('click', () => {
@@ -219,7 +219,7 @@
       );
       state.selected = null;
       renderList();
-      setMessage('GM eliminado.', 'success');
+      setMessage('GM excluído.', 'success');
     });
 
     root.querySelector('#save-gm').addEventListener('click', async () => {
@@ -231,16 +231,16 @@
           body: JSON.stringify({ content })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
         const reload = await fetch('/admin/server-editor/api/reload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ target: 'util' })
         });
         if (!reload.ok) {
-          setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+          setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
         } else {
-          setMessage('Guardado y recargado en el servidor.', 'success');
+          setMessage('Salvo e recarregado no servidor.', 'success');
         }
       } catch (err) {
         setMessage(err.message, 'error');
@@ -269,7 +269,7 @@
   async function loadInitialData() {
     const res = await fetch('/admin/server-editor/api/gamemaster');
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+    if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
     state.entries = parseGameMaster(data.content || '');
   }
 

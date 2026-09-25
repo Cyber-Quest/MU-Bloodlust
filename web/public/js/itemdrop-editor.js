@@ -74,7 +74,7 @@
   }
 
   function buildPresetOptions(list) {
-    const options = ['<option value="*">Sin Option</option>'];
+    const options = ['<option value="*">Sem Option</option>'];
     if (!list || !list.length) return options.join('');
     list.forEach((entry) => {
       options.push(`<option value="${entry.index}">${presetLabel(entry)}</option>`);
@@ -93,7 +93,7 @@
     if (!exists) {
       const opt = document.createElement('option');
       opt.value = raw;
-      opt.textContent = `Preset ${raw} (no encontrado)`;
+      opt.textContent = `Preset ${raw} (não encontrado)`;
       select.appendChild(opt);
     }
     select.value = raw;
@@ -207,34 +207,34 @@
       <div class="spawn-toolbar">
         <div class="spawn-toolbar-group">
           <label>Buscar</label>
-          <input id="drop-search" type="text" placeholder="Buscar item, mapa o monster..." />
+          <input id="drop-search" type="text" placeholder="Buscar item, mapa ou monstro..." />
           <span class="muted" id="drop-count"></span>
         </div>
         <div class="spawn-toolbar-group">
           <label>Mapa</label>
           <input id="drop-filter-map" type="text" placeholder="*">
-          <label>Monster</label>
+          <label>Monstro</label>
           <input id="drop-filter-monster" type="text" placeholder="*">
         </div>
         <div class="spawn-toolbar-group">
-          <button type="button" id="save-drop">Guardar</button>
+          <button type="button" id="save-drop">Salvar</button>
         </div>
       </div>
       <div class="custom-note">
-        Usa <code>*</code> para “cualquier” mapa/monster/nivel. El <code>DropRate</code> usa escala
+        Use <code>*</code> para “qualquer” mapa/monstro/nível. O <code>DropRate</code> usa escala
         <strong>1,000,000</strong> (1,000,000 = 100%).
       </div>
       <div class="custom-note">
-        <strong>ItemGrade</strong> solo aplica cuando <strong>ExcellentRate</strong> = 0.
+        <strong>ItemGrade</strong> só se aplica quando <strong>ExcellentRate</strong> = 0.
       </div>
       <div class="spawn-editor">
         <div class="spawn-list">
           <h3>Drops</h3>
           <ul id="drop-list" class="simple-list"></ul>
-          <button type="button" id="add-drop">Agregar drop</button>
+          <button type="button" id="add-drop">Adicionar drop</button>
         </div>
         <div class="spawn-form">
-          <h3>Detalle</h3>
+          <h3>Detalhe</h3>
           <div class="custom-form-grid">
             <div class="field"><label>ItemType</label><input id="drop-item-type" type="number"></div>
             <div class="field"><label>ItemIndex</label><input id="drop-item-index" type="number"></div>
@@ -246,21 +246,21 @@
             <div class="field"><label>OptionRate (preset)</label><select id="drop-option-rate"></select></div>
             <div class="field"><label>ExcellentRate (preset)</label><select id="drop-exc-rate"></select></div>
             <div class="field"><label>MapNum</label><input id="drop-map" type="text" placeholder="*"></div>
-            <div class="field"><label>Monster</label><input id="drop-monster" type="text" placeholder="*"></div>
+            <div class="field"><label>Monstro</label><input id="drop-monster" type="text" placeholder="*"></div>
             <div class="field"><label>MonsterLvlMin</label><input id="drop-monster-min" type="text" placeholder="*"></div>
             <div class="field"><label>MonsterLvlMax</label><input id="drop-monster-max" type="text" placeholder="*"></div>
             <div class="field"><label>DropRate</label><input id="drop-rate" type="text"></div>
             <div class="field"><label>DropRate %</label><input id="drop-rate-percent" type="text" readonly></div>
-            <div class="field"><label>Comentario</label><input id="drop-comment" type="text"></div>
+            <div class="field"><label>Comentário</label><input id="drop-comment" type="text"></div>
           </div>
           <div class="item-picker">
-            <label>Explorador de items</label>
+            <label>Explorador de itens</label>
             <input type="text" id="drop-item-search" placeholder="Buscar item..." />
             <ul id="drop-item-picker" class="simple-list"></ul>
           </div>
           <div class="spawn-actions">
-            <button type="button" id="update-drop">Actualizar</button>
-            <button type="button" id="delete-drop" class="link-button">Eliminar</button>
+            <button type="button" id="update-drop">Atualizar</button>
+            <button type="button" id="delete-drop" class="link-button">Excluir</button>
           </div>
         </div>
       </div>
@@ -360,7 +360,7 @@
   }
 
   function validateRow(row) {
-    if (!row) return { ok: false, reason: 'Fila vacia.' };
+    if (!row) return { ok: false, reason: 'Linha vazia.' };
     const itemType = String(row.itemType ?? '').trim();
     const itemIndex = String(row.itemIndex ?? '').trim();
     const level = String(row.itemLevel ?? '').trim();
@@ -372,25 +372,25 @@
     const dropRate = String(row.dropRate ?? '').trim();
 
     const typeOk = isInteger(itemType) && Number(itemType) >= 0;
-    if (!typeOk) return { ok: false, reason: 'ItemType invalido.' };
+    if (!typeOk) return { ok: false, reason: 'ItemType inválido.' };
     const indexOk = isInteger(itemIndex) && Number(itemIndex) >= 0;
-    if (!indexOk) return { ok: false, reason: 'ItemIndex invalido.' };
+    if (!indexOk) return { ok: false, reason: 'ItemIndex inválido.' };
     const levelOk = isWildcard(level) || (isInteger(level) && Number(level) >= 0 && Number(level) <= 15);
-    if (!levelOk) return { ok: false, reason: 'ItemLevel invalido.' };
+    if (!levelOk) return { ok: false, reason: 'ItemLevel inválido.' };
     const gradeOk = isInteger(grade) && Number(grade) >= 0 && Number(grade) <= 15;
-    if (!gradeOk) return { ok: false, reason: 'ItemGrade invalido.' };
+    if (!gradeOk) return { ok: false, reason: 'ItemGrade inválido.' };
     const mapOk = isWildcard(map) || (isInteger(map) && Number(map) >= 0 && Number(map) <= 255);
-    if (!mapOk) return { ok: false, reason: 'MapNum invalido.' };
+    if (!mapOk) return { ok: false, reason: 'MapNum inválido.' };
     const monsterOk = isWildcard(monster) || (isInteger(monster) && Number(monster) >= 0);
-    if (!monsterOk) return { ok: false, reason: 'Monster invalido.' };
+    if (!monsterOk) return { ok: false, reason: 'Monstro inválido.' };
     const minOk = isWildcard(minLvl) || (isInteger(minLvl) && Number(minLvl) >= 0);
     const maxOk = isWildcard(maxLvl) || (isInteger(maxLvl) && Number(maxLvl) >= 0);
-    if (!minOk || !maxOk) return { ok: false, reason: 'Rango de nivel invalido.' };
+    if (!minOk || !maxOk) return { ok: false, reason: 'Faixa de nível inválida.' };
     if (isInteger(minLvl) && isInteger(maxLvl) && Number(minLvl) > Number(maxLvl)) {
       return { ok: false, reason: 'MonsterLvlMin > MonsterLvlMax.' };
     }
     const rateOk = isInteger(dropRate) && Number(dropRate) >= 0 && Number(dropRate) <= 1000000;
-    if (!rateOk) return { ok: false, reason: 'DropRate invalido.' };
+    if (!rateOk) return { ok: false, reason: 'DropRate inválido.' };
     return { ok: true };
   }
 
@@ -423,22 +423,22 @@
     const dropRate = readValue('drop-rate', '0');
 
     const typeOk = isInteger(itemType) && Number(itemType) >= 0;
-    markField('drop-item-type', typeOk, 'Usa un numero >= 0.');
+    markField('drop-item-type', typeOk, 'Use um número >= 0.');
 
     const indexOk = isInteger(itemIndex) && Number(itemIndex) >= 0;
-    markField('drop-item-index', indexOk, 'Usa un numero >= 0.');
+    markField('drop-item-index', indexOk, 'Use um número >= 0.');
 
     const levelOk = isWildcard(level) || (isInteger(level) && Number(level) >= 0 && Number(level) <= 15);
-    markField('drop-item-level', levelOk, 'Usa * o un numero entre 0 y 15.');
+    markField('drop-item-level', levelOk, 'Use * ou um número entre 0 e 15.');
 
     const gradeOk = isInteger(grade) && Number(grade) >= 0 && Number(grade) <= 15;
-    markField('drop-item-grade', gradeOk, 'Usa un numero entre 0 y 15.');
+    markField('drop-item-grade', gradeOk, 'Use um número entre 0 e 15.');
 
     const mapOk = isWildcard(map) || (isInteger(map) && Number(map) >= 0 && Number(map) <= 255);
-    markField('drop-map', mapOk, 'Usa * o un numero entre 0 y 255.');
+    markField('drop-map', mapOk, 'Use * ou um número entre 0 e 255.');
 
     const monsterOk = isWildcard(monster) || (isInteger(monster) && Number(monster) >= 0);
-    markField('drop-monster', monsterOk, 'Usa * o un numero >= 0.');
+    markField('drop-monster', monsterOk, 'Use * ou um número >= 0.');
 
     const minOk = isWildcard(minLvl) || (isInteger(minLvl) && Number(minLvl) >= 0);
     const maxOk = isWildcard(maxLvl) || (isInteger(maxLvl) && Number(maxLvl) >= 0);
@@ -446,11 +446,11 @@
       minOk &&
       maxOk &&
       (!isInteger(minLvl) || !isInteger(maxLvl) || Number(minLvl) <= Number(maxLvl));
-    markField('drop-monster-min', minOk && rangeOk, 'Usa * o un numero >= 0.');
-    markField('drop-monster-max', maxOk && rangeOk, 'Usa * o un numero >= 0.');
+    markField('drop-monster-min', minOk && rangeOk, 'Use * ou um número >= 0.');
+    markField('drop-monster-max', maxOk && rangeOk, 'Use * ou um número >= 0.');
 
     const rateOk = isInteger(dropRate) && Number(dropRate) >= 0 && Number(dropRate) <= 1000000;
-    markField('drop-rate', rateOk, 'Usa un numero entre 0 y 1000000.');
+    markField('drop-rate', rateOk, 'Use um número entre 0 e 1000000.');
 
     const percentInput = root.querySelector('#drop-rate-percent');
     if (percentInput) {
@@ -497,7 +497,7 @@
 
     root.querySelector('#update-drop')?.addEventListener('click', () => {
       if (!validateInputs()) {
-        setMessage('Hay campos invalidos. Revisar resaltados.', 'error');
+        setMessage('Há campos inválidos. Revise os destacados.', 'error');
         return;
       }
       const idx = state.selected;
@@ -520,7 +520,7 @@
       row.dropRate = readValue('drop-rate', '0');
       row.comment = readValue('drop-comment', '');
       renderList();
-      setMessage('Drop actualizado.', 'success');
+      setMessage('Drop atualizado.', 'success');
     });
 
     root.querySelector('#delete-drop')?.addEventListener('click', () => {
@@ -529,7 +529,7 @@
       state.rows.splice(idx, 1);
       state.selected = null;
       renderList();
-      setMessage('Drop eliminado.', 'success');
+      setMessage('Drop excluído.', 'success');
     });
 
     root.querySelector('#save-drop')?.addEventListener('click', saveDrop);
@@ -589,7 +589,7 @@
   async function loadDrop() {
     const res = await fetch(apiGet);
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo cargar el drop');
+    if (!res.ok) throw new Error(data.error || 'Não foi possível carregar o drop');
     state.rows = parseDrop(data.content || '');
     state.selected = null;
   }
@@ -597,14 +597,14 @@
   async function saveDrop() {
     try {
       if (state.selected != null && !validateInputs()) {
-        setMessage('Hay campos invalidos. Revisar resaltados.', 'error');
+        setMessage('Há campos inválidos. Revise os destacados.', 'error');
         return;
       }
       for (let i = 0; i < state.rows.length; i += 1) {
         const result = validateRow(state.rows[i]);
         if (!result.ok) {
           selectRow(i);
-          setMessage(`No se pudo guardar: ${result.reason}`, 'error');
+          setMessage(`Não foi possível salvar: ${result.reason}`, 'error');
           return;
         }
       }
@@ -615,16 +615,16 @@
         body: JSON.stringify({ content })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
       const reload = await fetch('/admin/server-editor/api/reload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target: reloadTarget })
       });
       if (!reload.ok) {
-        setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+        setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
       } else {
-        setMessage('Drop guardado y recargado en el servidor.', 'success');
+        setMessage('Drop salvo e recarregado no servidor.', 'success');
       }
     } catch (err) {
       setMessage(err.message, 'error');
@@ -638,7 +638,7 @@
       state.itemDefs = Array.isArray(data.items) ? data.items : [];
       state.itemMap = new Map(state.itemDefs.map((item) => [itemKey(item.section, item.index), item]));
     } catch {
-      setMessage('No se pudo cargar la lista de items.', 'error');
+      setMessage('Não foi possível carregar a lista de itens.', 'error');
     }
   }
 
@@ -646,7 +646,7 @@
     try {
       const res = await fetch('/admin/server-editor/api/item-option-rate');
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'No se pudo cargar ItemOptionRate');
+      if (!res.ok) throw new Error(data.error || 'Não foi possível carregar ItemOptionRate');
       const sections = parseOptionRate(data.content || '');
       state.optionPresets.level = sections[0] || [];
       state.optionPresets.skill = sections[1] || [];

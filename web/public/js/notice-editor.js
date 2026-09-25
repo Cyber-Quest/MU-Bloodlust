@@ -60,11 +60,11 @@
       <div class="spawn-toolbar">
         <div class="spawn-toolbar-group">
           <label>Buscar</label>
-          <input type="text" id="notice-search" placeholder="Buscar mensaje..." />
+          <input type="text" id="notice-search" placeholder="Buscar mensagem..." />
         </div>
         <div class="spawn-toolbar-group">
-          <button type="button" id="add-notice">Agregar notice</button>
-          <button type="button" id="save-notice">Guardar</button>
+          <button type="button" id="add-notice">Adicionar notice</button>
+          <button type="button" id="save-notice">Salvar</button>
         </div>
       </div>
       <div class="spawn-editor">
@@ -73,8 +73,8 @@
           <ul id="notice-list" class="simple-list"></ul>
         </div>
         <div class="spawn-form">
-          <h3>Detalle</h3>
-          <label>Mensaje</label>
+          <h3>Detalhe</h3>
+          <label>Mensagem</label>
           <input type="text" id="notice-message" maxlength="128" />
           <label>Tipo</label>
           <select id="notice-type">
@@ -84,8 +84,8 @@
           <label>Repeat (seg)</label>
           <input type="number" id="notice-repeat" min="5" />
           <div class="spawn-actions">
-            <button type="button" id="update-notice">Actualizar</button>
-            <button type="button" id="delete-notice" class="link-button">Eliminar</button>
+            <button type="button" id="update-notice">Atualizar</button>
+            <button type="button" id="delete-notice" class="link-button">Excluir</button>
           </div>
         </div>
       </div>
@@ -138,13 +138,13 @@
 
     root.querySelector('#add-notice').addEventListener('click', () => {
       const notice = {
-        message: 'Nuevo notice',
+        message: 'Novo notice',
         type: 0,
         repeat: 600
       };
       state.notices.push(notice);
       selectNotice(notice, state.notices.length - 1);
-      setMessage('Notice agregado.', 'success');
+      setMessage('Notice adicionado.', 'success');
     });
 
     root.querySelector('#update-notice').addEventListener('click', () => {
@@ -156,7 +156,7 @@
         repeat: Number(root.querySelector('#notice-repeat').value)
       };
       selectNotice(state.notices[index], index);
-      setMessage('Notice actualizado.', 'success');
+      setMessage('Notice atualizado.', 'success');
     });
 
     root.querySelector('#delete-notice').addEventListener('click', () => {
@@ -164,7 +164,7 @@
       state.notices.splice(state.selected.index, 1);
       state.selected = null;
       renderList();
-      setMessage('Notice eliminado.', 'success');
+      setMessage('Notice excluído.', 'success');
     });
 
     root.querySelector('#save-notice').addEventListener('click', async () => {
@@ -176,16 +176,16 @@
           body: JSON.stringify({ content })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
         const reload = await fetch('/admin/server-editor/api/reload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ target: 'util' })
         });
         if (!reload.ok) {
-          setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+          setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
         } else {
-          setMessage('Guardado y recargado en el servidor.', 'success');
+          setMessage('Salvo e recarregado no servidor.', 'success');
         }
       } catch (err) {
         setMessage(err.message, 'error');
@@ -196,7 +196,7 @@
   async function loadInitialData() {
     const res = await fetch('/admin/server-editor/api/notices');
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+    if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
     state.notices = parseNotice(data.content || '');
   }
 

@@ -7,12 +7,12 @@
   const reloadTarget = root.dataset.reload || 'common';
 
   const KEY_HELP = {
-    CheckSpeedHack: 'Controla la velocidad de ataque y magia.',
-    CheckSpeedHackTolerance: 'Tolerancia cuando CheckSpeedHack=1.',
-    CheckLatencyHack: 'Valida latencia sospechosa.',
-    CheckLatencyHackTolerance: 'Tolerancia cuando CheckLatencyHack=1.',
-    CheckAutoPotionHack: 'Valida consumo automatico de pociones.',
-    CheckAutoPotionHackTolerance: 'Tolerancia cuando CheckAutoPotionHack=1.'
+    CheckSpeedHack: 'Controla a velocidade de ataque e magia.',
+    CheckSpeedHackTolerance: 'Tolerância quando CheckSpeedHack=1.',
+    CheckLatencyHack: 'Valida latência suspeita.',
+    CheckLatencyHackTolerance: 'Tolerância quando CheckLatencyHack=1.',
+    CheckAutoPotionHack: 'Valida consumo automático de poções.',
+    CheckAutoPotionHackTolerance: 'Tolerância quando CheckAutoPotionHack=1.'
   };
 
   const state = {
@@ -43,26 +43,26 @@
       GameServerInfo: 'General',
       'Hack Settings': 'Anti-Hack',
       'Common Settings': 'General',
-      'Monster Settings': 'Monstruos',
+      'Monster Settings': 'Monstros',
       'PK Settings': 'PK',
       'Guild Settings': 'Guild',
       'Guild War/Soccer Settings': 'Guild War / Soccer',
-      'Experience Settings': 'Experiencia',
-      'Item Drop Settings': 'Drop de Items',
+      'Experience Settings': 'Experiência',
+      'Item Drop Settings': 'Drop de Itens',
       'Money Drop Settings': 'Drop de Zen',
       'Shop Settings': 'Shop',
       'Event Settings': 'Eventos',
-      'Character Settings': 'Personajes',
-      'Inventory Settings': 'Inventario',
-      'Connection Settings': 'Conexion',
-      'Chaos Item Mix Settings': 'Chaos Mix - Items',
+      'Character Settings': 'Personagens',
+      'Inventory Settings': 'Inventário',
+      'Connection Settings': 'Conexão',
+      'Chaos Item Mix Settings': 'Chaos Mix - Itens',
       'Devil Square Mix Settings': 'Devil Square - Entradas',
-      '+10/+11 Plus Item Mix Settings': 'Mejora +10/+11',
-      'Dinorant Mix Settings': 'Mezcla Dinorant',
-      'Fruit Mix Settings': 'Mezcla Frutas',
-      'Wing1 Mix Settings': 'Mezcla Ala 1',
+      '+10/+11 Plus Item Mix Settings': 'Melhoria +10/+11',
+      'Dinorant Mix Settings': 'Mistura Dinorant',
+      'Fruit Mix Settings': 'Mistura Frutas',
+      'Wing1 Mix Settings': 'Mistura Asa 1',
       'Blood Castle Mix Settings': 'Blood Castle - Entradas',
-      'Wing2 Mix Settings': 'Mezcla Ala 2'
+      'Wing2 Mix Settings': 'Mistura Asa 2'
     };
     return map[name] || name;
   }
@@ -87,108 +87,108 @@
     if (/^=+$/.test(cleaned.replace(/\s+/g, ''))) return '';
     const directMap = {
       'Check Physic and Magic Speed (0 = No / 1 = Yes)':
-        'Verifica velocidad de ataque/magia (0 = No / 1 = Si).',
+        'Verifica velocidade de ataque/magia (0 = Não / 1 = Sim).',
       'The tolerance for the SpeedHack when CheckSpeedHack=1':
-        'Tolerancia cuando CheckSpeedHack=1.',
+        'Tolerância quando CheckSpeedHack=1.',
       'Check Latency (0 = No / 1 = Yes)':
-        'Verifica latencia (0 = No / 1 = Si).',
+        'Verifica latência (0 = Não / 1 = Sim).',
       'The tolerance for the Latency when CheckLatencyHack=1':
-        'Tolerancia cuando CheckLatencyHack=1.',
+        'Tolerância quando CheckLatencyHack=1.',
       'Check Potions consumption (0 = No / 1 = Yes)':
-        'Verifica consumo de pociones (0 = No / 1 = Si).',
+        'Verifica consumo de poções (0 = Não / 1 = Sim).',
       'The tolerance for consuming potions when CheckAutoPotionHack=1':
-        'Tolerancia cuando CheckAutoPotionHack=1.',
+        'Tolerância quando CheckAutoPotionHack=1.',
       'Maximum Jewel of Life additional option':
-        'Maximo de opcion adicional para Jewel of Life.',
+        'Máximo de opção adicional para Jewel of Life.',
       'Maximum IPs per computer':
-        'Maximo de IPs por computadora.',
+        'Máximo de IPs por computador.',
       'Disconnect the account when trying to connect to the same account (0 = No / 1 = Yes)':
-        'Desconectar al intentar entrar con la misma cuenta (0 = No / 1 = Si).',
+        'Desconectar ao tentar entrar com a mesma conta (0 = Não / 1 = Sim).',
       'Check the personal code (0 = No / 1 = Yes)':
-        'Verifica el codigo personal (0 = No / 1 = Si).',
+        'Verifica o código pessoal (0 = Não / 1 = Sim).',
       'Rate of life of all Monsters':
-        'Multiplicador de vida de todos los monstruos.',
+        'Multiplicador de vida de todos os monstros.',
       'Send the monster\'s HP for the client\'s Health Bar (0 = No / 1 = Yes)':
-        'Enviar HP del monstruo al cliente (0 = No / 1 = Si).',
+        'Enviar HP do monstro ao cliente (0 = Não / 1 = Sim).',
       'Disable player vs player? (0 = No / 1 = Yes)':
-        'Deshabilitar PVP (0 = No / 1 = Si).',
+        'Desabilitar PVP (0 = Não / 1 = Sim).',
       'Enable PKs to Move and Talk to NPCs (0 = No / 1 = Yes)':
-        'Permite PK para moverse y hablar con NPCs (0 = No / 1 = Si).',
+        'Permite PK para se mover e falar com NPCs (0 = Não / 1 = Sim).',
       'Time to decrease the Hero status (In Seconds)':
-        'Tiempo para bajar estado Hero (en segundos).',
+        'Tempo para baixar estado Hero (em segundos).',
       'Time to decrease the PK status (In Seconds)':
-        'Tiempo para bajar estado PK (en segundos).',
+        'Tempo para baixar estado PK (em segundos).',
       'Enable Guild Creation (0 = No / 1 = Yes)':
-        'Permite crear guild (0 = No / 1 = Si).',
+        'Permite criar guild (0 = Não / 1 = Sim).',
       'Enable Guild Delete (0 = No / 1 = Yes)':
-        'Permite borrar guild (0 = No / 1 = Si).',
+        'Permite excluir guild (0 = Não / 1 = Sim).',
       'Min Level required to create guild':
-        'Nivel minimo para crear guild.',
+        'Nível mínimo para criar guild.',
       'Min Reset required to create guild':
-        'Reset minimo para crear guild.',
+        'Reset mínimo para criar guild.',
       'Maximum users to insert in the guild (MAX: 40)':
-        'Maximo de usuarios en guild (MAX: 40).',
+        'Máximo de usuários na guild (MAX: 40).',
       'Score needed to win the guild war':
-        'Puntaje necesario para ganar guild war.',
+        'Pontuação necessária para vencer guild war.',
       'Score needed to win the battle soccer':
-        'Puntaje necesario para ganar battle soccer.',
+        'Pontuação necessária para vencer battle soccer.',
       'Points gained when enemy guild score is 0':
-        'Puntos ganados cuando el enemigo tiene 0.',
+        'Pontos ganhos quando o inimigo tem 0.',
       'Points gained when enemy guild score is less than half':
-        'Puntos ganados cuando el enemigo tiene menos de la mitad.',
+        'Pontos ganhos quando o inimigo tem menos da metade.',
       'Points gained in normal win':
-        'Puntos ganados en victoria normal.',
+        'Pontos ganhos em vitória normal.',
       'Experience rate gained in the server when killing monsters':
-        'Experiencia ganada al matar monstruos.',
+        'Experiência ganha ao matar monstros.',
       'Experience rate gained in events reward (Devil Square, Blood Castle)':
-        'Experiencia por recompensas de eventos (DS/BC).',
+        'Experiência por recompensas de eventos (DS/BC).',
       'Time of the item on the ground (In Seconds)':
-        'Tiempo del item en el suelo (segundos).',
+        'Tempo do item no chão (segundos).',
       'Rate of the drop of the items':
-        'Tasa de drop de items.',
+        'Taxa de drop de itens.',
       'Time of the money on the ground (In Seconds)':
-        'Tiempo del zen en el suelo (segundos).',
+        'Tempo do zen no chão (segundos).',
       'Rate of the amount of money dropped':
-        'Tasa de cantidad de zen dropeado.',
+        'Taxa de quantidade de zen dropado.',
       '-1 = (Total SellPrice of every item inside ChaosBox) / 20000':
-        '-1 = (Precio total de venta de los items en Chaos Box) / 20000.',
+        '-1 = (Preço total de venda dos itens na Chaos Box) / 20000.',
       '-1 = (Total SellPrice of every additional item inside ChaosBox) / 20000':
-        '-1 = (Precio total de venta de los items adicionales en Chaos Box) / 20000.',
+        '-1 = (Preço total de venda dos itens adicionais na Chaos Box) / 20000.',
       '-1 = (Total SellPrice of every jewel inside ChaosBox) / 20000':
-        '-1 = (Precio total de venta de las jewels en Chaos Box) / 20000.',
+        '-1 = (Preço total de venda das jewels na Chaos Box) / 20000.',
       '-1 = (Total SellPrice of every additional item inside ChaosBox) / 40000':
-        '-1 = (Precio total de venta de los items adicionales en Chaos Box) / 40000.',
+        '-1 = (Preço total de venda dos itens adicionais na Chaos Box) / 40000.',
       '-1 = (Wing SellPrice) / 4000000':
-        '-1 = (Precio de venta del ala) / 4000000.',
+        '-1 = (Preço de venda da asa) / 4000000.',
       '-1 = Rate * 10000':
-        '-1 = Tasa * 10000.',
+        '-1 = Taxa * 10000.',
       '0 ~ 100':
         '0 a 100.',
       '0 ~ MAXMONEY':
         '0 a MAXMONEY.',
       'Additional Mix Rate when Item is added':
-        'Tasa adicional cuando se agrega un item.',
+        'Taxa adicional quando se adiciona um item.',
       'Additional Mix Rate when Jewel is added':
-        'Tasa adicional cuando se agrega una jewel.',
+        'Taxa adicional quando se adiciona uma jewel.',
       'CustomMixRate: Rate of generating a random Custom Wing':
-        'CustomMixRate: probabilidad de generar un ala custom.',
+        'CustomMixRate: probabilidade de gerar uma asa custom.',
       '0 = Never generate Custom Wings (Always generate S2 Only)':
-        '0 = Nunca genera alas custom (siempre genera S2).',
+        '0 = Nunca gera asas custom (sempre gera S2).',
       '100 = Never generate S2 Wings (Always generate Custom Wings Only)':
-        '100 = Nunca genera alas S2 (solo genera custom).'
+        '100 = Nunca gera asas S2 (só gera custom).'
     };
     if (directMap[cleaned]) return directMap[cleaned];
     let t = cleaned;
-    t = t.replace(/\(0\s*=\s*No\s*\/\s*1\s*=\s*Yes\)/gi, '(0 = No / 1 = Si)');
-    t = t.replace(/In Seconds/gi, 'en segundos');
-    t = t.replace(/Maximum/gi, 'Maximo');
-    t = t.replace(/Minimum/gi, 'Minimo');
-    t = t.replace(/Experience/gi, 'Experiencia');
-    t = t.replace(/Rate/gi, 'Tasa');
-    t = t.replace(/Time/gi, 'Tiempo');
+    t = t.replace(/\(0\s*=\s*No\s*\/\s*1\s*=\s*Yes\)/gi, '(0 = Não / 1 = Sim)');
+    t = t.replace(/In Seconds/gi, 'em segundos');
+    t = t.replace(/Maximum/gi, 'Máximo');
+    t = t.replace(/Minimum/gi, 'Mínimo');
+    t = t.replace(/Experience/gi, 'Experiência');
+    t = t.replace(/Rate/gi, 'Taxa');
+    t = t.replace(/Time/gi, 'Tempo');
     t = t.replace(/Money/gi, 'Zen');
-    t = t.replace(/Character/gi, 'Personaje');
-    t = t.replace(/Level/gi, 'Nivel');
+    t = t.replace(/Character/gi, 'Personagem');
+    t = t.replace(/Level/gi, 'Nível');
     return t.trim();
   }
 
@@ -290,7 +290,7 @@
       let help = helpParts.join(' ');
       if (KEY_HELP[key]) help = KEY_HELP[key];
       if (!help && isBooleanEntry({ key, value })) {
-        help = '0 = No / 1 = Si';
+        help = '0 = Não / 1 = Sim';
       } else if (!help && /Rate|Experience/i.test(key)) {
         help = '100 = 100%';
       }
@@ -320,17 +320,17 @@
         <div class="spawn-toolbar-group">
           <label>Buscar</label>
           <input type="text" id="cfg-search" placeholder="Buscar config..." />
-          <span class="cfg-dirty" id="cfg-dirty">Sin cambios</span>
+          <span class="cfg-dirty" id="cfg-dirty">Sem alterações</span>
         </div>
         <div class="spawn-toolbar-group">
           <button type="button" id="reset-cfg" class="btn-danger">Restaurar valores</button>
-          <button type="button" id="save-cfg">Guardar</button>
+          <button type="button" id="save-cfg">Salvar</button>
         </div>
       </div>
       <div class="cfg-layout">
         <aside class="cfg-sidebar">
-          <div class="cfg-sidebar-title">Secciones</div>
-          <input type="text" id="cfg-nav-search" placeholder="Filtrar secciones..." />
+          <div class="cfg-sidebar-title">Seções</div>
+          <input type="text" id="cfg-nav-search" placeholder="Filtrar seções..." />
           <ul id="cfg-nav"></ul>
         </aside>
         <div class="cfg-sections" id="cfg-sections"></div>
@@ -351,7 +351,7 @@
     const resetBtn = document.createElement('button');
     resetBtn.type = 'button';
     resetBtn.className = 'cfg-reset';
-    resetBtn.textContent = 'Restaurar seccion';
+    resetBtn.textContent = 'Restaurar seção';
     resetBtn.addEventListener('click', () => {
       state.entries
         .filter((entry) => entry.section === sectionName)
@@ -360,7 +360,7 @@
         });
       renderList(root.querySelector('#cfg-search').value || '');
       updateDirtyBadge();
-      setMessage('Seccion restaurada.', 'success');
+      setMessage('Seção restaurada.', 'success');
     });
     actions.appendChild(resetBtn);
     header.appendChild(title);
@@ -513,7 +513,7 @@
     const badge = root.querySelector('#cfg-dirty');
     if (!badge) return;
     const dirtyCount = state.entries.filter((entry) => entry.value !== entry.originalValue).length;
-    badge.textContent = dirtyCount ? `Cambios: ${dirtyCount}` : 'Sin cambios';
+    badge.textContent = dirtyCount ? `Alterações: ${dirtyCount}` : 'Sem alterações';
   }
 
   function buildContent() {
@@ -536,14 +536,14 @@
 
     root.querySelector('#reset-cfg').addEventListener('click', () => {
       if (!state.originalRaw) return;
-      const ok = confirm('Restaurar los valores del archivo? Se perderan cambios sin guardar.');
+      const ok = confirm('Restaurar os valores do arquivo? As alterações não salvas serão perdidas.');
       if (!ok) return;
       state.raw = state.originalRaw;
       parseCommon(state.raw);
       root.querySelector('#cfg-search').value = '';
       renderList('');
       updateDirtyBadge();
-      setMessage('Valores restaurados desde el archivo.', 'success');
+      setMessage('Valores restaurados a partir do arquivo.', 'success');
     });
 
     root.querySelector('#save-cfg').addEventListener('click', async () => {
@@ -555,7 +555,7 @@
           body: JSON.stringify({ content })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'No se pudo guardar');
+        if (!res.ok) throw new Error(data.error || 'Não foi possível salvar');
         state.raw = content;
         state.originalRaw = content;
         state.entries.forEach((entry) => {
@@ -568,9 +568,9 @@
           body: JSON.stringify({ target: reloadTarget })
         });
         if (!reload.ok) {
-          setMessage('Guardado, pero no se pudo recargar en el server.', 'error');
+          setMessage('Salvo, mas não foi possível recarregar no servidor.', 'error');
         } else {
-          setMessage('Guardado y recargado en el servidor.', 'success');
+          setMessage('Salvo e recarregado no servidor.', 'success');
         }
       } catch (err) {
         setMessage(err.message, 'error');
@@ -581,7 +581,7 @@
   async function loadInitialData() {
     const res = await fetch(apiGet);
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'No se pudo cargar');
+    if (!res.ok) throw new Error(data.error || 'Não foi possível carregar');
     state.raw = data.content || '';
     state.originalRaw = state.raw;
     parseCommon(state.raw);

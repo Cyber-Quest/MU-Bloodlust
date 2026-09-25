@@ -42,16 +42,16 @@
   const EQUIP_META = [
     { index: 0, label: 'Arma' },
     { index: 1, label: 'Escudo' },
-    { index: 2, label: 'Casco' },
+    { index: 2, label: 'Elmo' },
     { index: 3, label: 'Armadura' },
-    { index: 4, label: 'Pantalon' },
-    { index: 5, label: 'Guantes' },
+    { index: 4, label: 'Calça' },
+    { index: 5, label: 'Luvas' },
     { index: 6, label: 'Botas' },
-    { index: 7, label: 'Alas' },
+    { index: 7, label: 'Asas' },
     { index: 8, label: 'Pet' },
-    { index: 9, label: 'Pendiente' },
-    { index: 10, label: 'Anillo 1' },
-    { index: 11, label: 'Anillo 2' }
+    { index: 9, label: 'Pingente' },
+    { index: 10, label: 'Anel 1' },
+    { index: 11, label: 'Anel 2' }
   ];
 
   const EQUIP_RECTS = [
@@ -253,9 +253,9 @@
         <input type="text" id="item-search" placeholder="Buscar item..." />
         <select id="item-select" size="10"></select>
         <div class="picker-fields">
-          <label>Nivel</label>
+          <label>Nível</label>
           <input type="number" id="item-level" min="0" max="15" value="0" />
-          <label>Durabilidad</label>
+          <label>Durabilidade</label>
           <input type="number" id="item-durability" min="0" max="255" value="255" />
           <label class="checkbox"><input type="checkbox" id="item-skill" /> Skill</label>
           <label class="checkbox"><input type="checkbox" id="item-luck" /> Luck</label>
@@ -264,8 +264,8 @@
           <label>Excellent (0-63)</label>
           <input type="number" id="item-exc" min="0" max="63" value="0" />
           <button type="button" id="place-item">Colocar item</button>
-          <button type="button" id="update-item">Actualizar seleccionado</button>
-          <button type="button" id="remove-item" class="link-button">Eliminar seleccionado</button>
+          <button type="button" id="update-item">Atualizar selecionado</button>
+          <button type="button" id="remove-item" class="link-button">Excluir selecionado</button>
         </div>
       </div>
     `;
@@ -527,12 +527,12 @@
 
     root.querySelector('#place-item').addEventListener('click', () => {
       placeMode = true;
-      setMessage('Selecciona una casilla libre para colocar el item.', 'success');
+      setMessage('Selecione uma casa livre para colocar o item.', 'success');
     });
 
     root.querySelector('#update-item').addEventListener('click', () => {
       if (!selectedItemId) {
-        setMessage('Selecciona un item primero.', 'error');
+        setMessage('Selecione um item primeiro.', 'error');
         return;
       }
       const item = state.items.get(selectedItemId) || state.equip.find((it) => it && it.id === selectedItemId);
@@ -545,12 +545,12 @@
       item.excellent = Number(root.querySelector('#item-exc').value || 0);
       item.bytes = encodeItem(item);
       renderItems();
-      setMessage('Item actualizado.', 'success');
+      setMessage('Item atualizado.', 'success');
     });
 
     root.querySelector('#remove-item').addEventListener('click', () => {
       if (!selectedItemId) {
-        setMessage('Selecciona un item primero.', 'error');
+        setMessage('Selecione um item primeiro.', 'error');
         return;
       }
       const item = state.items.get(selectedItemId);
@@ -576,11 +576,11 @@
         if (placeMode) {
           const newItem = createItemFromPicker();
           if (!newItem) {
-            setMessage('Selecciona un item para colocar.', 'error');
+            setMessage('Selecione um item para colocar.', 'error');
             return;
           }
           if (!canPlace(newItem, slotIndex)) {
-            setMessage('No hay espacio para el item en esa posicion.', 'error');
+            setMessage('Não há espaço para o item nessa posição.', 'error');
             return;
           }
           newItem.area = 'bag';
@@ -601,7 +601,7 @@
             if (moveItemToBag(item, slotIndex)) {
               renderItems();
             } else {
-              setMessage('No se puede mover a esa posicion.', 'error');
+              setMessage('Não é possível mover para essa posição.', 'error');
             }
             return;
           }
@@ -615,15 +615,15 @@
         if (placeMode) {
           const newItem = createItemFromPicker();
           if (!newItem) {
-            setMessage('Selecciona un item para colocar.', 'error');
+            setMessage('Selecione um item para colocar.', 'error');
             return;
           }
           if (!canEquip(newItem, slotIndex)) {
-            setMessage('Ese item no puede equiparse ahi.', 'error');
+            setMessage('Esse item não pode ser equipado aí.', 'error');
             return;
           }
           if (state.equip[slotIndex]) {
-            setMessage('Ese slot esta ocupado.', 'error');
+            setMessage('Esse slot está ocupado.', 'error');
             return;
           }
           newItem.area = 'equip';
@@ -645,7 +645,7 @@
               renderItems();
               return;
             }
-            setMessage('No se puede equipar en ese slot.', 'error');
+            setMessage('Não é possível equipar nesse slot.', 'error');
             return;
           }
         }
@@ -723,6 +723,6 @@
       render();
     })
     .catch(() => {
-      setMessage('No se pudo cargar la lista de items.', 'error');
+      setMessage('Não foi possível carregar a lista de itens.', 'error');
     });
 })();
