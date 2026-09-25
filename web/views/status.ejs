@@ -1,0 +1,171 @@
+<%- include('partials/site_head', { pageTitle, page }) %>
+
+<%
+function statusClass(ok) {
+  return ok ? 'is-up' : 'is-down';
+}
+function statusText(ok) {
+  return ok ? 'Online' : 'Offline';
+}
+%>
+
+<main class="flex-grow-1">
+  <div class="container my-5">
+    <div class="bg-white border p-4 shadow-sm rounded-3" id="server-status"
+         data-api="/api/status" data-interval="10000">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <div>
+          <h3 class="fw-bold mb-0">Status dos Servidores</h3>
+          <p class="text-muted small mb-0">
+            Verificação automática a cada 10 segundos &bull;
+            <span id="status-checked">última verificação: <%= status.checkedAt ? new Date(status.checkedAt).toLocaleTimeString('pt-BR') : '--:--:--' %></span>
+          </p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="status-badge <%= statusClass(status.online) %>" id="status-overall">
+            <span class="status-dot"></span>
+            <span id="status-overall-text"><%= status.online ? 'Servidor no ar' : 'Servidor fora do ar' %></span>
+          </span>
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="status-refresh">Verificar agora</button>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-12 col-md-4">
+          <div class="status-card <%= statusClass(status.connectServer) %>" id="card-connect">
+            <div class="status-card-head">
+              <span class="status-dot"></span>
+              <strong>ConnectServer</strong>
+            </div>
+            <div class="status-card-body">
+              <span class="status-port">Porta <%= connectServerPort %>/TCP</span>
+              <span class="status-state" id="state-connect"><%= statusText(status.connectServer) %></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="status-card <%= statusClass(status.gameServer) %>" id="card-game">
+            <div class="status-card-head">
+              <span class="status-dot"></span>
+              <strong>GameServer</strong>
+            </div>
+            <div class="status-card-body">
+              <span class="status-port">Porta <%= gameServerPort %>/TCP</span>
+              <span class="status-state" id="state-game"><%= statusText(status.gameServer) %></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="status-card <%= statusClass(status.database) %>" id="card-database">
+            <div class="status-card-head">
+              <span class="status-dot"></span>
+              <strong>Banco de dados</strong>
+            </div>
+            <div class="status-card-body">
+              <span class="status-port">MySQL</span>
+              <span class="status-state" id="state-database"><%= statusText(status.database) %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-12 col-md-6">
+          <div class="status-card is-info">
+            <div class="status-card-head">
+              <strong>Jogadores online</strong>
+            </div>
+            <div class="status-card-body">
+              <span class="status-big" id="status-players"><%= status.playersOnline %></span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="status-card is-info">
+            <div class="status-card-head">
+              <strong>Tempo de resposta da verificação</strong>
+            </div>
+            <div class="status-card-body">
+              <span class="status-big" id="status-latency"><%= status.latencyMs %><small> ms</small></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <% if (!status.online) { %>
+        <div class="alert alert-danger mt-4 mb-0">
+          O servidor está <strong>fora do ar</strong> no momento. Se o problema persistir,
+          verifique se os containers estão rodando no servidor.
+        </div>
+      <% } else { %>
+        <div class="alert alert-success mt-4 mb-0">
+          Tudo funcionando! <a href="/download">Baixe o jogo</a> e bom divertimento.
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<script>
+  (function () {
+    var root = document.getElementById('server-status');
+    if (!root) return;
+
+    var api = root.dataset.api || '/api/status';
+    var interval = Number(root.dataset.interval || 10000);
+
+    function setClass(el, ok) {
+      if (!el) return;
+      el.classList.remove('is-up', 'is-down');
+      el.classList.add(ok ? 'is-up' : 'is-down');
+    }
+
+    function apply(status) {
+      if (!status) return;
+
+      var overall = document.getElementById('status-overall');
+      setClass(overall, status.online);
+      var overallText = document.getElementById('status-overall-text');
+      if (overallText) overallText.textContent = status.online ? 'Servidor no ar' : 'Servidor fora do ar';
+
+      var map = [
+        ['card-connect', 'state-connect', status.connectServer],
+        ['card-game', 'state-game', status.gameServer],
+        ['card-database', 'state-database', status.database]
+      ];
+
+      map.forEach(function (entry) {
+        setClass(document.getElementById(entry[0]), entry[2]);
+        var stateEl = document.getElementById(entry[1]);
+        if (stateEl) stateEl.textContent = entry[2] ? 'Online' : 'Offline';
+      });
+
+      var players = document.getElementById('status-players');
+      if (players) players.textContent = status.playersOnline;
+
+      var latency = document.getElementById('status-latency');
+      if (latency) latency.innerHTML = status.latencyMs + '<small> ms</small>';
+
+      var checked = document.getElementById('status-checked');
+      if (checked && status.checkedAt) {
+        checked.textContent = 'última verificação: ' + new Date(status.checkedAt).toLocaleTimeString('pt-BR');
+      }
+    }
+
+    function load() {
+      fetch(api, { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(apply)
+        .catch(function () { /* silencioso */ });
+    }
+
+    var btn = document.getElementById('status-refresh');
+    if (btn) btn.addEventListener('click', load);
+
+    setInterval(load, interval);
+  })();
+</script>
+
+<%- include('partials/site_footer') %>

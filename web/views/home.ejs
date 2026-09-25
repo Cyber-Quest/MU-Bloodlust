@@ -19,6 +19,13 @@
 
       <div class="mu-stat-row">
         <div class="mu-stat">
+          <span class="mu-stat-label">Status do servidor</span>
+          <span class="mu-stat-value <%= status && status.online ? 'is-online' : 'is-offline' %>" id="home-status" data-api="/api/status">
+            <span class="status-dot"></span>
+            <span id="home-status-text"><%= status && status.online ? 'Online' : 'Offline' %></span>
+          </span>
+        </div>
+        <div class="mu-stat">
           <span class="mu-stat-label">Jogadores online</span>
           <span class="mu-stat-value is-online" id="players-online"><%= playersOnline %></span>
         </div>

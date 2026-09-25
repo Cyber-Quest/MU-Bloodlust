@@ -8,6 +8,7 @@ const rateLimit = require('express-rate-limit');
 const sanitizeHtml = require('sanitize-html');
 const fs = require('fs');
 const path = require('path');
+const net = require('net');
 
 const app = express();
 
@@ -646,6 +647,82 @@ async function fetchPlayersOnline() {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Status dos servidores de jogo (ConnectServer / GameServer / banco)
+// ---------------------------------------------------------------------------
+const GAME_SERVER_HOST = process.env.GAME_SERVER_HOST || 'mu-server';
+const CONNECT_SERVER_PORT = Number(process.env.CONNECT_SERVER_PORT || 44405);
+const GAME_SERVER_PORT = Number(process.env.GAME_SERVER_PORT || 55901);
+
+let statusCache = { data: null, at: 0 };
+
+function tcpPing(host, port, timeoutMs = 2500) {
+  return new Promise((resolve) => {
+    const socket = new net.Socket();
+    let settled = false;
+
+    const finish = (ok) => {
+      if (settled) return;
+      settled = true;
+      socket.destroy();
+      resolve(ok);
+    };
+
+    socket.setTimeout(timeoutMs);
+    socket.once('connect', () => finish(true));
+    socket.once('timeout', () => finish(false));
+    socket.once('error', () => finish(false));
+
+    try {
+      socket.connect(port, host);
+    } catch {
+      finish(false);
+    }
+  });
+}
+
+async function refreshServerStatus() {
+  const startedAt = Date.now();
+  const [connectServer, gameServer] = await Promise.all([
+    tcpPing(GAME_SERVER_HOST, CONNECT_SERVER_PORT),
+    tcpPing(GAME_SERVER_HOST, GAME_SERVER_PORT)
+  ]);
+
+  let database = false;
+  let playersOnline = 0;
+  try {
+    const [rows] = await pool.query('SELECT COUNT(*) AS total FROM MEMB_STAT WHERE ConnectStat = 1');
+    playersOnline = Number(rows?.[0]?.total ?? 0);
+    database = true;
+  } catch {
+    database = false;
+  }
+
+  const data = {
+    connectServer,
+    gameServer,
+    database,
+    online: connectServer && gameServer && database,
+    playersOnline,
+    latencyMs: Date.now() - startedAt,
+    checkedAt: new Date().toISOString()
+  };
+
+  statusCache = { data, at: Date.now() };
+  return data;
+}
+
+async function getServerStatus(options = {}) {
+  if (options.fresh || !statusCache.data) {
+    return refreshServerStatus();
+  }
+  return statusCache.data;
+}
+
+// Atualiza em segundo plano para as paginas responderem do cache (sem esperar)
+setInterval(() => { refreshServerStatus().catch(() => {}); }, 15000);
+refreshServerStatus().catch(() => {});
+
 async function ensureSchema() {
   const conn = await pool.getConnection();
   try {
@@ -803,7 +880,29 @@ app.get('/', async (req, res) => {
     };
   }).filter(Boolean);
 
-  res.render('home', { news, ranking: rankingView, playersOnline, serverTime, events, page: 'home', pageTitle: 'Bloodlust - Início' });
+  const status = await getServerStatus();
+  res.render('home', { news, ranking: rankingView, playersOnline, serverTime, events, status, page: 'home', pageTitle: 'Bloodlust - Início' });
+});
+
+app.get('/api/status', async (req, res) => {
+  try {
+    const status = await getServerStatus();
+    res.set('Cache-Control', 'no-store');
+    res.json(status);
+  } catch (err) {
+    res.status(500).json({ online: false, error: 'status_unavailable' });
+  }
+});
+
+app.get('/status', async (req, res) => {
+  const status = await getServerStatus();
+  res.render('status', {
+    status,
+    connectServerPort: CONNECT_SERVER_PORT,
+    gameServerPort: GAME_SERVER_PORT,
+    page: 'status',
+    pageTitle: 'Bloodlust - Status dos servidores'
+  });
 });
 
 app.get('/register', (req, res) => {
