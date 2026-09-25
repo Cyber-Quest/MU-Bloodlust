@@ -1349,6 +1349,9 @@ app.get('/shop', requireUser, async (req, res) => {
 
 app.post('/shop/buy', requireUser, async (req, res) => {
   const accountId = req.session.user.id;
+  if (!(await ensureAccountOffline(accountId))) {
+    return res.redirect('/shop?err=' + encodeURIComponent('Saia do jogo para comprar: com o personagem online o servidor salva o bau por cima e o item seria perdido.'));
+  }
   const section = Number(req.body.section);
   const index = Number(req.body.index);
 
@@ -1383,6 +1386,9 @@ app.post('/shop/buy', requireUser, async (req, res) => {
 
 app.post('/shop/kit/buy', requireUser, async (req, res) => {
   const accountId = req.session.user.id;
+  if (!(await ensureAccountOffline(accountId))) {
+    return res.redirect('/shop?err=' + encodeURIComponent('Saia do jogo para comprar: com o personagem online o servidor salva o bau por cima e o item seria perdido.'));
+  }
   const kitId = String(req.body.kit || '').trim();
 
   const kit = getShopKits().find((item) => item.id === kitId);
