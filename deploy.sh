@@ -26,6 +26,28 @@ else
   echo "==> Servidor sem mudancas"
 fi
 
+# IMPORTANTE: /opt/mu/Data e /opt/mu/GameServer/Data sao VOLUMES nomeados do Docker.
+# Um volume ja existente NAO recebe os arquivos novos da imagem, entao mudancas em
+# MuServer/Data (Item.txt, ItemOption.txt, Shop, EventItemBag, ...) e em
+# MuServer/GameServer/DATA (XP, StartUp, eventos) ficariam sem efeito.
+# Sincronizamos do host para o container e reiniciamos apenas quando algo muda.
+CFG_STAMP="$HOME/.mu-config-synced"
+CFG_HASH=$(find MuServer/Data MuServer/GameServer/DATA -type f -print0 \
+  | sort -z | xargs -0 md5sum | md5sum | cut -d' ' -f1)
+if [ ! -f "$CFG_STAMP" ] || [ "$(cat "$CFG_STAMP" 2>/dev/null)" != "$CFG_HASH" ]; then
+  echo "==> Config do servidor mudou -> sincronizando para o container"
+  CID=$($COMPOSE ps -q mu-server)
+  if [ -n "$CID" ]; then
+    docker cp MuServer/Data/. "$CID:/opt/mu/Data/"
+    docker cp MuServer/GameServer/DATA/. "$CID:/opt/mu/GameServer/Data/"
+    docker restart "$CID" >/dev/null
+    echo "$CFG_HASH" > "$CFG_STAMP"
+    echo "==> mu-server reiniciado com a config nova"
+  fi
+else
+  echo "==> Config do servidor sem mudancas"
+fi
+
 # Cliente: regenera o manifesto do launcher e o zip de download
 if [ ! -f Client/update-manifest.json ] || [ ! -f downloads/MuOnline-97k.zip ] || \
    [ -n "$(find Client Encoder tools -newer downloads/MuOnline-97k.zip -print -quit 2>/dev/null)" ]; then
