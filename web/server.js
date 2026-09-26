@@ -1115,6 +1115,14 @@ const SHOP_KITS = [
     classId: 16,
     name: 'Kit Dark Knight / Blade Knight',
     weapon: { section: 0, index: 20 },  // Knight Blade
+    setIndex: 16,                        // conjunto Black Dragon
+    wings: { section: 12, index: 5 }     // Wings of Dragon
+  },
+  {
+    id: 'gd',
+    classId: 16,
+    name: 'Kit Great Dragon (Dark Knight)',
+    weapon: { section: 0, index: 20 },  // Knight Blade
     setIndex: 21,                        // conjunto Great Dragon
     wings: { section: 12, index: 5 }     // Wings of Dragon
   },
