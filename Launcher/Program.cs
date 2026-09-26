@@ -489,6 +489,27 @@ namespace MuLauncher
         }
 
         /// <summary>
+        /// Quantos arquivos do manifesto existem de fato nessa pasta. Serve para saber
+        /// se a pasta realmente contem o jogo antes de mexer em qualquer coisa.
+        /// </summary>
+        public static int CountGameFiles(string pasta, HashSet<string> gameFiles)
+        {
+            if (string.IsNullOrWhiteSpace(pasta) || gameFiles == null || gameFiles.Count == 0) return 0;
+
+            int total = 0;
+            foreach (var relativo in gameFiles)
+            {
+                if (string.IsNullOrWhiteSpace(relativo)) continue;
+                try
+                {
+                    if (File.Exists(Path.Combine(pasta, relativo))) total++;
+                }
+                catch { /* caminho invalido: ignora */ }
+            }
+            return total;
+        }
+
+        /// <summary>
         /// Move o conteudo do jogo de uma pasta para outra (evita rebaixar tudo ao trocar
         /// a pasta). SOMENTE arquivos que constam no manifesto do servidor sao movidos:
         /// assim nada que nao seja do jogo e arrastado junto (Downloads, Documentos, etc.).
@@ -1018,34 +1039,46 @@ namespace MuLauncher
 
                 if (File.Exists(Path.Combine(anteriorFull, "main.exe")))
                 {
-                    var resposta = MessageBox.Show(
-                        this,
-                        "Mover os arquivos do jogo que já estão em:\n\n" + anteriorFull +
-                        "\n\npara:\n\n" + novoFull +
-                        "\n\nSó os arquivos do jogo são movidos — o resto da pasta não é tocado." +
-                        "\n\nEscolha \"Não\" para baixar tudo de novo na pasta nova.",
-                        "Bloodlust Launcher", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    SetStatus("Conferindo os arquivos do jogo...");
 
-                    if (resposta == DialogResult.Yes)
+                    // Lista oficial do que e do jogo: nada fora dela e movido.
+                    var gameFiles = await Updater.FetchGameFileSetAsync(_exeDir);
+                    var presentes = GameFolder.CountGameFiles(anteriorFull, gameFiles);
+
+                    if (gameFiles == null)
                     {
-                        SetStatus("Movendo arquivos do jogo...");
-                        try
-                        {
-                            // Lista oficial do que e do jogo: nada fora dela e movido.
-                            var gameFiles = await Updater.FetchGameFileSetAsync(_exeDir);
-                            var movidos = GameFolder.MoveContents(anteriorFull, novoFull, gameFiles);
+                        SetStatus("Sem resposta do servidor para listar o jogo — nada será movido. Baixando na pasta nova...");
+                    }
+                    else if (presentes < 3)
+                    {
+                        SetStatus("A pasta antiga não tem os arquivos do jogo — baixando tudo na pasta nova...");
+                    }
+                    else
+                    {
+                        var resposta = MessageBox.Show(
+                            this,
+                            "Mover os arquivos do jogo que já estão em:\n\n" + anteriorFull +
+                            "\n\npara:\n\n" + novoFull +
+                            "\n\nSó os " + presentes + " arquivos do jogo são movidos — o resto da pasta não é tocado." +
+                            "\n\nEscolha \"Não\" para baixar tudo de novo na pasta nova.",
+                            "Bloodlust Launcher", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                            SetStatus(gameFiles == null
-                                ? "Não deu para listar os arquivos do jogo — nada foi movido. Baixando tudo de novo..."
-                                : string.Format("{0} arquivo(s) do jogo movido(s). Conferindo atualizações...", movidos));
-                        }
-                        catch (Exception ex)
+                        if (resposta == DialogResult.Yes)
                         {
-                            MessageBox.Show(
-                                this,
-                                "Não foi possível mover tudo:\n\n" + ex.Message +
-                                "\n\nO que faltar será baixado de novo.",
-                                "Bloodlust Launcher", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            SetStatus("Movendo arquivos do jogo...");
+                            try
+                            {
+                                var movidos = GameFolder.MoveContents(anteriorFull, novoFull, gameFiles);
+                                SetStatus(string.Format("{0} arquivo(s) do jogo movido(s). Conferindo atualizações...", movidos));
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(
+                                    this,
+                                    "Não foi possível mover tudo:\n\n" + ex.Message +
+                                    "\n\nO que faltar será baixado de novo.",
+                                    "Bloodlust Launcher", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
                         }
                     }
                 }
