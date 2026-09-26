@@ -161,24 +161,30 @@
       };
     }
 
-    // ARMADURAS / PECAS (7-11): ja estao no padrao do MU (cima=+Y, frente=+Z)
-    if (secao >= 7) {
-      return function (x, y, z) { return [x, y, z]; };
+    // ARMADURAS / PECAS (7-11): o esqueleto Bip01 guarda o corpo DEITADO
+    // (cabeca no +X). Gira para o +X virar +Y (cima); o yaw depois cuida da frente.
+    if (secao >= 7 && secao <= 11) {
+      return function (x, y, z) { return [-y, x, z]; };
     }
 
     // ARMAS (0-5): ponta para cima
-    var eixo = 1;
-    if (!tipCode) {
-      eixo = (e[0] >= e[1] && e[0] >= e[2]) ? 0 : (e[1] >= e[2] ? 1 : 2);
+    if (secao <= 5) {
+      var eixo = 1;
+      if (!tipCode) {
+        eixo = (e[0] >= e[1] && e[0] >= e[2]) ? 0 : (e[1] >= e[2] ? 1 : 2);
+      }
+      return function (x, y, z) {
+        if (tipCode === 'nx') return [y, -x, z];
+        if (tipCode === 'ny') return [-x, -y, z];
+        if (tipCode === 'pz') return [x, z, -y];
+        if (eixo === 0) return [-y, x, z];
+        if (eixo === 2) return [x, z, -y];
+        return [x, y, z];
+      };
     }
-    return function (x, y, z) {
-      if (tipCode === 'nx') return [y, -x, z];
-      if (tipCode === 'ny') return [-x, -y, z];
-      if (tipCode === 'pz') return [x, z, -y];
-      if (eixo === 0) return [-y, x, z];
-      if (eixo === 2) return [x, z, -y];
-      return [x, y, z];
-    };
+
+    // DEMAIS (asas 12, pets/pocoes 13-15): deixa como esta
+    return function (x, y, z) { return [x, y, z]; };
   }
 
   /* ---------- tira malhas de efeito (chama/brilho), que viram retangulo solto ---------- */
