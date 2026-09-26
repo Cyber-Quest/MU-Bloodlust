@@ -356,6 +356,174 @@ namespace MuLauncher
         }
     }
 
+    // ---- Pasta do jogo / configuracoes ------------------------------------
+    /// <summary>Configuracoes do launcher (launcher-config.json ao lado do executavel).</summary>
+    public class LauncherConfig
+    {
+        public string installDir { get; set; }
+
+        private const string FileName = "launcher-config.json";
+
+        private static string PrimaryPath(string exeDir)
+        {
+            return Path.Combine(exeDir, FileName);
+        }
+
+        private static string FallbackPath()
+        {
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            return Path.Combine(appData, "Bloodlust", FileName);
+        }
+
+        public static LauncherConfig Load(string exeDir)
+        {
+            foreach (var caminho in new[] { PrimaryPath(exeDir), FallbackPath() })
+            {
+                try
+                {
+                    if (!File.Exists(caminho)) continue;
+                    var json = File.ReadAllText(caminho);
+                    if (string.IsNullOrWhiteSpace(json)) continue;
+                    var cfg = new JavaScriptSerializer().Deserialize<LauncherConfig>(json);
+                    if (cfg != null) return cfg;
+                }
+                catch { /* config corrompida: ignora e usa o padrao */ }
+            }
+            return new LauncherConfig();
+        }
+
+        public void Save(string exeDir)
+        {
+            var json = new JavaScriptSerializer().Serialize(this);
+            foreach (var caminho in new[] { PrimaryPath(exeDir), FallbackPath() })
+            {
+                try
+                {
+                    var dir = Path.GetDirectoryName(caminho);
+                    if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
+                    File.WriteAllText(caminho, json);
+                    return;
+                }
+                catch { /* tenta o proximo local */ }
+            }
+        }
+    }
+
+    /// <summary>Descobre/gerencia a pasta onde o jogo e baixado.</summary>
+    public static class GameFolder
+    {
+        public const string DefaultFolderName = "Bloodlust";
+
+        /// <summary>Pasta Documentos do usuario (nunca vazia).</summary>
+        public static string Documents()
+        {
+            var docs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (string.IsNullOrWhiteSpace(docs)) docs = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            if (string.IsNullOrWhiteSpace(docs)) docs = AppDomain.CurrentDomain.BaseDirectory;
+            return docs;
+        }
+
+        /// <summary>Pasta padrao sugerida: Documentos\Bloodlust.</summary>
+        public static string DefaultDir()
+        {
+            return Path.Combine(Documents(), DefaultFolderName);
+        }
+
+        /// <summary>
+        /// Onde o jogo fica, nesta ordem:
+        ///   1. a pasta escolhida pelo jogador (launcher-config.json)
+        ///   2. uma instalacao ja existente ao lado do launcher (compatibilidade)
+        ///   3. Documentos\Bloodlust (padrao para instalacoes novas)
+        /// </summary>
+        public static string Resolve(string exeDir, LauncherConfig cfg)
+        {
+            var salvo = cfg != null ? cfg.installDir : null;
+            if (!string.IsNullOrWhiteSpace(salvo))
+            {
+                try { return Path.GetFullPath(salvo.Trim()); }
+                catch { /* caminho invalido: cai no padrao */ }
+            }
+
+            if (File.Exists(Path.Combine(exeDir, "main.exe"))) return exeDir;
+
+            return DefaultDir();
+        }
+
+        /// <summary>Arquivos do proprio launcher: nunca sao movidos junto com o jogo.</summary>
+        private static readonly string[] LauncherOwnFiles =
+        {
+            "launcher.exe", "launcher.exe.config", "launcher-config.json",
+            "launcher-url.txt", "launcher-update.log"
+        };
+
+        public static bool IsLauncherFile(string nome)
+        {
+            return LauncherOwnFiles.Any(f => string.Equals(f, nome, StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
+        /// Move o conteudo do jogo de uma pasta para outra (evita rebaixar tudo ao trocar
+        /// a pasta). Arquivos em uso sao ignorados e serao baixados de novo.
+        /// </summary>
+        public static int MoveContents(string origem, string destino)
+        {
+            if (string.IsNullOrWhiteSpace(origem) || string.IsNullOrWhiteSpace(destino)) return 0;
+
+            var de = Path.GetFullPath(origem).TrimEnd(Path.DirectorySeparatorChar);
+            var para = Path.GetFullPath(destino).TrimEnd(Path.DirectorySeparatorChar);
+            if (string.Equals(de, para, StringComparison.OrdinalIgnoreCase)) return 0;
+
+            var sep = Path.DirectorySeparatorChar;
+            if ((para + sep).StartsWith(de + sep, StringComparison.OrdinalIgnoreCase)) return 0;
+            if ((de + sep).StartsWith(para + sep, StringComparison.OrdinalIgnoreCase)) return 0;
+
+            Directory.CreateDirectory(destino);
+            int movidos = 0;
+
+            foreach (var arquivo in Directory.GetFiles(origem))
+            {
+                if (IsLauncherFile(Path.GetFileName(arquivo))) continue;
+                var alvo = Path.Combine(destino, Path.GetFileName(arquivo));
+                try
+                {
+                    if (File.Exists(alvo)) File.Delete(alvo);
+                    try { File.Move(arquivo, alvo); }
+                    catch (IOException) { File.Copy(arquivo, alvo, true); File.Delete(arquivo); }
+                    movidos++;
+                }
+                catch { /* arquivo em uso: sera baixado de novo */ }
+            }
+
+            foreach (var pasta in Directory.GetDirectories(origem))
+            {
+                var alvo = Path.Combine(destino, Path.GetFileName(pasta));
+                try
+                {
+                    if (Directory.Exists(alvo)) Directory.Delete(alvo, true);
+                    try { Directory.Move(pasta, alvo); }
+                    catch (IOException) { CopyDirectory(pasta, alvo); Directory.Delete(pasta, true); }
+                    movidos++;
+                }
+                catch { /* ignora */ }
+            }
+
+            return movidos;
+        }
+
+        private static void CopyDirectory(string origem, string destino)
+        {
+            Directory.CreateDirectory(destino);
+            foreach (var arquivo in Directory.GetFiles(origem))
+            {
+                File.Copy(arquivo, Path.Combine(destino, Path.GetFileName(arquivo)), true);
+            }
+            foreach (var pasta in Directory.GetDirectories(origem))
+            {
+                CopyDirectory(pasta, Path.Combine(destino, Path.GetFileName(pasta)));
+            }
+        }
+    }
+
     // ---- Controles com estilo de jogo -------------------------------------
     internal static class Ui
     {
@@ -427,6 +595,74 @@ namespace MuLauncher
         }
     }
 
+    /// <summary>Botao de engrenagem (configuracoes), desenhado a mao para nao depender de fonte.</summary>
+    internal sealed class GearButton : Control
+    {
+        private bool _hover;
+
+        public GearButton()
+        {
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint |
+                     ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw |
+                     ControlStyles.SupportsTransparentBackColor, true);
+            BackColor = Color.Transparent;
+            Cursor = Cursors.Hand;
+            TabStop = false;
+            Size = new Size(42, 42);
+        }
+
+        protected override void OnMouseEnter(EventArgs e) { _hover = true; Invalidate(); base.OnMouseEnter(e); }
+        protected override void OnMouseLeave(EventArgs e) { _hover = false; Invalidate(); base.OnMouseLeave(e); }
+        protected override void OnEnabledChanged(EventArgs e) { Invalidate(); base.OnEnabledChanged(e); }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            var rect = new Rectangle(0, 0, Width - 1, Height - 1);
+            using (var path = Ui.RoundedRect(rect, 10))
+            {
+                using (var fundo = new SolidBrush(Color.FromArgb(_hover ? 165 : 105, 0, 0, 0)))
+                    g.FillPath(fundo, path);
+
+                using (var borda = new Pen(Color.FromArgb(_hover ? 230 : 150, 214, 160, 74), 1.2f))
+                    g.DrawPath(borda, path);
+            }
+
+            var cor = Enabled
+                ? (_hover ? Color.FromArgb(255, 246, 214) : Color.FromArgb(224, 176, 97))
+                : Color.FromArgb(120, 116, 110);
+
+            float cx = Width / 2f;
+            float cy = Height / 2f;
+            float raio = Math.Min(Width, Height) * 0.255f;
+            float dente = Math.Max(3f, Width * 0.105f);
+            float furo = raio * 0.44f;
+
+            using (var brush = new SolidBrush(cor))
+            {
+                // dentes
+                var estado = g.Save();
+                g.TranslateTransform(cx, cy);
+                for (int i = 0; i < 8; i++)
+                {
+                    g.FillRectangle(brush, -dente / 2f, -raio - dente * 0.85f, dente, dente * 1.7f);
+                    g.RotateTransform(45f);
+                }
+                g.Restore(estado);
+
+                // corpo com furo central de verdade (FillMode.Alternate)
+                using (var corpo = new GraphicsPath(FillMode.Alternate))
+                {
+                    corpo.AddEllipse(cx - raio, cy - raio, raio * 2f, raio * 2f);
+                    corpo.AddEllipse(cx - furo, cy - furo, furo * 2f, furo * 2f);
+                    g.FillPath(brush, corpo);
+                }
+            }
+        }
+    }
+
     // ---- Janela principal --------------------------------------------------
     public class LauncherForm : Form
     {
@@ -434,7 +670,9 @@ namespace MuLauncher
         private const int WindowHeight = 520;
         private const string DefaultGameName = "BLOODLUST";
 
-        private readonly string _baseDir;
+        private readonly string _exeDir;
+        private string _gameDir;
+        private LauncherConfig _config;
         private Image _background;
         private Image _logo;
 
@@ -442,10 +680,13 @@ namespace MuLauncher
         private string _version = "";
         private int _progressValue;
         private GradientButton _playButton;
+        private GearButton _gearButton;
 
         public LauncherForm()
         {
-            _baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            _exeDir = AppDomain.CurrentDomain.BaseDirectory;
+            _config = LauncherConfig.Load(_exeDir);
+            _gameDir = GameFolder.Resolve(_exeDir, _config);
             LoadEmbeddedAssets();
             BuildUi();
         }
@@ -501,6 +742,18 @@ namespace MuLauncher
             };
             _playButton.Click += (s, e) => LaunchGame();
             Controls.Add(_playButton);
+
+            _gearButton = new GearButton
+            {
+                Bounds = new Rectangle(WindowWidth - 64, 22, 42, 42),
+                Enabled = false
+            };
+            _gearButton.Click += (s, e) => OpenSettings();
+            Controls.Add(_gearButton);
+            _gearButton.BringToFront();
+
+            var dica = new ToolTip();
+            dica.SetToolTip(_gearButton, "Configurações — escolher a pasta de download do jogo");
         }
 
         protected override void OnPaintBackground(PaintEventArgs e)
@@ -578,6 +831,20 @@ namespace MuLauncher
                     g.DrawPath(pen, path);
             }
 
+            // pasta onde o jogo esta sendo baixado
+            using (var font = new Font("Segoe UI", 8F))
+            using (var brush = new SolidBrush(Color.FromArgb(150, 144, 133)))
+            {
+                var r = new Rectangle(30, Height - 66, Width - 60, 18);
+                var sf = new StringFormat
+                {
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center,
+                    Trimming = StringTrimming.EllipsisPath
+                };
+                g.DrawString("Pasta: " + (_gameDir ?? string.Empty), font, brush, r, sf);
+            }
+
             // rodape
             using (var font = new Font("Segoe UI", 8.5F))
             using (var brush = new SolidBrush(Color.FromArgb(170, 163, 152)))
@@ -591,29 +858,122 @@ namespace MuLauncher
         protected override async void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            await RunUpdateAsync();
+        }
 
-            SetStatus("Verificando atualizações...");
-            var result = await Updater.RunAsync(_baseDir, SetStatus, SetProgress);
+        /// <summary>Baixa/atualiza o jogo na pasta configurada.</summary>
+        private async Task RunUpdateAsync()
+        {
+            _gearButton.Enabled = false;
+            _playButton.Enabled = false;
+            _progressValue = 0;
+            Invalidate();
 
-            if (result.Success)
+            try
             {
-                SetVersion("versão do servidor: " + (result.Version ?? "?"));
-                EnablePlay();
+                Directory.CreateDirectory(_gameDir);
+            }
+            catch (Exception ex)
+            {
+                SetStatus("Não foi possível usar a pasta configurada.");
+                MessageBox.Show(
+                    this,
+                    "Não foi possível criar/usar a pasta do jogo:\n\n" + _gameDir + "\n\n" + ex.Message +
+                    "\n\nClique na engrenagem (canto superior direito) para escolher outra pasta.",
+                    "Bloodlust Launcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _gearButton.Enabled = true;
                 return;
             }
 
-            var hasGame = File.Exists(Path.Combine(_baseDir, "main.exe"));
+            SetStatus("Verificando atualizações...");
+            var result = await Updater.RunAsync(_gameDir, SetStatus, SetProgress);
+
+            if (result.Success)
+            {
+                SetVersion("versão do servidor: " + (result.Version ?? "?") +
+                           (result.Downloaded > 0
+                               ? string.Format("  •  {0} arquivo(s), {1:N1} MB", result.Downloaded, result.Bytes / 1048576.0)
+                               : ""));
+                EnablePlay();
+                _gearButton.Enabled = true;
+                return;
+            }
+
+            var hasGame = File.Exists(Path.Combine(_gameDir, "main.exe"));
             SetStatus(hasGame ? "Não foi possível atualizar — você ainda pode jogar offline." : "Falha ao baixar o jogo.");
 
             MessageBox.Show(
                 this,
                 "Não foi possível verificar/baixar as atualizações:\n\n" + result.Error +
-                (hasGame ? "\n\nVocê ainda pode iniciar o jogo com os arquivos atuais." : ""),
+                "\n\nPasta: " + _gameDir +
+                (hasGame ? "\n\nVocê ainda pode iniciar o jogo com os arquivos atuais." : "") +
+                "\n\nClique na engrenagem (canto superior direito) para escolher outra pasta.",
                 "Bloodlust Launcher",
                 MessageBoxButtons.OK,
                 hasGame ? MessageBoxIcon.Warning : MessageBoxIcon.Error);
 
             if (hasGame) EnablePlay();
+            _gearButton.Enabled = true;
+        }
+
+        /// <summary>Engrenagem: escolher a pasta onde o jogo e baixado.</summary>
+        private async void OpenSettings()
+        {
+            var anterior = _gameDir;
+
+            using (var dlg = new SettingsForm(_gameDir, _exeDir))
+            {
+                if (dlg.ShowDialog(this) != DialogResult.OK) return;
+
+                var novo = dlg.SelectedPath;
+                if (string.IsNullOrWhiteSpace(novo)) return;
+
+                string anteriorFull;
+                string novoFull;
+                try
+                {
+                    anteriorFull = Path.GetFullPath(anterior);
+                    novoFull = Path.GetFullPath(novo);
+                }
+                catch { return; }
+
+                if (string.Equals(anteriorFull, novoFull, StringComparison.OrdinalIgnoreCase)) return;
+
+                if (File.Exists(Path.Combine(anteriorFull, "main.exe")))
+                {
+                    var resposta = MessageBox.Show(
+                        this,
+                        "Mover os arquivos do jogo que já estão em:\n\n" + anteriorFull +
+                        "\n\npara:\n\n" + novoFull +
+                        "\n\nEscolha \"Não\" para baixar tudo de novo na pasta nova.",
+                        "Bloodlust Launcher", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (resposta == DialogResult.Yes)
+                    {
+                        SetStatus("Movendo arquivos do jogo...");
+                        try
+                        {
+                            var movidos = GameFolder.MoveContents(anteriorFull, novoFull);
+                            SetStatus(string.Format("{0} item(ns) movido(s). Conferindo atualizações...", movidos));
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(
+                                this,
+                                "Não foi possível mover tudo:\n\n" + ex.Message +
+                                "\n\nO que faltar será baixado de novo.",
+                                "Bloodlust Launcher", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                }
+
+                _gameDir = novoFull;
+                _config.installDir = novoFull;
+                _config.Save(_exeDir);
+                Invalidate();
+            }
+
+            await RunUpdateAsync();
         }
 
         private void SetStatus(string text)
@@ -648,10 +1008,10 @@ namespace MuLauncher
 
         private void LaunchGame()
         {
-            var exe = Path.Combine(_baseDir, "main.exe");
+            var exe = Path.Combine(_gameDir, "main.exe");
             if (!File.Exists(exe))
             {
-                MessageBox.Show(this, "main.exe não encontrado na pasta do jogo.", "Bloodlust Launcher",
+                MessageBox.Show(this, "main.exe não encontrado na pasta do jogo:\n\n" + _gameDir, "Bloodlust Launcher",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -661,7 +1021,7 @@ namespace MuLauncher
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = exe,
-                    WorkingDirectory = _baseDir,
+                    WorkingDirectory = _gameDir,
                     UseShellExecute = true
                 });
                 Close();
@@ -674,25 +1034,305 @@ namespace MuLauncher
         }
     }
 
+    // ---- Janela de configuracoes (engrenagem) ------------------------------
+    internal sealed class SettingsForm : Form
+    {
+        private string _pasta;
+        private TextBox _caminho;
+        private Label _espaco;
+        private Label _aviso;
+
+        public string SelectedPath
+        {
+            get { return _pasta; }
+        }
+
+        public SettingsForm(string pastaAtual, string exeDir)
+        {
+            _pasta = string.IsNullOrWhiteSpace(pastaAtual) ? GameFolder.DefaultDir() : pastaAtual;
+            BuildUi();
+            AtualizarTextos();
+        }
+
+        private void BuildUi()
+        {
+            Text = "Configurações — Bloodlust Launcher";
+            ClientSize = new Size(640, 322);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            StartPosition = FormStartPosition.CenterParent;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            ShowInTaskbar = false;
+            BackColor = Color.FromArgb(20, 17, 15);
+            ForeColor = Color.FromArgb(236, 231, 221);
+            Font = new Font("Segoe UI", 9F);
+
+            try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
+
+            Controls.Add(new Label
+            {
+                Text = "PASTA DE DOWNLOAD",
+                Font = new Font("Segoe UI", 14F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(235, 195, 95),
+                Bounds = new Rectangle(24, 18, ClientSize.Width - 48, 28)
+            });
+
+            Controls.Add(new Label
+            {
+                Text = "O launcher baixa o jogo (main.exe e a pasta Data) para o local abaixo.\n" +
+                       "Use uma pasta sua — como Documentos — para não ter problema de permissão.",
+                ForeColor = Color.FromArgb(180, 174, 164),
+                Bounds = new Rectangle(24, 52, ClientSize.Width - 48, 36)
+            });
+
+            _caminho = new TextBox
+            {
+                ReadOnly = true,
+                Bounds = new Rectangle(24, 98, ClientSize.Width - 48, 26),
+                BackColor = Color.FromArgb(38, 33, 28),
+                ForeColor = Color.FromArgb(240, 235, 226),
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font("Consolas", 9.5F)
+            };
+            Controls.Add(_caminho);
+
+            var alterar = Botao("Alterar pasta...", 24, 136, 152);
+            alterar.Click += (s, e) => EscolherPasta();
+            Controls.Add(alterar);
+
+            var padrao = Botao("Usar Documentos", 184, 136, 164);
+            padrao.Click += (s, e) =>
+            {
+                _pasta = GameFolder.DefaultDir();
+                AtualizarTextos();
+            };
+            Controls.Add(padrao);
+
+            var abrir = Botao("Abrir pasta", 356, 136, 124);
+            abrir.Click += (s, e) => AbrirPasta();
+            Controls.Add(abrir);
+
+            _espaco = new Label
+            {
+                Bounds = new Rectangle(24, 176, ClientSize.Width - 48, 20),
+                ForeColor = Color.FromArgb(170, 163, 152)
+            };
+            Controls.Add(_espaco);
+
+            _aviso = new Label
+            {
+                Bounds = new Rectangle(24, 198, ClientSize.Width - 48, 34),
+                ForeColor = Color.FromArgb(205, 199, 189)
+            };
+            Controls.Add(_aviso);
+
+            var salvar = new GradientButton
+            {
+                Text = "SALVAR",
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                Bounds = new Rectangle(ClientSize.Width - 24 - 170, 252, 170, 46)
+            };
+            salvar.Click += (s, e) => Confirmar();
+            Controls.Add(salvar);
+            AcceptButton = salvar;
+
+            var cancelar = Botao("Cancelar", ClientSize.Width - 24 - 170 - 132, 252, 122, 46);
+            cancelar.Click += (s, e) => { DialogResult = DialogResult.Cancel; Close(); };
+            Controls.Add(cancelar);
+            CancelButton = cancelar;
+        }
+
+        private static Button Botao(string texto, int x, int y, int largura, int altura = 32)
+        {
+            var b = new Button
+            {
+                Text = texto,
+                Bounds = new Rectangle(x, y, largura, altura),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.FromArgb(46, 39, 32),
+                ForeColor = Color.FromArgb(236, 231, 221),
+                Font = new Font("Segoe UI", 9F)
+            };
+            b.FlatAppearance.BorderColor = Color.FromArgb(120, 214, 160, 74);
+            return b;
+        }
+
+        private void AtualizarTextos()
+        {
+            _caminho.Text = _pasta;
+            AtualizarEspaco();
+
+            var ehPadrao = false;
+            try
+            {
+                ehPadrao = string.Equals(
+                    Path.GetFullPath(_pasta).TrimEnd(Path.DirectorySeparatorChar),
+                    Path.GetFullPath(GameFolder.DefaultDir()).TrimEnd(Path.DirectorySeparatorChar),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+            catch { /* caminho invalido */ }
+
+            _aviso.Text = ehPadrao
+                ? "Pasta padrão: Documentos\\Bloodlust (recomendado)."
+                : "Pasta personalizada — o jogo será baixado aqui.";
+        }
+
+        private void AtualizarEspaco()
+        {
+            try
+            {
+                var raiz = Path.GetPathRoot(Path.GetFullPath(_pasta));
+                var drive = new DriveInfo(raiz);
+                var livre = drive.AvailableFreeSpace / 1073741824.0;
+                _espaco.Text = string.Format(
+                    "Espaço livre em {0} {1:N1} GB   (o jogo ocupa cerca de 210 MB)",
+                    drive.Name.TrimEnd(Path.DirectorySeparatorChar), livre);
+                _espaco.ForeColor = livre < 1 ? Color.FromArgb(255, 140, 140) : Color.FromArgb(170, 163, 152);
+            }
+            catch
+            {
+                _espaco.Text = string.Empty;
+            }
+        }
+
+        private void EscolherPasta()
+        {
+            using (var dlg = new FolderBrowserDialog())
+            {
+                dlg.Description = "Escolha a pasta onde o jogo será baixado";
+                dlg.ShowNewFolderButton = true;
+
+                // abre já na pasta configurada; se ela ainda não existe, começa em Documentos
+                dlg.SelectedPath = Directory.Exists(_pasta) ? _pasta : GameFolder.Documents();
+
+                if (dlg.ShowDialog(this) == DialogResult.OK && !string.IsNullOrWhiteSpace(dlg.SelectedPath))
+                {
+                    _pasta = dlg.SelectedPath;
+                    AtualizarTextos();
+                }
+            }
+        }
+
+        private void AbrirPasta()
+        {
+            try
+            {
+                Directory.CreateDirectory(_pasta);
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = _pasta,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "Não foi possível abrir a pasta:\n\n" + ex.Message,
+                    "Bloodlust Launcher", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void Confirmar()
+        {
+            string completo;
+            try
+            {
+                completo = Path.GetFullPath(_pasta);
+            }
+            catch
+            {
+                MessageBox.Show(this, "Caminho inválido.", "Bloodlust Launcher",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                // confirma de verdade que da para escrever ai
+                Directory.CreateDirectory(completo);
+                var teste = Path.Combine(completo, ".bloodlust-teste");
+                File.WriteAllText(teste, "ok");
+                File.Delete(teste);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    this,
+                    "Não foi possível escrever nesta pasta:\n\n" + completo + "\n\n" + ex.Message +
+                    "\n\nEscolha outra pasta (por exemplo, dentro de Documentos).",
+                    "Bloodlust Launcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            _pasta = completo;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+    }
+
     internal static class Program
     {
         [STAThread]
         private static void Main(string[] args)
         {
+            var exeDir = AppDomain.CurrentDomain.BaseDirectory;
+            var config = LauncherConfig.Load(exeDir);
+            var gameDir = GameFolder.Resolve(exeDir, config);
+
+            // Diagnostico (sem interface): mostra em que pasta o jogo vai ficar e sai.
+            //   Launcher.exe --show-config > config.txt
+            if (args != null && args.Any(a => string.Equals(a, "--show-config", StringComparison.OrdinalIgnoreCase)))
+            {
+                Console.WriteLine("exeDir      = " + exeDir);
+                Console.WriteLine("installDir  = " + (string.IsNullOrWhiteSpace(config.installDir) ? "(nao definido)" : config.installDir));
+                Console.WriteLine("gameDir     = " + gameDir);
+                Console.WriteLine("pastaExiste = " + Directory.Exists(gameDir));
+                Console.WriteLine("mainExe     = " + File.Exists(Path.Combine(gameDir, "main.exe")));
+                Environment.Exit(0);
+                return;
+            }
+
+            // Abre direto a janela de configuracoes, sem baixar nada (util para suporte):
+            //   Launcher.exe --settings
+            if (args != null && args.Any(a => string.Equals(a, "--settings", StringComparison.OrdinalIgnoreCase)))
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                using (var dlg = new SettingsForm(gameDir, exeDir))
+                {
+                    if (dlg.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(dlg.SelectedPath))
+                    {
+                        config.installDir = dlg.SelectedPath;
+                        config.Save(exeDir);
+                    }
+                }
+                Environment.Exit(0);
+                return;
+            }
+
             // Modo sem interface (util para testar/automatizar):
             //   Launcher.exe --update-only   -> baixa as atualizacoes e sai
             if (args != null && args.Any(a => string.Equals(a, "--update-only", StringComparison.OrdinalIgnoreCase)))
             {
-                var baseDir = AppDomain.CurrentDomain.BaseDirectory;
                 var log = new StringBuilder();
-                var result = Updater.RunAsync(
-                    baseDir,
-                    s => log.AppendLine(s),
-                    p => { }).GetAwaiter().GetResult();
+                log.AppendLine("pasta do jogo: " + gameDir);
+
+                UpdateResult result;
+                try
+                {
+                    Directory.CreateDirectory(gameDir);
+                    result = Updater.RunAsync(
+                        gameDir,
+                        s => log.AppendLine(s),
+                        p => { }).GetAwaiter().GetResult();
+                }
+                catch (Exception ex)
+                {
+                    result = new UpdateResult { Success = false, Error = ex.Message };
+                }
 
                 try
                 {
-                    File.WriteAllText(Path.Combine(baseDir, "launcher-update.log"),
+                    File.WriteAllText(Path.Combine(exeDir, "launcher-update.log"),
                         log.ToString() + (result.Success ? "OK" : "ERRO: " + result.Error));
                 }
                 catch { /* ignora */ }
