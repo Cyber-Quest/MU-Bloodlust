@@ -161,7 +161,7 @@
   }
 
   /* ---------- render ---------- */
-  function render(canvas, meshes, texs, angX, angY, margem) {
+  function render(canvas, meshes, texs, angX, angY, margem, girarBase) {
     margem = margem === undefined ? 0.06 : margem;
     var W = canvas.width, H = canvas.height;
     var ctx = canvas.getContext('2d');
@@ -173,20 +173,25 @@
     var cx = Math.cos(angX), sx = Math.sin(angX);
     var cy = Math.cos(angY), sy = Math.sin(angY);
 
-    // Eixo maior do modelo -> vertical da tela (igual ao renderizador Python).
-    // Sem isso a espada aparece deitada.
-    var b0 = [1e18, 1e18, 1e18], b1 = [-1e18, -1e18, -1e18];
-    meshes.forEach(function (m) {
-      for (var k = 0; k < m.verts.length; k += 3) {
-        for (var a = 0; a < 3; a++) {
-          var v = m.verts[k + a];
-          if (v < b0[a]) b0[a] = v;
-          if (v > b1[a]) b1[a] = v;
+    // Eixo maior do modelo -> vertical da tela.
+    // SO para ARMAS (secoes 0..5): esses modelos vem de outro jogo, com a
+    // lamina no eixo X ou Z. As armaduras (6..11) ja estao no padrao do MU
+    // (Y para cima), entao girar elas estraga.
+    var eixo = 1;
+    if (girarBase) {
+      var b0 = [1e18, 1e18, 1e18], b1 = [-1e18, -1e18, -1e18];
+      meshes.forEach(function (m) {
+        for (var k = 0; k < m.verts.length; k += 3) {
+          for (var a = 0; a < 3; a++) {
+            var v = m.verts[k + a];
+            if (v < b0[a]) b0[a] = v;
+            if (v > b1[a]) b1[a] = v;
+          }
         }
-      }
-    });
-    var t0 = b1[0] - b0[0], t1 = b1[1] - b0[1], t2 = b1[2] - b0[2];
-    var eixo = (t0 >= t1 && t0 >= t2) ? 0 : (t1 >= t2 ? 1 : 2);
+      });
+      var t0 = b1[0] - b0[0], t1 = b1[1] - b0[1], t2 = b1[2] - b0[2];
+      eixo = (t0 >= t1 && t0 >= t2) ? 0 : (t1 >= t2 ? 1 : 2);
+    }
 
     function base(x, y, z) {
       if (eixo === 0) return [-y, x, z];    // lamina em X -> Y
@@ -328,8 +333,9 @@
 
       function pronto(meshes, texs) {
         var angX = 0.1745, angY = 0.4887;   // 10 e 28 graus, igual ao Python
+        var girarBase = secao >= 0 && secao <= 5;   // so armas
         var arrastando = false, lx = 0;
-        function desenha() { render(canvas, meshes, texs, angX, angY); }
+        function desenha() { render(canvas, meshes, texs, angX, angY, undefined, girarBase); }
         desenha();
         status.textContent = 'Arraste para girar';
         canvas.onmousedown = function (e) { arrastando = true; lx = e.clientX; };
