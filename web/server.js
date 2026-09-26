@@ -1100,25 +1100,28 @@ const SHOP_SECTIONS = [
   'Joias e Consumíveis', 'Pergaminhos'
 ];
 
-// Itens especiais: joias, asas, orbs, pets/acessorios e itens de evento.
-// Ficam agrupados numa secao propria em vez de misturados com o equipamento.
+// Itens CUSTOM do servidor (definidos em Encoder/CustomItem.txt).
+// Vao para uma secao propria ("Itens Especiais") na Cash Shop, em vez de
+// ficarem misturados com o equipamento normal.
 const SHOP_SPECIAL_REFS = [
-  // Joias
-  [12, 15], [14, 13], [14, 14], [14, 16], [14, 22], [14, 26],
-  // Asas (nivel 1, 2 e 3)
-  [12, 0], [12, 1], [12, 2], [12, 3], [12, 4], [12, 5], [12, 6],
-  // Orbs (skills)
-  [12, 7], [12, 8], [12, 9], [12, 10], [12, 11], [12, 12], [12, 13], [12, 14],
-  [12, 16], [12, 17], [12, 18], [12, 19],
-  // Pets, aneis e pingentes
-  [13, 0], [13, 1], [13, 2], [13, 3], [13, 8], [13, 9], [13, 10], [13, 12], [13, 13],
-  // Itens especiais / de evento
-  [13, 14], [13, 15], [13, 16], [13, 17], [13, 18], [13, 19],
-  [14, 11], [14, 12], [14, 17], [14, 18], [14, 19], [14, 20], [14, 21],
-  [14, 23], [14, 24], [14, 25]
+  // Armas custom
+  [0, 20], [0, 21], [0, 22], [0, 23], [0, 24], [0, 25], [0, 26],
+  [1, 9], [2, 8], [3, 11], [5, 11], [6, 17],
+  // Conjunto Great Dragon
+  [7, 21], [8, 21], [9, 21], [10, 21], [11, 21],
+  // Conjunto Majestyc
+  [7, 22], [8, 22], [9, 22], [10, 22], [11, 22],
+  // Conjunto Nature
+  [7, 23], [8, 23], [9, 23], [10, 23], [11, 23],
+  // Conjunto Especial 01
+  [7, 24], [8, 24], [9, 24], [10, 24], [11, 24],
+  // Conjunto Especial 02
+  [7, 25], [8, 25], [9, 25], [10, 25], [11, 25],
+  // Conjunto Especial 03
+  [7, 26], [8, 26], [9, 26], [10, 26], [11, 26]
 ];
 
-const SHOP_SPECIAL_TITLE = 'Itens Especiais';
+const SHOP_SPECIAL_TITLE = 'Itens Especiais (Custom)';
 
 const SHOP_ITEM_PRICE = 1000;      // preço padrão em Cash (full +15)
 const SHOP_ITEM_LEVEL = 15;        // +15
