@@ -161,7 +161,7 @@
   }
 
   /* ---------- render ---------- */
-  function render(canvas, meshes, texs, angX, angY, margem, girarBase) {
+  function render(canvas, meshes, texs, angX, angY, margem, girarBase, tipCode) {
     margem = margem === undefined ? 0.06 : margem;
     var W = canvas.width, H = canvas.height;
     var ctx = canvas.getContext('2d');
@@ -174,9 +174,9 @@
     var cy = Math.cos(angY), sy = Math.sin(angY);
 
     // Eixo maior do modelo -> vertical da tela.
-    // SO para ARMAS (secoes 0..5): esses modelos vem de outro jogo, com a
-    // lamina no eixo X ou Z. As armaduras (6..11) ja estao no padrao do MU
-    // (Y para cima), entao girar elas estraga.
+    // SO para ARMAS (secoes 0..5). A "ponta" precisa apontar para CIMA (+Y);
+    // para as armas custom o tip vem pronto no mapa, para as padrao do MU
+    // assumimos a ponta no eixo dominante positivo.
     var eixo = 1;
     if (girarBase) {
       var b0 = [1e18, 1e18, 1e18], b1 = [-1e18, -1e18, -1e18];
@@ -194,8 +194,13 @@
     }
 
     function base(x, y, z) {
-      if (eixo === 0) return [-y, x, z];    // lamina em X -> Y
-      if (eixo === 2) return [x, z, -y];    // lamina em Z -> Y
+      if (!girarBase) return [x, y, z];
+      if (tipCode === "nx") return [y, -x, z];     // ponta em -X -> +Y
+      if (tipCode === "ny") return [-x, -y, z];    // ponta em -Y -> +Y
+      if (tipCode === "pz") return [x, z, -y];     // ponta em +Z -> +Y
+      // padrao do MU: ponta no eixo dominante positivo
+      if (eixo === 0) return [-y, x, z];
+      if (eixo === 2) return [x, z, -y];
       return [x, y, z];
     }
 
@@ -334,8 +339,9 @@
       function pronto(meshes, texs) {
         var angX = 0.1745, angY = 0.4887;   // 10 e 28 graus, igual ao Python
         var girarBase = secao >= 0 && secao <= 5;   // so armas
+        var tipCode = (info && info.tip) || null;
         var arrastando = false, lx = 0;
-        function desenha() { render(canvas, meshes, texs, angX, angY, undefined, girarBase); }
+        function desenha() { render(canvas, meshes, texs, angX, angY, undefined, girarBase, tipCode); }
         desenha();
         status.textContent = 'Arraste para girar';
         canvas.onmousedown = function (e) { arrastando = true; lx = e.clientX; };
@@ -375,12 +381,21 @@
         // junta as texturas necessarias
         var nomes = [];
         meshes.forEach(function (m) { if (m.tex && nomes.indexOf(m.tex) < 0) nomes.push(m.tex); });
-        return Promise.all(nomes.map(function (t) {
+        // texturas ja resolvidas no servidor (case + pasta), quando existirem
+        function carrega(t) {
+          var direto = (info && info.tex && info.tex[t]) ? info.tex[t] : null;
+          if (direto) {
+            return fetch('/updates/' + direto).then(function (r) {
+              return r.ok ? r.arrayBuffer() : null;
+            }).catch(function () { return null; }).then(function (buf) {
+              return buf ? melhorImagem(buf) : null;
+            });
+          }
           return pegaTex(t, pastas).then(function (buf) {
-            if (!buf) return null;
-            return melhorImagem(buf);
+            return buf ? melhorImagem(buf) : null;
           });
-        })).then(function (texs) {
+        }
+        return Promise.all(nomes.map(carrega)).then(function (texs) {
           var mapaTex = {};
           nomes.forEach(function (t, i) { if (texs[i]) mapaTex[t] = texs[i]; });
           cache[chave] = [meshes, mapaTex];

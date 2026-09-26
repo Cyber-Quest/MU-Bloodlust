@@ -2,1511 +2,2648 @@
 "0,0": {
 "custom": false,
 "dir": "Item",
-"file": "Sword01.bmd"
+"file": "Sword01.bmd",
+"tex": {
+"sword02.jpg": "Data/Item/sword02.OZJ"
+}
 },
 "0,1": {
 "custom": false,
 "dir": "Item",
-"file": "Sword02.bmd"
+"file": "Sword02.bmd",
+"tex": {
+"sword03.jpg": "Data/Item/sword03.OZJ"
+}
 },
 "0,10": {
 "custom": false,
 "dir": "Item",
-"file": "Sword11.bmd"
+"file": "Sword11.bmd",
+"tex": {
+"sword12.jpg": "Data/Item/sword12.OZJ",
+"sword12_2.jpg": "Data/Item/sword12_2.OZJ"
+}
 },
 "0,11": {
 "custom": false,
 "dir": "Item",
-"file": "Sword12.bmd"
+"file": "Sword12.bmd",
+"tex": {
+"sword13.jpg": "Data/Item/sword13.OZJ"
+}
 },
 "0,12": {
 "custom": false,
 "dir": "Item",
-"file": "Sword13.bmd"
+"file": "Sword13.bmd",
+"tex": {
+"sword14.jpg": "Data/Item/sword14.ozt",
+"sword14.tga": "Data/Item/sword14.ozt"
+}
 },
 "0,13": {
 "custom": false,
 "dir": "Item",
-"file": "Sword14.bmd"
+"file": "Sword14.bmd",
+"tex": {
+"sword015.jpg": "Data/Item/sword015.OZJ",
+"sword015_2.jpg": "Data/Item/sword015_2.OZJ"
+}
 },
 "0,14": {
 "custom": false,
 "dir": "Item",
-"file": "Sword15.bmd"
+"file": "Sword15.bmd",
+"tex": {
+"sword15.jpg": "Data/Item/sword15.OZJ",
+"sword15_2.jpg": "Data/Item/sword15_2.OZJ"
+}
 },
 "0,15": {
 "custom": false,
 "dir": "Item",
-"file": "Sword16.bmd"
+"file": "Sword16.bmd",
+"tex": {
+"sword17.jpg": "Data/Item/sword17.OZJ"
+}
 },
 "0,16": {
 "custom": false,
 "dir": "Item",
-"file": "Sword17.bmd"
+"file": "Sword17.bmd",
+"tex": {
+"sword077.jpg": "Data/Item/sword077.OZJ"
+}
 },
 "0,17": {
 "custom": false,
 "dir": "Item",
-"file": "Sword18.bmd"
+"file": "Sword18.bmd",
+"tex": {
+"Ksword.jpg": "Data/Item/Ksword.OZJ",
+"Ksword2.jpg": "Data/Item/Ksword2.OZJ"
+}
 },
 "0,18": {
 "custom": false,
 "dir": "Item",
-"file": "Sword19.bmd"
+"file": "Sword19.bmd",
+"tex": {
+"Msword.jpg": "Data/Item/Msword.OZJ"
+}
 },
 "0,19": {
 "custom": false,
 "dir": "Item",
-"file": "Sword20.bmd"
+"file": "Sword20.bmd",
+"tex": {
+"sword442.jpg": "Data/Item/sword442.OZJ",
+"sword44_R.jpg": "Data/Item/sword44_R.OZJ"
+}
 },
 "0,2": {
 "custom": false,
 "dir": "Item",
-"file": "Sword03.bmd"
+"file": "Sword03.bmd",
+"tex": {
+"sword04.jpg": "Data/Item/sword04.OZJ"
+}
 },
 "0,20": {
 "custom": true,
 "dir": "Item/Custom/20",
-"file": "sword21.bmd"
+"file": "sword21.bmd",
+"tex": {
+"nks01.jpg": "Data/Item/Custom/20/nks01.OZJ",
+"nks02.jpg": "Data/Item/Custom/20/nks02.OZJ",
+"nks03.jpg": "Data/Item/Custom/20/nks03.OZJ",
+"nks04.jpg": "Data/Item/Custom/20/nks04.OZJ"
+}
 },
 "0,21": {
 "custom": true,
 "dir": "Item/Custom/21",
-"file": "Axe11.bmd"
+"file": "Axe11.bmd",
+"tex": {
+"RingPenOfLordEvent.JPG": "Data/Item/Custom/21/RingPenOfLordEvent.OZJ",
+"a_2.jpg": "Data/Item/Custom/21/a_2.OZJ",
+"flamestani.jpg": "Data/Item/Custom/21/flamestani.ozj",
+"gold.jpg": "Data/Item/Custom/21/gold.OZJ",
+"gra.jpg": "Data/Item/Custom/21/gra.ozj",
+"soketnight_mulagzuberuzu.jpg": "Data/Item/Custom/21/soketnight_mulagzuberuzu.ozj"
+},
+"tip": "nx"
 },
 "0,22": {
 "custom": true,
 "dir": "Item/Custom/22",
-"file": "sword23.bmd"
+"file": "sword23.bmd",
+"tex": {
+"Thunder01.jpg": "Data/Item/Custom/22/thunder01.ozj",
+"dn3_darksw.jpg": "Data/Item/Custom/22/dn3_darksw.ozj"
+},
+"tip": "ny"
 },
 "0,23": {
 "custom": true,
 "dir": "Item/Custom/23",
-"file": "sword24.bmd"
+"file": "sword24.bmd",
+"tex": {
+"bksword.JPG": "Data/Item/Custom/23/bksword.ozj"
+},
+"tip": "ny"
 },
 "0,24": {
 "custom": true,
 "dir": "Item/Custom/24",
-"file": "axe20.bmd"
+"file": "axe20.bmd",
+"tex": {
+"pegdagger.jpg": "Data/Item/Custom/24/pegdagger.ozj"
+},
+"tip": "ny"
 },
 "0,25": {
 "custom": true,
 "dir": "Item/Custom/25",
-"file": "axe23.bmd"
+"file": "axe23.bmd",
+"tex": {
+"TX_W_warhammer_daedric_01.jpg": "Data/Item/Custom/25/tx_w_warhammer_daedric_01.ozj"
+},
+"tip": "id"
 },
 "0,26": {
 "custom": true,
 "dir": "Item/Custom/26",
-"file": "axe26.bmd"
+"file": "axe26.bmd",
+"tex": {
+"istxs.JPG": "Data/Item/Custom/26/istxs.ozj"
+},
+"tip": "pz"
 },
 "0,3": {
 "custom": false,
 "dir": "Item",
-"file": "Sword04.bmd"
+"file": "Sword04.bmd",
+"tex": {
+"sword05.jpg": "Data/Item/sword05.OZJ",
+"sword05.tga": "Data/Item/sword05.OZJ"
+}
 },
 "0,31": {
 "custom": false,
 "dir": "Item",
-"file": "Sword32.bmd"
+"file": "Sword32.bmd",
+"tex": {
+"MMsS.jpg": "Data/Item/MMsS.OZJ",
+"MMsS2.jpg": "Data/Item/MMsS2.OZJ",
+"MMsS_r.jpg": "Data/Item/MMsS_r.OZJ",
+"MMsSs_r.jpg": "Data/Item/MMsSs_r.OZJ"
+}
 },
 "0,4": {
 "custom": false,
 "dir": "Item",
-"file": "Sword05.bmd"
+"file": "Sword05.bmd",
+"tex": {
+"sword06.jpg": "Data/Item/sword06.OZJ"
+}
 },
 "0,5": {
 "custom": false,
 "dir": "Item",
-"file": "Sword06.bmd"
+"file": "Sword06.bmd",
+"tex": {
+"sword07.jpg": "Data/Item/sword07.OZJ",
+"sword07_2.jpg": "Data/Item/sword07_2.OZJ"
+}
 },
 "0,6": {
 "custom": false,
 "dir": "Item",
-"file": "Sword07.bmd"
+"file": "Sword07.bmd",
+"tex": {
+"sword08.jpg": "Data/Item/sword08.OZJ"
+}
 },
 "0,7": {
 "custom": false,
 "dir": "Item",
-"file": "Sword08.bmd"
+"file": "Sword08.bmd",
+"tex": {
+"hound_sword1.jpg": "Data/Item/hound_sword1.OZJ"
+}
 },
 "0,8": {
 "custom": false,
 "dir": "Item",
-"file": "Sword09.bmd"
+"file": "Sword09.bmd",
+"tex": {
+"sword09.jpg": "Data/Item/sword09.OZJ"
+}
 },
 "0,9": {
 "custom": false,
 "dir": "Item",
-"file": "Sword10.bmd"
+"file": "Sword10.bmd",
+"tex": {
+"sword11.jpg": "Data/Item/sword11.OZJ",
+"sword11.tga": "Data/Item/sword11.OZJ"
+}
 },
 "1,0": {
 "custom": false,
 "dir": "Item",
-"file": "Axe01.bmd"
+"file": "Axe01.bmd",
+"tex": {
+"Axes02.jpg": "Data/Item/Axes02.OZJ"
+}
 },
 "1,1": {
 "custom": false,
 "dir": "Item",
-"file": "Axe02.bmd"
+"file": "Axe02.bmd",
+"tex": {
+"Axes03.jpg": "Data/Item/Axes03.OZJ"
+}
 },
 "1,2": {
 "custom": false,
 "dir": "Item",
-"file": "Axe03.bmd"
+"file": "Axe03.bmd",
+"tex": {
+"Axes04.jpg": "Data/Item/Axes04.OZJ"
+}
 },
 "1,3": {
 "custom": false,
 "dir": "Item",
-"file": "Axe04.bmd"
+"file": "Axe04.bmd",
+"tex": {
+"Axes05.jpg": "Data/Item/Axes05.OZJ"
+}
 },
 "1,4": {
 "custom": false,
 "dir": "Item",
-"file": "Axe05.bmd"
+"file": "Axe05.bmd",
+"tex": {
+"Axes06.jpg": "Data/Item/Axes06.ozt",
+"Axes06.tga": "Data/Item/Axes06.ozt"
+}
 },
 "1,5": {
 "custom": false,
 "dir": "Item",
-"file": "Axe06.bmd"
+"file": "Axe06.bmd",
+"tex": {
+"Axes07.jpg": "Data/Item/Axes07.OZJ"
+}
 },
 "1,6": {
 "custom": false,
 "dir": "Item",
-"file": "Axe07.bmd"
+"file": "Axe07.bmd",
+"tex": {
+"Axes08.jpg": "Data/Item/Axes08.OZJ"
+}
 },
 "1,7": {
 "custom": false,
 "dir": "Item",
-"file": "Axe08.bmd"
+"file": "Axe08.bmd",
+"tex": {
+"Axes09.jpg": "Data/Item/Axes09.OZJ"
+}
 },
 "1,8": {
 "custom": false,
 "dir": "Item",
-"file": "Axe09.bmd"
+"file": "Axe09.bmd",
+"tex": {
+"Axes10.jpg": "Data/Item/Axes10.OZJ"
+}
 },
 "1,9": {
 "custom": true,
 "dir": "Item/Custom/41",
-"file": "axe27.bmd"
+"file": "axe27.bmd",
+"tex": {
+"fortress_hammer_axe.jpg": "Data/Item/Custom/41/fortress_hammer_axe.ozj"
+},
+"tip": "pz"
 },
 "10,0": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale01.bmd"
+"file": "GloveMale01.bmd",
+"tex": {
+"gloves_02.jpg": "Data/Player/gloves_02.OZJ"
+}
 },
 "10,1": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale02.bmd"
+"file": "GloveMale02.bmd",
+"tex": {
+"gloves_03.jpg": "Data/Player/gloves_03.OZJ"
+}
 },
 "10,15": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale16.bmd"
+"file": "GloveMale16.bmd",
+"tex": {
+"gloves_14.tga": "Data/Player/gloves_14.OZT"
+}
 },
 "10,16": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale17.bmd"
+"file": "GloveMale17.bmd",
+"tex": {
+"gloves_03.jpg": "Data/Player/gloves_03.OZJ",
+"gloves_bd.jpg": "Data/Player/gloves_bd.OZJ"
+}
 },
 "10,17": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale18.bmd"
+"file": "GloveMale18.bmd",
+"tex": {
+"gloves_bld.jpg": "Data/Player/gloves_bld.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "10,18": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale19.bmd"
+"file": "GloveMale19.bmd",
+"tex": {
+"gloves_14m.jpg": "Data/Player/gloves_14m.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "10,19": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale20.bmd"
+"file": "GloveMale20.bmd",
+"tex": {
+"gloves_E1.jpg": "Data/Player/gloves_E1.OZJ"
+}
 },
 "10,2": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale03.bmd"
+"file": "GloveMale03.bmd",
+"tex": {
+"gloves_04.jpg": "Data/Player/gloves_04.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "10,20": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale21.bmd"
+"file": "GloveMale21.bmd",
+"tex": {
+"gloves_15.tga": "Data/Player/gloves_15.OZT",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "10,21": {
 "custom": true,
 "dir": "Player/Custom/21",
-"file": "GloveMale22.bmd"
+"file": "GloveMale22.bmd",
+"tex": {
+"glove22.jpg": "Data/Player/Custom/21/glove22.OZJ",
+"hide.jpg": "Data/Player/Custom/21/hide.OZJ"
+}
 },
 "10,22": {
 "custom": true,
 "dir": "Player/Custom/22",
-"file": "GloveMale23.bmd"
+"file": "GloveMale23.bmd",
+"tex": {
+"dark400_gloves.jpg": "Data/Player/Custom/22/dark400_gloves.ozj"
+}
 },
 "10,23": {
 "custom": true,
 "dir": "Player/Custom/23",
-"file": "GloveMale25.bmd"
+"file": "GloveMale25.bmd",
+"tex": {
+"FGlove.jpg": "Data/Player/Custom/23/FGlove.OZJ",
+"hide.jpg": "Data/Player/Custom/23/hide.OZJ"
+}
 },
 "10,24": {
 "custom": true,
 "dir": "Player/Custom/24",
-"file": "GloveMale30.bmd"
+"file": "GloveMale30.bmd",
+"tex": {
+"ValorousDarkrunedBody.jpg": "Data/Player/Custom/24/valorousdarkrunedbody.ozj"
+}
 },
 "10,25": {
 "custom": true,
 "dir": "Player/Custom/25",
-"file": "GloveMale31.bmd"
+"file": "GloveMale31.bmd",
+"tex": {
+"Scourgestalker.jpg": "Data/Player/Custom/25/Scourgestalker.ozj"
+}
 },
 "10,26": {
 "custom": true,
 "dir": "Player/Custom/26",
-"file": "GloveMale32.bmd"
+"file": "GloveMale32.bmd",
+"tex": {
+"Seadbrno.jpg": "Data/Player/Custom/26/Seadbrno.ozj"
+}
 },
 "10,27": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale28.bmd"
+"file": "GloveMale28.bmd",
+"tex": {
+"Kgpp.jpg": "Data/Player/Kgpp.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "10,28": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale29.bmd"
+"file": "GloveMale29.bmd",
+"tex": {
+"KSgp.jpg": "Data/Player/KSgp.OZJ"
+}
 },
 "10,3": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale04.bmd"
+"file": "GloveMale04.bmd",
+"tex": {
+"gloves_13m.jpg": "Data/Player/gloves_13m.OZJ",
+"hide_m.jpg": "Data/Player/hide_m.OZJ"
+}
 },
 "10,4": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale05.bmd"
+"file": "GloveMale05.bmd",
+"tex": {
+"gloves_06.jpg": "Data/Player/gloves_06.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "10,5": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale06.bmd"
+"file": "GloveMale06.bmd",
+"tex": {
+"gloves_07.jpg": "Data/Player/gloves_07.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "10,6": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale07.bmd"
+"file": "GloveMale07.bmd",
+"tex": {
+"gloves_08.jpg": "Data/Player/gloves_08.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "10,7": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale08.bmd"
+"file": "GloveMale08.bmd",
+"tex": {
+"gloves_09.jpg": "Data/Player/gloves_09.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "10,8": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale09.bmd"
+"file": "GloveMale09.bmd",
+"tex": {
+"boots_10b.tga": "Data/Player/boots_10b.ozt",
+"gloves_10.jpg": "Data/Player/gloves_10.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "10,9": {
 "custom": false,
 "dir": "Player",
-"file": "GloveMale10.bmd"
+"file": "GloveMale10.bmd",
+"tex": {
+"gloves_11.jpg": "Data/Player/gloves_11.OZJ"
+}
 },
 "11,0": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale01.bmd"
+"file": "BootMale01.bmd",
+"tex": {
+"boots_02.jpg": "Data/Player/boots_02.ozj"
+}
 },
 "11,1": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale02.bmd"
+"file": "BootMale02.bmd",
+"tex": {
+"boots_03.jpg": "Data/Player/boots_03.OZJ"
+}
 },
 "11,15": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale16.bmd"
+"file": "BootMale16.bmd",
+"tex": {
+"boots_14.tga": "Data/Player/boots_14.OZT"
+}
 },
 "11,16": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale17.bmd"
+"file": "BootMale17.bmd",
+"tex": {
+"boots_bd.jpg": "Data/Player/boots_bd.OZJ"
+}
 },
 "11,17": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale18.bmd"
+"file": "BootMale18.bmd",
+"tex": {
+"boots_bld.jpg": "Data/Player/boots_bld.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "11,18": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale19.bmd"
+"file": "BootMale19.bmd",
+"tex": {
+"boots_14m.jpg": "Data/Player/boots_14m.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "11,19": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale20.bmd"
+"file": "BootMale20.bmd",
+"tex": {
+"boots_E1.jpg": "Data/Player/boots_E1.OZJ"
+}
 },
 "11,2": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale03.bmd"
+"file": "BootMale03.bmd",
+"tex": {
+"boots_04.jpg": "Data/Player/boots_04.OZJ",
+"boots_04b.tga": "Data/Player/boots_04b.ozt",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "11,20": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale21.bmd"
+"file": "BootMale21.bmd",
+"tex": {
+"boots_15.tga": "Data/Player/boots_15.OZT",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "11,21": {
 "custom": true,
 "dir": "Player/Custom/21",
-"file": "BootMale22.bmd"
+"file": "BootMale22.bmd",
+"tex": {
+"boots22.jpg": "Data/Player/Custom/21/boots22.OZJ"
+}
 },
 "11,22": {
 "custom": true,
 "dir": "Player/Custom/22",
-"file": "BootMale23.bmd"
+"file": "BootMale23.bmd",
+"tex": {
+"dark400_boots.jpg": "Data/Player/Custom/22/dark400_boots.ozj"
+}
 },
 "11,23": {
 "custom": true,
 "dir": "Player/Custom/23",
-"file": "BootMale25.bmd"
+"file": "BootMale25.bmd",
+"tex": {
+"FBoots.jpg": "Data/Player/Custom/23/FBoots.OZJ",
+"hide.jpg": "Data/Player/Custom/23/hide.OZJ"
+}
 },
 "11,24": {
 "custom": true,
 "dir": "Player/Custom/24",
-"file": "BootMale30.bmd"
+"file": "BootMale30.bmd",
+"tex": {
+"ValorousDarkrunedBody.jpg": "Data/Player/Custom/24/valorousdarkrunedbody.ozj"
+}
 },
 "11,25": {
 "custom": true,
 "dir": "Player/Custom/25",
-"file": "BootMale31.bmd"
+"file": "BootMale31.bmd",
+"tex": {
+"Scourgestalker.jpg": "Data/Player/Custom/25/Scourgestalker.ozj"
+}
 },
 "11,26": {
 "custom": true,
 "dir": "Player/Custom/26",
-"file": "BootMale32.bmd"
+"file": "BootMale32.bmd",
+"tex": {
+"Seadbrno.jpg": "Data/Player/Custom/26/Seadbrno.ozj"
+}
 },
 "11,27": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale28.bmd"
+"file": "BootMale28.bmd",
+"tex": {
+"Kbpp.jpg": "Data/Player/Kbpp.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "11,28": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale29.bmd"
+"file": "BootMale29.bmd",
+"tex": {
+"KSbp.jpg": "Data/Player/KSbp.OZJ"
+}
 },
 "11,3": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale04.bmd"
+"file": "BootMale04.bmd",
+"tex": {
+"boots_13m.jpg": "Data/Player/boots_13m.OZJ",
+"hide_m.jpg": "Data/Player/hide_m.OZJ"
+}
 },
 "11,4": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale05.bmd"
+"file": "BootMale05.bmd",
+"tex": {
+"boots_06.jpg": "Data/Player/boots_06.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "11,5": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale06.bmd"
+"file": "BootMale06.bmd",
+"tex": {
+"boots_07.jpg": "Data/Player/boots_07.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "11,6": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale07.bmd"
+"file": "BootMale07.bmd",
+"tex": {
+"boots_08.jpg": "Data/Player/boots_08.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "11,7": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale08.bmd"
+"file": "BootMale08.bmd",
+"tex": {
+"boots_09.jpg": "Data/Player/boots_09.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "11,8": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale09.bmd"
+"file": "BootMale09.bmd",
+"tex": {
+"boots_10.jpg": "Data/Player/boots_10.OZJ",
+"boots_10b.tga": "Data/Player/boots_10b.ozt"
+}
 },
 "11,9": {
 "custom": false,
 "dir": "Player",
-"file": "BootMale10.bmd"
+"file": "BootMale10.bmd",
+"tex": {
+"boots_11.jpg": "Data/Player/boots_11.OZJ"
+}
 },
 "12,0": {
 "custom": false,
 "dir": "Item",
-"file": "Wing01.bmd"
+"file": "Wing01.bmd",
+"tex": {
+"elfin_wing.jpg": "Data/Item/elfin_wing.OZJ"
+}
 },
 "12,1": {
 "custom": false,
 "dir": "Item",
-"file": "Wing02.bmd"
+"file": "Wing02.bmd",
+"tex": {
+"angel_wing.tga": "Data/Item/angel_wing.OZT"
+}
 },
 "12,10": {
 "custom": false,
 "dir": "Item",
-"file": "Gem04.bmd"
+"file": "Gem04.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,11": {
 "custom": false,
 "dir": "Item",
-"file": "Gem05.bmd"
+"file": "Gem05.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,12": {
 "custom": false,
 "dir": "Item",
-"file": "Gem06.bmd"
+"file": "Gem06.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,13": {
 "custom": false,
 "dir": "Item",
-"file": "Gem07.bmd"
+"file": "Gem07.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,14": {
 "custom": false,
 "dir": "Item",
-"file": "Gem08.bmd"
+"file": "Gem08.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,15": {
 "custom": false,
 "dir": "Item",
-"file": "Jewel15.bmd"
+"file": "Jewel15.bmd",
+"tex": {
+"yellow_jewel.jpg": "Data/Item/yellow_jewel.OZJ"
+}
 },
 "12,16": {
 "custom": false,
 "dir": "Item",
-"file": "Gem10.bmd"
+"file": "Gem10.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,17": {
 "custom": false,
 "dir": "Item",
-"file": "Gem11.bmd"
+"file": "Gem11.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,18": {
 "custom": false,
 "dir": "Item",
-"file": "Gem12.bmd"
+"file": "Gem12.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,19": {
 "custom": false,
 "dir": "Item",
-"file": "Gem13.bmd"
+"file": "Gem13.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,2": {
 "custom": false,
 "dir": "Item",
-"file": "Wing03.bmd"
+"file": "Wing03.bmd",
+"tex": {
+"devil_wing.tga": "Data/Item/devil_wing.OZT"
+}
 },
 "12,3": {
 "custom": false,
 "dir": "Item",
-"file": "Wing04.bmd"
+"file": "Wing04.bmd",
+"tex": {
+"NewingEl.jpg": "Data/Item/NewingEl.OZJ"
+}
 },
 "12,4": {
 "custom": false,
 "dir": "Item",
-"file": "Wing05.bmd"
+"file": "Wing05.bmd",
+"tex": {
+"NEWWW.jpg": "Data/Item/NEWWW.OZJ",
+"NEWW_R.jpg": "Data/Item/NEWW_R.OZJ"
+}
 },
 "12,5": {
 "custom": false,
 "dir": "Item",
-"file": "Wing06.bmd"
+"file": "Wing06.bmd",
+"tex": {
+"NDW.jpg": "Data/Item/NDW.OZJ",
+"NDW_R.jpg": "Data/Item/NDW_R.OZJ"
+}
 },
 "12,6": {
 "custom": false,
 "dir": "Item",
-"file": "Wing07.bmd"
+"file": "Wing07.bmd",
+"tex": {
+"NDEE.tga": "Data/Item/NDEE.OZJ"
+}
 },
 "12,7": {
 "custom": false,
 "dir": "Item",
-"file": "Gem01.bmd"
+"file": "Gem01.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,8": {
 "custom": false,
 "dir": "Item",
-"file": "Gem02.bmd"
+"file": "Gem02.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "12,9": {
 "custom": false,
 "dir": "Item",
-"file": "Gem03.bmd"
+"file": "Gem03.bmd",
+"tex": {
+"pearl.jpg": "Data/Item/pearl.OZJ"
+}
 },
 "13,0": {
 "custom": false,
 "dir": "Player",
-"file": "Helper01.bmd"
+"file": "Helper01.bmd",
+"tex": {
+"fairy.jpg": "Data/Item/fairy.OZJ",
+"fairy2.jpg": "Data/Item/fairy2.OZJ"
+}
 },
 "13,1": {
 "custom": false,
 "dir": "Player",
-"file": "Helper02.bmd"
+"file": "Helper02.bmd",
+"tex": {
+"satan.jpg": "Data/Item/satan.OZJ",
+"satan2.tga": "Data/Item/satan2.ozt"
+}
 },
 "13,10": {
 "custom": false,
 "dir": "Item",
-"file": "Ring01.bmd"
+"file": "Ring01.bmd",
+"tex": {
+"ring.jpg": "Data/Item/ring.OZJ"
+}
 },
 "13,12": {
 "custom": false,
 "dir": "Item",
-"file": "Necklace01.bmd"
+"file": "Necklace01.bmd",
+"tex": {
+"ring.jpg": "Data/Item/ring.OZJ"
+}
 },
 "13,13": {
 "custom": false,
 "dir": "Item",
-"file": "Necklace02.bmd"
+"file": "Necklace02.bmd",
+"tex": {
+"ring.jpg": "Data/Item/ring.OZJ"
+}
 },
 "13,14": {
 "custom": false,
 "dir": "Item",
-"file": "Quest04.bmd"
+"file": "Quest04.bmd",
+"tex": {
+"rok.tga": "Data/Item/rok.OZT"
+}
 },
 "13,15": {
 "custom": false,
 "dir": "Item",
-"file": "Quest05.bmd"
+"file": "Quest05.bmd",
+"tex": {
+"Stts.jpg": "Data/Item/Stts.OZJ"
+}
 },
 "13,16": {
 "custom": false,
 "dir": "Item",
-"file": "EventBloodCastle00.bmd"
+"file": "EventBloodCastle00.bmd",
+"tex": {
+"angelscroll01.TGA": "Data/Item/angelscroll01.OZT"
+}
 },
 "13,17": {
 "custom": false,
 "dir": "Item",
-"file": "EventBloodCastle01.bmd"
+"file": "EventBloodCastle01.bmd",
+"tex": {
+"bone02.tga": "Data/Item/bone02.OZT"
+}
 },
 "13,18": {
 "custom": false,
 "dir": "Item",
-"file": "EventBloodCastle02.bmd"
+"file": "EventBloodCastle02.bmd",
+"tex": {
+"mangto04.jpg": "Data/Item/mangto04.OZJ"
+}
 },
 "13,2": {
 "custom": false,
 "dir": "Player",
-"file": "Helper03.bmd"
+"file": "Helper03.bmd",
+"tex": {
+"unicon.jpg": "Data/Item/unicon.OZJ",
+"unicon01.tga": "Data/Item/unicon01.OZT"
+}
 },
 "13,3": {
 "custom": false,
 "dir": "Player",
-"file": "Helper04.bmd"
+"file": "Helper04.bmd",
+"tex": {
+"RedDragonT.jpg": "Data/Item/RedDragonT.OZJ"
+}
 },
 "13,8": {
 "custom": false,
 "dir": "Item",
-"file": "Ring01.bmd"
+"file": "Ring01.bmd",
+"tex": {
+"ring.jpg": "Data/Item/ring.OZJ"
+}
 },
 "13,9": {
 "custom": false,
 "dir": "Item",
-"file": "Ring02.bmd"
+"file": "Ring02.bmd",
+"tex": {
+"ring.jpg": "Data/Item/ring.OZJ"
+}
 },
 "14,0": {
 "custom": false,
 "dir": "Item",
-"file": "Potion01.bmd"
+"file": "Potion01.bmd",
+"tex": {
+"apple.jpg": "Data/Item/apple.OZJ",
+"pot3.tga": "Data/Item/pot3.ozt"
+}
 },
 "14,1": {
 "custom": false,
 "dir": "Item",
-"file": "Potion02.bmd"
+"file": "Potion02.bmd",
+"tex": {
+"medicine1.jpg": "Data/Item/medicine1.OZJ",
+"medicine2.jpg": "Data/Item/medicine2.OZJ"
+}
 },
 "14,10": {
 "custom": false,
 "dir": "Item",
-"file": "Scroll01.bmd"
+"file": "Scroll01.bmd",
+"tex": {
+"magictext.jpg": "Data/Item/magictext.OZJ"
+}
 },
 "14,11": {
 "custom": false,
 "dir": "Item",
-"file": "MagicBox01.bmd"
+"file": "MagicBox01.bmd",
+"tex": {
+"box.jpg": "Data/Item/box.OZJ"
+}
 },
 "14,12": {
 "custom": false,
 "dir": "Item",
-"file": "Event01.bmd"
+"file": "Event01.bmd",
+"tex": {
+"hhj.jpg": "Data/Item/hhj.OZJ"
+}
 },
 "14,13": {
 "custom": false,
 "dir": "Item",
-"file": "Jewel01.bmd"
+"file": "Jewel01.bmd",
+"tex": {
+"blue_jewel.jpg": "Data/Item/blue_jewel.OZJ"
+}
 },
 "14,14": {
 "custom": false,
 "dir": "Item",
-"file": "Jewel02.bmd"
+"file": "Jewel02.bmd",
+"tex": {
+"red_jewel.jpg": "Data/Item/red_jewel.OZJ"
+}
 },
 "14,15": {
 "custom": false,
 "dir": "Item",
-"file": "Gold01.bmd"
+"file": "Gold01.bmd",
+"tex": {
+"gold.jpg": "Data/Item/gold.OZJ"
+}
 },
 "14,16": {
 "custom": false,
 "dir": "Item",
-"file": "Jewel03.bmd"
+"file": "Jewel03.bmd",
+"tex": {
+"wolf02.jpg": "Data/Item/wolf02.OZJ"
+}
 },
 "14,17": {
 "custom": false,
 "dir": "Item",
-"file": "Devil00.bmd"
+"file": "Devil00.bmd",
+"tex": {
+"devileye.jpg": "Data/Item/devileye.OZJ",
+"devileye2.jpg": "Data/Item/devileye2.OZJ"
+}
 },
 "14,18": {
 "custom": false,
 "dir": "Item",
-"file": "Devil01.bmd"
+"file": "Devil01.bmd",
+"tex": {
+"devilkey.jpg": "Data/Item/devilkey.OZJ"
+}
 },
 "14,19": {
 "custom": false,
 "dir": "Item",
-"file": "Devil02.bmd"
+"file": "Devil02.bmd",
+"tex": {
+"visitor.jpg": "Data/Item/visitor.OZJ",
+"visitor2.jpg": "Data/Item/visitor2.OZJ"
+}
 },
 "14,2": {
 "custom": false,
 "dir": "Item",
-"file": "Potion03.bmd"
+"file": "Potion03.bmd",
+"tex": {
+"medicine1.jpg": "Data/Item/medicine1.OZJ",
+"medicine2.jpg": "Data/Item/medicine2.OZJ"
+}
 },
 "14,20": {
 "custom": false,
 "dir": "Item",
-"file": "Drink00.bmd"
+"file": "Drink00.bmd",
+"tex": {
+"loveB.jpg": "Data/Item/loveB.OZJ"
+}
 },
 "14,21": {
 "custom": false,
 "dir": "Item",
-"file": "ConChip00.bmd"
+"file": "ConChip00.bmd",
+"tex": {
+"chip.jpg": "Data/Item/chip.OZJ"
+}
 },
 "14,22": {
 "custom": false,
 "dir": "Item",
-"file": "jewel22.bmd"
+"file": "jewel22.bmd",
+"tex": {
+"blue_jewel.jpg": "Data/Item/blue_jewel.OZJ",
+"red_jewel.jpg": "Data/Item/red_jewel.OZJ"
+}
 },
 "14,23": {
 "custom": false,
 "dir": "Item",
-"file": "Quest00.bmd"
+"file": "Quest00.bmd",
+"tex": {
+"Ktext.jpg": "Data/Item/Ktext.OZJ"
+}
 },
 "14,24": {
 "custom": false,
 "dir": "Item",
-"file": "Quest01.bmd"
+"file": "Quest01.bmd",
+"tex": {
+"Ksword.jpg": "Data/Item/Ksword.OZJ"
+}
 },
 "14,25": {
 "custom": false,
 "dir": "Item",
-"file": "Quest02.bmd"
+"file": "Quest02.bmd",
+"tex": {
+"Elf_E.jpg": "Data/Item/Elf_E.OZJ"
+}
 },
 "14,26": {
 "custom": false,
 "dir": "Item",
-"file": "Quest03.bmd"
+"file": "Quest03.bmd",
+"tex": {
+"W_S.jpg": "Data/Item/W_S.OZJ"
+}
 },
 "14,3": {
 "custom": false,
 "dir": "Item",
-"file": "Potion04.bmd"
+"file": "Potion04.bmd",
+"tex": {
+"medicine1.jpg": "Data/Item/medicine1.OZJ",
+"medicine2.jpg": "Data/Item/medicine2.OZJ"
+}
 },
 "14,4": {
 "custom": false,
 "dir": "Item",
-"file": "Potion05.bmd"
+"file": "Potion05.bmd",
+"tex": {
+"medicine1.jpg": "Data/Item/medicine1.OZJ",
+"medicine2.jpg": "Data/Item/medicine2.OZJ"
+}
 },
 "14,5": {
 "custom": false,
 "dir": "Item",
-"file": "Potion06.bmd"
+"file": "Potion06.bmd",
+"tex": {
+"medicine1.jpg": "Data/Item/medicine1.OZJ",
+"medicine2.jpg": "Data/Item/medicine2.OZJ"
+}
 },
 "14,6": {
 "custom": false,
 "dir": "Item",
-"file": "Potion07.bmd"
+"file": "Potion07.bmd",
+"tex": {
+"medicine1.jpg": "Data/Item/medicine1.OZJ",
+"medicine2.jpg": "Data/Item/medicine2.OZJ"
+}
 },
 "14,8": {
 "custom": false,
 "dir": "Item",
-"file": "Antidote01.bmd"
+"file": "Antidote01.bmd",
+"tex": {
+"medicine1.jpg": "Data/Item/medicine1.OZJ",
+"medicine2.jpg": "Data/Item/medicine2.OZJ"
+}
 },
 "14,9": {
 "custom": false,
 "dir": "Item",
-"file": "Beer01.bmd"
+"file": "Beer01.bmd",
+"tex": {
+"bottle.tga": "Data/Item/bottle.ozt"
+}
 },
 "15,0": {
 "custom": false,
 "dir": "Item",
-"file": "Book01.bmd"
+"file": "Book01.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,1": {
 "custom": false,
 "dir": "Item",
-"file": "Book02.bmd"
+"file": "Book02.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,10": {
 "custom": false,
 "dir": "Item",
-"file": "Book11.bmd"
+"file": "Book11.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,11": {
 "custom": false,
 "dir": "Item",
-"file": "Book12.bmd"
+"file": "Book12.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,12": {
 "custom": false,
 "dir": "Item",
-"file": "Book13.bmd"
+"file": "Book13.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,13": {
 "custom": false,
 "dir": "Item",
-"file": "Book14.bmd"
+"file": "Book14.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,14": {
 "custom": false,
 "dir": "Item",
-"file": "Book15.bmd"
+"file": "Book15.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,15": {
 "custom": false,
 "dir": "Item",
-"file": "Book16.bmd"
+"file": "Book16.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,2": {
 "custom": false,
 "dir": "Item",
-"file": "Book03.bmd"
+"file": "Book03.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,3": {
 "custom": false,
 "dir": "Item",
-"file": "Book04.bmd"
+"file": "Book04.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,4": {
 "custom": false,
 "dir": "Item",
-"file": "Book05.bmd"
+"file": "Book05.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,5": {
 "custom": false,
 "dir": "Item",
-"file": "Book06.bmd"
+"file": "Book06.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,6": {
 "custom": false,
 "dir": "Item",
-"file": "Book07.bmd"
+"file": "Book07.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,7": {
 "custom": false,
 "dir": "Item",
-"file": "Book08.bmd"
+"file": "Book08.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,8": {
 "custom": false,
 "dir": "Item",
-"file": "Book09.bmd"
+"file": "Book09.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "15,9": {
 "custom": false,
 "dir": "Item",
-"file": "Book10.bmd"
+"file": "Book10.bmd",
+"tex": {
+"book.jpg": "Data/Item/book.OZJ"
+}
 },
 "2,0": {
 "custom": false,
 "dir": "Item",
-"file": "Mace01.bmd"
+"file": "Mace01.bmd",
+"tex": {
+"mace02.jpg": "Data/Item/mace02.OZJ"
+}
 },
 "2,1": {
 "custom": false,
 "dir": "Item",
-"file": "Mace02.bmd"
+"file": "Mace02.bmd",
+"tex": {
+"mace03.jpg": "Data/Item/mace03.OZJ"
+}
 },
 "2,2": {
 "custom": false,
 "dir": "Item",
-"file": "Mace03.bmd"
+"file": "Mace03.bmd",
+"tex": {
+"flail00.tga": "Data/Item/flail00.ozt",
+"flail02.jpg": "Data/Item/flail02.OZJ"
+}
 },
 "2,3": {
 "custom": false,
 "dir": "Item",
-"file": "Mace04.bmd"
+"file": "Mace04.bmd",
+"tex": {
+"maul03.jpg": "Data/Item/maul03.OZJ"
+}
 },
 "2,4": {
 "custom": false,
 "dir": "Item",
-"file": "Mace05.bmd"
+"file": "Mace05.bmd",
+"tex": {
+"mace.jpg": "Data/Item/mace.OZJ",
+"maceB.jpg": "Data/Item/maceB.OZJ"
+}
 },
 "2,5": {
 "custom": false,
 "dir": "Item",
-"file": "Mace06.bmd"
+"file": "Mace06.bmd",
+"tex": {
+"ni99.jpg": "Data/Item/ni99.OZJ"
+}
 },
 "2,6": {
 "custom": false,
 "dir": "Item",
-"file": "Mace07.bmd"
+"file": "Mace07.bmd",
+"tex": {
+"ft6.jpg": "Data/Item/ft6.OZJ",
+"ft72.jpg": "Data/Item/ft72.OZJ"
+}
 },
 "2,7": {
 "custom": false,
 "dir": "Item",
-"file": "Mace08.bmd"
+"file": "Mace08.bmd",
+"tex": {
+"Estic.jpg": "Data/Item/Estic.OZJ",
+"Estic2.jpg": "Data/Item/Estic2.OZJ",
+"Estic2_R.jpg": "Data/Item/Estic2_R.OZJ"
+}
 },
 "2,8": {
 "custom": true,
 "dir": "Item/Custom/72",
-"file": "Mace72.bmd"
+"file": "Mace72.bmd",
+"tex": {
+"nfm01.jpg": "Data/Item/Custom/72/nfm01.OZJ",
+"nfm02.tga": "Data/Item/Custom/72/nfm02.OZT",
+"nfm03.jpg": "Data/Item/Custom/72/nfm03.OZJ"
+}
 },
 "3,0": {
 "custom": false,
 "dir": "Item",
-"file": "Spear01.bmd"
+"file": "Spear01.bmd",
+"tex": {
+"sword12.jpg": "Data/Item/sword12.OZJ",
+"sword12_3.jpg": "Data/Item/sword12_3.OZJ"
+}
 },
 "3,1": {
 "custom": false,
 "dir": "Item",
-"file": "Spear02.bmd"
+"file": "Spear02.bmd",
+"tex": {
+"Javelins03.jpg": "Data/Item/Javelins03.OZJ",
+"sword12.jpg": "Data/Item/sword12.OZJ"
+}
 },
 "3,10": {
 "custom": false,
 "dir": "Item",
-"file": "Spear11.bmd"
+"file": "Spear11.bmd",
+"tex": {
+"Drax.jpg": "Data/Item/Drax.OZJ",
+"Drax_R.jpg": "Data/Item/Drax_R.OZJ",
+"Drax_n.jpg": "Data/Item/Drax_N.OZJ"
+}
 },
 "3,11": {
 "custom": true,
 "dir": "Item/Custom/107",
-"file": "spear14.bmd"
+"file": "spear14.bmd",
+"tex": {
+"vbtexture.JPG": "Data/Item/Custom/107/vbtexture.ozj"
+},
+"tip": "pz"
 },
 "3,2": {
 "custom": false,
 "dir": "Item",
-"file": "Spear03.bmd"
+"file": "Spear03.bmd",
+"tex": {
+"Javelins01.jpg": "Data/Item/Javelins01.OZJ"
+}
 },
 "3,3": {
 "custom": false,
 "dir": "Item",
-"file": "Spear04.bmd"
+"file": "Spear04.bmd",
+"tex": {
+"Javelins04.jpg": "Data/Item/Javelins04.OZJ"
+}
 },
 "3,4": {
 "custom": false,
 "dir": "Item",
-"file": "Spear05.bmd"
+"file": "Spear05.bmd",
+"tex": {
+"Javelins05.jpg": "Data/Item/Javelins05.OZJ"
+}
 },
 "3,5": {
 "custom": false,
 "dir": "Item",
-"file": "Spear06.bmd"
+"file": "Spear06.bmd",
+"tex": {
+"Polearms02.jpg": "Data/Item/Polearms02.OZJ"
+}
 },
 "3,6": {
 "custom": false,
 "dir": "Item",
-"file": "Spear07.bmd"
+"file": "Spear07.bmd",
+"tex": {
+"Polearms03.jpg": "Data/Item/Polearms03.OZJ"
+}
 },
 "3,7": {
 "custom": false,
 "dir": "Item",
-"file": "Spear08.bmd"
+"file": "Spear08.bmd",
+"tex": {
+"Polearms04.jpg": "Data/Item/Polearms04.OZJ"
+}
 },
 "3,8": {
 "custom": false,
 "dir": "Item",
-"file": "Spear09.bmd"
+"file": "Spear09.bmd",
+"tex": {
+"Polearms05.jpg": "Data/Item/Polearms05.OZJ"
+}
 },
 "3,9": {
 "custom": false,
 "dir": "Item",
-"file": "Spear10.bmd"
+"file": "Spear10.bmd",
+"tex": {
+"af.tga": "Data/Item/af.OZT"
+}
 },
 "4,0": {
 "custom": false,
 "dir": "Item",
-"file": "Bow01.bmd"
+"file": "Bow01.bmd",
+"tex": {
+"bow01.jpg": "Data/Item/bow01.OZJ",
+"bow05.tga": "Data/Item/bow05.OZJ"
+}
 },
 "4,1": {
 "custom": false,
 "dir": "Item",
-"file": "Bow02.bmd"
+"file": "Bow02.bmd",
+"tex": {
+"bow01.jpg": "Data/Item/bow01.OZJ",
+"bow02.jpg": "Data/Item/bow02.OZJ",
+"bow05.tga": "Data/Item/bow05.OZJ"
+}
 },
 "4,10": {
 "custom": false,
 "dir": "Item",
-"file": "CrossBow03.bmd"
+"file": "CrossBow03.bmd",
+"tex": {
+"crossbow03.jpg": "Data/Item/crossbow03.OZJ",
+"crossbow05.jpg": "Data/Item/crossbow05.OZJ"
+}
 },
 "4,11": {
 "custom": false,
 "dir": "Item",
-"file": "CrossBow04.bmd"
+"file": "CrossBow04.bmd",
+"tex": {
+"crossbow04.jpg": "Data/Item/crossbow04.OZJ",
+"crossbow05.jpg": "Data/Item/crossbow05.OZJ"
+}
 },
 "4,12": {
 "custom": false,
 "dir": "Item",
-"file": "CrossBow05.bmd"
+"file": "CrossBow05.bmd",
+"tex": {
+"crossbow05.jpg": "Data/Item/crossbow05.OZJ"
+}
 },
 "4,13": {
 "custom": false,
 "dir": "Item",
-"file": "CrossBow06.bmd"
+"file": "CrossBow06.bmd",
+"tex": {
+"jk00.jpg": "Data/Item/jk00.OZJ",
+"jk01.jpg": "Data/Item/jk01.OZJ"
+}
 },
 "4,14": {
 "custom": false,
 "dir": "Item",
-"file": "CrossBow07.bmd"
+"file": "CrossBow07.bmd",
+"tex": {
+"jo00.jpg": "Data/Item/jo00.OZJ",
+"jo01.jpg": "Data/Item/jo01.OZJ"
+}
 },
 "4,15": {
 "custom": false,
 "dir": "Item",
-"file": "Arrows02.bmd"
+"file": "Arrows02.bmd",
+"tex": {
+"bowbox.jpg": "Data/Item/bowbox.OZJ"
+}
 },
 "4,16": {
 "custom": false,
 "dir": "Item",
-"file": "CrossBow17.bmd"
+"file": "CrossBow17.bmd",
+"tex": {
+"crossbow06.jpg": "Data/Item/crossbow06.OZJ",
+"crossbow06_2.tga": "Data/Item/crossbow06_2.OZT"
+}
 },
 "4,17": {
 "custom": false,
 "dir": "Item",
-"file": "Bow18.bmd"
+"file": "Bow18.bmd",
+"tex": {
+"Ebow4.jpg": "Data/Item/Ebow4.OZJ",
+"Ebow_R.jpg": "Data/Item/Ebow_R.OZJ",
+"bow01.jpg": "Data/Item/bow01.OZJ",
+"bow05.tga": "Data/Item/bow05.OZJ"
+}
 },
 "4,18": {
 "custom": false,
 "dir": "Item",
-"file": "Bow19.bmd"
+"file": "Bow19.bmd",
+"tex": {
+"crossbow06.jpg": "Data/Item/crossbow06.OZJ",
+"crossbow06_R.jpg": "Data/Item/crossbow06_R.OZJ"
+}
 },
 "4,2": {
 "custom": false,
 "dir": "Item",
-"file": "Bow03.bmd"
+"file": "Bow03.bmd",
+"tex": {
+"bow01.jpg": "Data/Item/bow01.OZJ",
+"bow03.jpg": "Data/Item/bow03.OZJ",
+"bow05.tga": "Data/Item/bow05.OZJ"
+}
 },
 "4,3": {
 "custom": false,
 "dir": "Item",
-"file": "Bow04.bmd"
+"file": "Bow04.bmd",
+"tex": {
+"bow01.jpg": "Data/Item/bow01.OZJ",
+"bow04.jpg": "Data/Item/bow04.OZJ",
+"bow05.tga": "Data/Item/bow05.OZJ"
+}
 },
 "4,4": {
 "custom": false,
 "dir": "Item",
-"file": "Bow05.bmd"
+"file": "Bow05.bmd",
+"tex": {
+"bow01.jpg": "Data/Item/bow01.OZJ",
+"bow05.jpg": "Data/Item/bow05.OZJ",
+"bow05.tga": "Data/Item/bow05.OZJ"
+}
 },
 "4,5": {
 "custom": false,
 "dir": "Item",
-"file": "Bow06.bmd"
+"file": "Bow06.bmd",
+"tex": {
+"bow01.jpg": "Data/Item/bow01.OZJ",
+"bow05.jpg": "Data/Item/bow05.OZJ",
+"bow05.tga": "Data/Item/bow05.OZJ",
+"bow06.jpg": "Data/Item/bow06.OZJ"
+}
 },
 "4,6": {
 "custom": false,
 "dir": "Item",
-"file": "Bow07.bmd"
+"file": "Bow07.bmd",
+"tex": {
+"bow01.jpg": "Data/Item/bow01.OZJ",
+"bow05.tga": "Data/Item/bow05.OZJ",
+"bow77.jpg": "Data/Item/bow77.OZJ"
+}
 },
 "4,7": {
 "custom": false,
 "dir": "Item",
-"file": "Arrows01.bmd"
+"file": "Arrows01.bmd",
+"tex": {
+"crossbow_box.jpg": "Data/Item/crossbow_box.OZJ"
+}
 },
 "4,8": {
 "custom": false,
 "dir": "Item",
-"file": "CrossBow01.bmd"
+"file": "CrossBow01.bmd",
+"tex": {
+"crossbow01.jpg": "Data/Item/crossbow01.OZJ",
+"crossbow05.jpg": "Data/Item/crossbow05.OZJ"
+}
 },
 "4,9": {
 "custom": false,
 "dir": "Item",
-"file": "CrossBow02.bmd"
+"file": "CrossBow02.bmd",
+"tex": {
+"crossbow02.jpg": "Data/Item/crossbow02.OZJ",
+"crossbow05.jpg": "Data/Item/crossbow05.OZJ"
+}
 },
 "5,0": {
 "custom": false,
 "dir": "Item",
-"file": "Staff01.bmd"
+"file": "Staff01.bmd",
+"tex": {
+"wand02.jpg": "Data/Item/wand02.OZJ"
+}
 },
 "5,1": {
 "custom": false,
 "dir": "Item",
-"file": "Staff02.bmd"
+"file": "Staff02.bmd",
+"tex": {
+"wand03.jpg": "Data/Item/wand03.ozt",
+"wand03.tga": "Data/Item/wand03.ozt"
+}
 },
 "5,10": {
 "custom": false,
 "dir": "Item",
-"file": "Staff11.bmd"
+"file": "Staff11.bmd",
+"tex": {
+"wand44.jpg": "Data/Item/wand44.OZJ",
+"wand44_R.jpg": "Data/Item/wand44_R.OZJ"
+}
 },
 "5,11": {
 "custom": true,
 "dir": "Item/Custom/171",
-"file": "staff13.bmd"
+"file": "staff13.bmd",
+"tex": {
+"cobraset_wand_s.jpg": "Data/Item/Custom/171/cobraset_wand_s.ozj"
+},
+"tip": "ny"
 },
 "5,2": {
 "custom": false,
 "dir": "Item",
-"file": "Staff03.bmd"
+"file": "Staff03.bmd",
+"tex": {
+"wand04.jpg": "Data/Item/wand04.OZJ"
+}
 },
 "5,3": {
 "custom": false,
 "dir": "Item",
-"file": "Staff04.bmd"
+"file": "Staff04.bmd",
+"tex": {
+"wand05.jpg": "Data/Item/wand05.OZJ"
+}
 },
 "5,4": {
 "custom": false,
 "dir": "Item",
-"file": "Staff05.bmd"
+"file": "Staff05.bmd",
+"tex": {
+"wand06.jpg": "Data/Item/wand06.OZJ"
+}
 },
 "5,5": {
 "custom": false,
 "dir": "Item",
-"file": "Staff06.bmd"
+"file": "Staff06.bmd",
+"tex": {
+"a9.jpg": "Data/Item/a9.OZJ",
+"a_2.jpg": "Data/Item/a_2.OZJ",
+"shield11_a.jpg": "Data/Item/shield11_a.OZJ"
+}
 },
 "5,6": {
 "custom": false,
 "dir": "Item",
-"file": "Staff07.bmd"
+"file": "Staff07.bmd",
+"tex": {
+"red.jpg": "Data/Item/red.OZJ",
+"wwa.jpg": "Data/Item/wwa.OZJ",
+"wwe.jpg": "Data/Item/wwe.OZJ",
+"wwe00.jpg": "Data/Item/wwe00.OZJ"
+}
 },
 "5,7": {
 "custom": false,
 "dir": "Item",
-"file": "Staff08.bmd"
+"file": "Staff08.bmd",
+"tex": {
+"u2u.jpg": "Data/Item/u2u.OZJ",
+"u2u2.jpg": "Data/Item/u2u2.OZJ"
+}
 },
 "5,8": {
 "custom": false,
 "dir": "Item",
-"file": "Staff09.bmd"
+"file": "Staff09.bmd",
+"tex": {
+"wand10.jpg": "Data/Item/wand10.OZT"
+}
 },
 "5,9": {
 "custom": false,
 "dir": "Item",
-"file": "Staff10.bmd"
+"file": "Staff10.bmd",
+"tex": {
+"Ds_B.jpg": "Data/Item/Ds_B.OZJ",
+"Dstic.jpg": "Data/Item/Dstic.OZJ"
+}
 },
 "6,0": {
 "custom": false,
 "dir": "Item",
-"file": "Shield01.bmd"
+"file": "Shield01.bmd",
+"tex": {
+"du_shield1.jpg": "Data/Item/du_shield1.OZJ"
+}
 },
 "6,1": {
 "custom": false,
 "dir": "Item",
-"file": "Shield02.bmd"
+"file": "Shield02.bmd",
+"tex": {
+"du_shield2.jpg": "Data/Item/du_shield2.OZJ"
+}
 },
 "6,10": {
 "custom": false,
 "dir": "Item",
-"file": "Shield11.bmd"
+"file": "Shield11.bmd",
+"tex": {
+"hound_shield2.jpg": "Data/Item/hound_shield2.OZJ"
+}
 },
 "6,11": {
 "custom": false,
 "dir": "Item",
-"file": "Shield12.bmd"
+"file": "Shield12.bmd",
+"tex": {
+"shield08.jpg": "Data/Item/shield08.OZJ",
+"shield082.jpg": "Data/Item/shield082.OZJ"
+}
 },
 "6,12": {
 "custom": false,
 "dir": "Item",
-"file": "Shield13.bmd"
+"file": "Shield13.bmd",
+"tex": {
+"shield09.jpg": "Data/Item/shield09.OZJ",
+"shield092.jpg": "Data/Item/shield092.OZJ"
+}
 },
 "6,13": {
 "custom": false,
 "dir": "Item",
-"file": "Shield14.bmd"
+"file": "Shield14.bmd",
+"tex": {
+"shield10.jpg": "Data/Item/shield10.OZJ",
+"shield102.jpg": "Data/Item/shield102.OZJ"
+}
 },
 "6,14": {
 "custom": false,
 "dir": "Item",
-"file": "Shield15.bmd"
+"file": "Shield15.bmd",
+"tex": {
+"shield11.tga": "Data/Item/shield11.OZT",
+"shield11_a.jpg": "Data/Item/shield11_a.OZJ"
+}
 },
 "6,15": {
 "custom": false,
 "dir": "Item",
-"file": "shield16.bmd"
+"file": "shield16.bmd",
+"tex": {
+"MMsSs_r.jpg": "Data/Item/MMsSs_r.OZJ",
+"jh01.jpg": "Data/Item/jh01.OZJ",
+"jh03.tga": "Data/Item/jh03.OZT"
+}
 },
 "6,16": {
 "custom": false,
 "dir": "Item",
-"file": "shield17.bmd"
+"file": "shield17.bmd",
+"tex": {
+"WD_R.jpg": "Data/Item/WD_R.OZJ",
+"WD_a.jpg": "Data/Item/WD_a.OZJ",
+"WDn.tga": "Data/Item/WDn.OZJ",
+"wdn_r.jpg": "Data/Item/wdn_R.OZJ"
+}
 },
 "6,17": {
 "custom": true,
 "dir": "Item/Custom/209",
-"file": "shield21.bmd"
+"file": "shield21.bmd",
+"tex": {
+"SMshield_a.jpg": "Data/Item/Custom/209/smshield_a.ozj",
+"firehik02.JPG": "Data/Item/Custom/209/firehik02.ozj"
+}
 },
 "6,2": {
 "custom": false,
 "dir": "Item",
-"file": "Shield03.bmd"
+"file": "Shield03.bmd",
+"tex": {
+"shield02.jpg": "Data/Item/shield02.OZJ"
+}
 },
 "6,3": {
 "custom": false,
 "dir": "Item",
-"file": "Shield04.bmd"
+"file": "Shield04.bmd",
+"tex": {
+"shield07.jpg": "Data/Item/shield07.ozt",
+"shield07.tga": "Data/Item/shield07.ozt"
+}
 },
 "6,4": {
 "custom": false,
 "dir": "Item",
-"file": "Shield05.bmd"
+"file": "Shield05.bmd",
+"tex": {
+"shield03.jpg": "Data/Item/shield03.OZJ"
+}
 },
 "6,5": {
 "custom": false,
 "dir": "Item",
-"file": "Shield06.bmd"
+"file": "Shield06.bmd",
+"tex": {
+"shield_a_01.jpg": "Data/Item/shield_a_01.OZJ",
+"shield_a_02.jpg": "Data/Item/shield_a_02.OZJ"
+}
 },
 "6,6": {
 "custom": false,
 "dir": "Item",
-"file": "Shield07.bmd"
+"file": "Shield07.bmd",
+"tex": {
+"shield04.jpg": "Data/Item/shield04.ozt",
+"shield04.tga": "Data/Item/shield04.ozt"
+}
 },
 "6,7": {
 "custom": false,
 "dir": "Item",
-"file": "Shield08.bmd"
+"file": "Shield08.bmd",
+"tex": {
+"shield05.jpg": "Data/Item/shield05.OZJ"
+}
 },
 "6,8": {
 "custom": false,
 "dir": "Item",
-"file": "Shield09.bmd"
+"file": "Shield09.bmd",
+"tex": {
+"shield06.jpg": "Data/Item/shield06.OZJ"
+}
 },
 "6,9": {
 "custom": false,
 "dir": "Item",
-"file": "Shield10.bmd"
+"file": "Shield10.bmd",
+"tex": {
+"hound_shield1.tga": "Data/Item/hound_shield1.ozt"
+}
 },
 "7,0": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale01.bmd"
+"file": "HelmMale01.bmd",
+"tex": {
+"head_02.jpg": "Data/Player/head_02.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "7,1": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale02.bmd"
+"file": "HelmMale02.bmd",
+"tex": {
+"head_03.jpg": "Data/Player/head_03.OZJ",
+"skin_barbarian_01.jpg": "Data/Player/skin_barbarian_01.OZJ"
+}
 },
 "7,16": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale17.bmd"
+"file": "HelmMale17.bmd",
+"tex": {
+"head_bd.jpg": "Data/Player/head_bd.OZJ",
+"level_man01.jpg": "Data/Player/level_man01.OZJ"
+}
 },
 "7,17": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale18.bmd"
+"file": "HelmMale18.bmd",
+"tex": {
+"head_bld.jpg": "Data/Player/head_bld.OZJ",
+"level_man01.jpg": "Data/Player/level_man01.OZJ"
+}
 },
 "7,18": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale19.bmd"
+"file": "HelmMale19.bmd",
+"tex": {
+"head_14m.jpg": "Data/Player/head_14m.OZJ",
+"level_man022.jpg": "Data/Player/level_man022.OZJ"
+}
 },
 "7,19": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale20.bmd"
+"file": "HelmMale20.bmd",
+"tex": {
+"head_E1.jpg": "Data/Player/head_E1.OZJ",
+"level_man01.jpg": "Data/Player/level_man01.OZJ"
+}
 },
 "7,2": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale03.bmd"
+"file": "HelmMale03.bmd",
+"tex": {
+"head_04.jpg": "Data/Player/head_04.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "7,21": {
 "custom": true,
 "dir": "Player/Custom/21",
-"file": "HelmMale22.bmd"
+"file": "HelmMale22.bmd",
+"tex": {
+"boots22.jpg": "Data/Player/Custom/21/boots22.OZJ",
+"head22.jpg": "Data/Player/Custom/21/head22.OZJ",
+"level_man01.jpg": "Data/Player/Custom/21/level_man01.OZJ"
+}
 },
 "7,22": {
 "custom": true,
 "dir": "Player/Custom/22",
-"file": "HelmMale23.bmd"
+"file": "HelmMale23.bmd",
+"tex": {
+"cundunHead.jpg": "Data/Player/Custom/22/cundunHead.ozj"
+}
 },
 "7,23": {
 "custom": true,
 "dir": "Player/Custom/23",
-"file": "HelmMale25.bmd"
+"file": "HelmMale25.bmd",
+"tex": {
+"FHelm.jpg": "Data/Player/Custom/23/FHelm.OZJ",
+"FShoots_R.jpg": "Data/Player/Custom/23/FShoots_R.OZJ",
+"hide.jpg": "Data/Player/Custom/23/hide.OZJ",
+"model_man033.jpg": "Data/Player/Custom/23/model_man033.OZJ"
+}
 },
 "7,24": {
 "custom": true,
 "dir": "Player/Custom/24",
-"file": "HelmMale30.bmd"
+"file": "HelmMale30.bmd",
+"tex": {
+"ValorousDarkrunedHelm.jpg": "Data/Player/Custom/24/valorousdarkrunedhelm.ozj"
+}
 },
 "7,25": {
 "custom": true,
 "dir": "Player/Custom/25",
-"file": "HelmMale31.bmd"
+"file": "HelmMale31.bmd",
+"tex": {
+"helmGaz.jpg": "Data/Player/Custom/25/helmGaz.ozj"
+}
 },
 "7,26": {
 "custom": true,
 "dir": "Player/Custom/26",
-"file": "HelmMale32.bmd"
+"file": "HelmMale32.bmd",
+"tex": {
+"Seadbrno.jpg": "Data/Player/Custom/26/Seadbrno.ozj"
+}
 },
 "7,27": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale28.bmd"
+"file": "HelmMale28.bmd",
+"tex": {
+"Kmpp.jpg": "Data/Player/Kmpp.OZJ",
+"hair_R.jpg": "Data/Player/hair_R.OZJ",
+"level_man02.jpg": "Data/Player/level_man02.OZJ"
+}
 },
 "7,28": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale29.bmd"
+"file": "HelmMale29.bmd",
+"tex": {
+"KShp.jpg": "Data/Player/KShp.OZJ",
+"hair_R.jpg": "Data/Player/hair_R.OZJ",
+"level_man02.jpg": "Data/Player/level_man02.OZJ"
+}
 },
 "7,3": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale04.bmd"
+"file": "HelmMale04.bmd",
+"tex": {
+"head_13m.jpg": "Data/Player/head_13m.OZT",
+"skin_warrior_01.jpg": "Data/Player/skin_warrior_01.OZJ"
+}
 },
 "7,4": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale05.bmd"
+"file": "HelmMale05.bmd",
+"tex": {
+"head_06.jpg": "Data/Player/head_06.OZJ",
+"head_a06.tga": "Data/Player/head_a06.ozt",
+"hide.jpg": "Data/Player/hide.OZJ",
+"skin_warrior_01.jpg": "Data/Player/skin_warrior_01.OZJ"
+}
 },
 "7,5": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale06.bmd"
+"file": "HelmMale06.bmd",
+"tex": {
+"head_07.jpg": "Data/Player/head_07.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ",
+"skin_barbarian_01.jpg": "Data/Player/skin_barbarian_01.OZJ"
+}
 },
 "7,6": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale07.bmd"
+"file": "HelmMale07.bmd",
+"tex": {
+"head_08.jpg": "Data/Player/head_08.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ",
+"skin_barbarian_01.jpg": "Data/Player/skin_barbarian_01.OZJ"
+}
 },
 "7,7": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale08.bmd"
+"file": "HelmMale08.bmd",
+"tex": {
+"head_09.jpg": "Data/Player/head_09.OZJ",
+"head_09b.tga": "Data/Player/head_09b.ozt",
+"hide.jpg": "Data/Player/hide.OZJ",
+"skin_barbarian_01.jpg": "Data/Player/skin_barbarian_01.OZJ"
+}
 },
 "7,8": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale09.bmd"
+"file": "HelmMale09.bmd",
+"tex": {
+"head_10.jpg": "Data/Player/head_10.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ",
+"skin_barbarian_01.jpg": "Data/Player/skin_barbarian_01.OZJ"
+}
 },
 "7,9": {
 "custom": false,
 "dir": "Player",
-"file": "HelmMale10.bmd"
+"file": "HelmMale10.bmd",
+"tex": {
+"guard_hair.tga": "Data/Player/guard_hair.ozt",
+"head_11.jpg": "Data/Player/head_11.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "8,0": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale01.bmd"
+"file": "ArmorMale01.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"skin_barbarian_01.jpg": "Data/Player/skin_barbarian_01.OZJ",
+"upper_02_m.jpg": "Data/Player/upper_02_m.OZJ",
+"upper_02b_m.tga": "Data/Player/upper_02b_m.ozt"
+}
 },
 "8,1": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale02.bmd"
+"file": "ArmorMale02.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_03b_m.tga": "Data/Player/lower_03b_m.OZT",
+"upper_03_m.jpg": "Data/Player/upper_03_m.OZJ"
+}
 },
 "8,15": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale16.bmd"
+"file": "ArmorMale16.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"upper_14.tga": "Data/Player/upper_14.OZT"
+}
 },
 "8,16": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale17.bmd"
+"file": "ArmorMale17.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_bd.tga": "Data/Player/lower_bd.OZJ",
+"upper_bd.jpg": "Data/Player/upper_bd.OZJ"
+}
 },
 "8,17": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale18.bmd"
+"file": "ArmorMale18.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_bld.tga": "Data/Player/lower_bld.OZJ",
+"upper_bld.jpg": "Data/Player/upper_bld.OZJ"
+}
 },
 "8,18": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale19.bmd"
+"file": "ArmorMale19.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"upper_14m.jpg": "Data/Player/upper_14m.OZJ"
+}
 },
 "8,19": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale20.bmd"
+"file": "ArmorMale20.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"level_man033.jpg": "Data/Player/level_man033.OZJ",
+"upper_E1.tga": "Data/Player/upper_E1.OZT"
+}
 },
 "8,2": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale03.bmd"
+"file": "ArmorMale03.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"skin_barbarian_01.jpg": "Data/Player/skin_barbarian_01.OZJ",
+"upper_04_m.jpg": "Data/Player/upper_04_m.OZJ"
+}
 },
 "8,20": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale21.bmd"
+"file": "ArmorMale21.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"upper_15.tga": "Data/Player/upper_15.OZT"
+}
 },
 "8,21": {
 "custom": true,
 "dir": "Player/Custom/21",
-"file": "ArmorMale22.bmd"
+"file": "ArmorMale22.bmd",
+"tex": {
+"boots22.jpg": "Data/Player/Custom/21/boots22.OZJ",
+"hide.jpg": "Data/Player/Custom/21/hide.OZJ",
+"pants22.tga": "Data/Player/Custom/21/pants22.OZT",
+"upper22.jpg": "Data/Player/Custom/21/upper22.OZJ"
+}
 },
 "8,22": {
 "custom": true,
 "dir": "Player/Custom/22",
-"file": "ArmorMale23.bmd"
+"file": "ArmorMale23.bmd",
+"tex": {
+"dark400_lower.jpg": "Data/Player/Custom/22/dark400_lower.ozj",
+"dark400_upper.jpg": "Data/Player/Custom/22/dark400_upper.ozj"
+}
 },
 "8,23": {
 "custom": true,
 "dir": "Player/Custom/23",
-"file": "ArmorMale25.bmd"
+"file": "ArmorMale25.bmd",
+"tex": {
+"FArmor.jpg": "Data/Player/Custom/23/FArmor.OZJ",
+"model_man01.jpg": "Data/Player/Custom/23/model_man01.OZJ"
+}
 },
 "8,24": {
 "custom": true,
 "dir": "Player/Custom/24",
-"file": "ArmorMale30.bmd"
+"file": "ArmorMale30.bmd",
+"tex": {
+"ValorousDarkrunedBody.jpg": "Data/Player/Custom/24/valorousdarkrunedbody.ozj",
+"ValorousDarkrunedHair.jpg": "Data/Player/Custom/24/valorousdarkrunedhair.ozj"
+}
 },
 "8,25": {
 "custom": true,
 "dir": "Player/Custom/25",
-"file": "ArmorMale31.bmd"
+"file": "ArmorMale31.bmd",
+"tex": {
+"Scourgestalker.jpg": "Data/Player/Custom/25/Scourgestalker.ozj",
+"ScourgestalkerHair.jpg": "Data/Player/Custom/25/ScourgestalkerHair.ozj"
+}
 },
 "8,26": {
 "custom": true,
 "dir": "Player/Custom/26",
-"file": "ArmorMale32.bmd"
+"file": "ArmorMale32.bmd",
+"tex": {
+"Seadbrno.jpg": "Data/Player/Custom/26/Seadbrno.ozj"
+}
 },
 "8,27": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale28.bmd"
+"file": "ArmorMale28.bmd",
+"tex": {
+"Klpp.jpg": "Data/Player/Klpp.OZJ",
+"Kupp.jpg": "Data/Player/Kupp.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "8,28": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale29.bmd"
+"file": "ArmorMale29.bmd",
+"tex": {
+"KSlp.jpg": "Data/Player/KSlp.OZJ",
+"KSup.jpg": "Data/Player/KSup.OZJ",
+"KSup2.tga": "Data/Player/KSup2.OZT"
+}
 },
 "8,3": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale04.bmd"
+"file": "ArmorMale04.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"upper_13m.jpg": "Data/Player/upper_13m.OZJ"
+}
 },
 "8,4": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale05.bmd"
+"file": "ArmorMale05.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"upper_06.jpg": "Data/Player/upper_06.OZJ"
+}
 },
 "8,5": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale06.bmd"
+"file": "ArmorMale06.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"skin_barbarian_01.jpg": "Data/Player/skin_barbarian_01.OZJ",
+"upper_07_m.jpg": "Data/Player/upper_07_m.OZJ",
+"upper_07b_m.tga": "Data/Player/upper_07b_m.ozt"
+}
 },
 "8,6": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale07.bmd"
+"file": "ArmorMale07.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"upper_08_m.jpg": "Data/Player/upper_08_m.OZJ"
+}
 },
 "8,7": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale08.bmd"
+"file": "ArmorMale08.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"upper_09_m.jpg": "Data/Player/upper_09_m.OZJ",
+"upper_09b_m.tga": "Data/Player/upper_09b_m.ozt"
+}
 },
 "8,8": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale09.bmd"
+"file": "ArmorMale09.bmd",
+"tex": {
+"boots_10b.tga": "Data/Player/boots_10b.ozt",
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"upper_10_m.jpg": "Data/Player/upper_10_m.OZJ"
+}
 },
 "8,9": {
 "custom": false,
 "dir": "Player",
-"file": "ArmorMale10.bmd"
+"file": "ArmorMale10.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"upper_11.jpg": "Data/Player/upper_11.OZJ"
+}
 },
 "9,0": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale01.bmd"
+"file": "PantMale01.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"lower_02_m.jpg": "Data/Player/lower_02_m.OZJ"
+}
 },
 "9,1": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale02.bmd"
+"file": "PantMale02.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"lower_03_m.jpg": "Data/Player/lower_03_m.OZJ"
+}
 },
 "9,15": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale16.bmd"
+"file": "PantMale16.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_14.tga": "Data/Player/lower_14.OZT"
+}
 },
 "9,16": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale17.bmd"
+"file": "PantMale17.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_bd.jpg": "Data/Player/lower_bd.OZJ"
+}
 },
 "9,17": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale18.bmd"
+"file": "PantMale18.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_bld.jpg": "Data/Player/lower_bld.OZJ"
+}
 },
 "9,18": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale19.bmd"
+"file": "PantMale19.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_14m.jpg": "Data/Player/lower_14m.OZJ"
+}
 },
 "9,19": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale20.bmd"
+"file": "PantMale20.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"level_man033.jpg": "Data/Player/level_man033.OZJ",
+"lower_E1.tga": "Data/Player/lower_E1.OZJ"
+}
 },
 "9,2": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale03.bmd"
+"file": "PantMale03.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_04_m.jpg": "Data/Player/lower_04_m.OZJ",
+"lower_04b_m.tga": "Data/Player/lower_04b_m.OZT",
+"lower_04c.tga": "Data/Player/lower_04c.OZT"
+}
 },
 "9,20": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale21.bmd"
+"file": "PantMale21.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_15.tga": "Data/Player/lower_15.OZT",
+"upper_15.tga": "Data/Player/upper_15.OZT"
+}
 },
 "9,21": {
 "custom": true,
 "dir": "Player/Custom/21",
-"file": "PantMale22.bmd"
+"file": "PantMale22.bmd",
+"tex": {
+"hide.jpg": "Data/Player/Custom/21/hide.OZJ",
+"pants22.jpg": "Data/Player/Custom/21/pants22.OZT"
+}
 },
 "9,22": {
 "custom": true,
 "dir": "Player/Custom/22",
-"file": "PantMale23.bmd"
+"file": "PantMale23.bmd",
+"tex": {
+"dark400_lower.jpg": "Data/Player/Custom/22/dark400_lower.ozj"
+}
 },
 "9,23": {
 "custom": true,
 "dir": "Player/Custom/23",
-"file": "PantMale25.bmd"
+"file": "PantMale25.bmd",
+"tex": {
+"FPants01.jpg": "Data/Player/Custom/23/FPants01.OZJ",
+"FPants02.jpg": "Data/Player/Custom/23/FPants02.OZJ",
+"FShoots_R.jpg": "Data/Player/Custom/23/FShoots_R.OZJ",
+"model_man01.jpg": "Data/Player/Custom/23/model_man01.OZJ"
+}
 },
 "9,24": {
 "custom": true,
 "dir": "Player/Custom/24",
-"file": "PantMale30.bmd"
+"file": "PantMale30.bmd",
+"tex": {
+"ValorousDarkrunedBody.jpg": "Data/Player/Custom/24/valorousdarkrunedbody.ozj"
+}
 },
 "9,25": {
 "custom": true,
 "dir": "Player/Custom/25",
-"file": "PantMale31.bmd"
+"file": "PantMale31.bmd",
+"tex": {
+"Scourgestalker.jpg": "Data/Player/Custom/25/Scourgestalker.ozj"
+}
 },
 "9,26": {
 "custom": true,
 "dir": "Player/Custom/26",
-"file": "PantMale32.bmd"
+"file": "PantMale32.bmd",
+"tex": {
+"Seadbrno.jpg": "Data/Player/Custom/26/Seadbrno.ozj"
+}
 },
 "9,27": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale28.bmd"
+"file": "PantMale28.bmd",
+"tex": {
+"Klpp.jpg": "Data/Player/Klpp.OZJ",
+"hide.jpg": "Data/Player/hide.OZJ"
+}
 },
 "9,28": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale29.bmd"
+"file": "PantMale29.bmd",
+"tex": {
+"KSlp.jpg": "Data/Player/KSlp.OZJ"
+}
 },
 "9,3": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale04.bmd"
+"file": "PantMale04.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"lower_13m.jpg": "Data/Player/lower_13m.OZT",
+"lower_13m.tga": "Data/Player/lower_13m.OZT"
+}
 },
 "9,4": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale05.bmd"
+"file": "PantMale05.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_06.jpg": "Data/Player/lower_06.OZJ",
+"lower_a06.tga": "Data/Player/lower_a06.ozt"
+}
 },
 "9,5": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale06.bmd"
+"file": "PantMale06.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"lower_07_m.jpg": "Data/Player/lower_07_m.OZJ"
+}
 },
 "9,6": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale07.bmd"
+"file": "PantMale07.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"lower_08_m.jpg": "Data/Player/lower_08_m.OZJ"
+}
 },
 "9,7": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale08.bmd"
+"file": "PantMale08.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"lower_09_m.jpg": "Data/Player/lower_09_m.OZJ",
+"upper_09c.tga": "Data/Player/upper_09c.OZT"
+}
 },
 "9,8": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale09.bmd"
+"file": "PantMale09.bmd",
+"tex": {
+"hide_m.jpg": "Data/Player/hide_m.OZJ",
+"lower_10_m.jpg": "Data/Player/lower_10_m.OZJ",
+"lower_10b.tga": "Data/Player/lower_10b.ozt"
+}
 },
 "9,9": {
 "custom": false,
 "dir": "Player",
-"file": "PantMale10.bmd"
+"file": "PantMale10.bmd",
+"tex": {
+"hide.jpg": "Data/Player/hide.OZJ",
+"lower_11.jpg": "Data/Player/lower_11.OZJ"
+}
 }
 }
