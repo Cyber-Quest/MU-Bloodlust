@@ -327,6 +327,33 @@ namespace MuLauncher
             return serializer.Deserialize<Manifest>(json);
         }
 
+        /// <summary>
+        /// Lista (caminhos relativos) dos arquivos que pertencem ao JOGO, segundo o
+        /// manifesto do servidor. Usada para nunca mexer em arquivos que nao sao do jogo
+        /// (ex.: quando o jogador aponta a pasta para Downloads).
+        /// Devolve null quando nao foi possivel obter o manifesto (nesse caso nada e movido).
+        /// </summary>
+        public static async Task<HashSet<string>> FetchGameFileSetAsync(string baseDir)
+        {
+            try
+            {
+                var manifest = await FetchManifestAsync(ResolveUpdatesUrl(baseDir));
+                if (manifest == null || manifest.files == null) return null;
+
+                var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var file in manifest.files)
+                {
+                    if (file == null || string.IsNullOrEmpty(file.path)) continue;
+                    set.Add(file.path.Replace('\\', '/').TrimStart('/'));
+                }
+                return set.Count > 0 ? set : null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private static string LocalPath(string baseDir, string relative)
         {
             var clean = relative.Replace('\\', '/').TrimStart('/');
@@ -463,11 +490,14 @@ namespace MuLauncher
 
         /// <summary>
         /// Move o conteudo do jogo de uma pasta para outra (evita rebaixar tudo ao trocar
-        /// a pasta). Arquivos em uso sao ignorados e serao baixados de novo.
+        /// a pasta). SOMENTE arquivos que constam no manifesto do servidor sao movidos:
+        /// assim nada que nao seja do jogo e arrastado junto (Downloads, Documentos, etc.).
+        /// Arquivos em uso sao ignorados e serao baixados de novo.
         /// </summary>
-        public static int MoveContents(string origem, string destino)
+        public static int MoveContents(string origem, string destino, HashSet<string> gameFiles)
         {
             if (string.IsNullOrWhiteSpace(origem) || string.IsNullOrWhiteSpace(destino)) return 0;
+            if (gameFiles == null || gameFiles.Count == 0) return 0;
 
             var de = Path.GetFullPath(origem).TrimEnd(Path.DirectorySeparatorChar);
             var para = Path.GetFullPath(destino).TrimEnd(Path.DirectorySeparatorChar);
@@ -480,31 +510,34 @@ namespace MuLauncher
             Directory.CreateDirectory(destino);
             int movidos = 0;
 
-            foreach (var arquivo in Directory.GetFiles(origem))
+            foreach (var relativo in gameFiles)
             {
-                if (IsLauncherFile(Path.GetFileName(arquivo))) continue;
-                var alvo = Path.Combine(destino, Path.GetFileName(arquivo));
+                if (string.IsNullOrWhiteSpace(relativo)) continue;
+                if (IsLauncherFile(Path.GetFileName(relativo))) continue;
+
+                string arquivo;
+                string alvo;
                 try
                 {
+                    arquivo = Path.GetFullPath(Path.Combine(origem, relativo));
+                    alvo = Path.GetFullPath(Path.Combine(destino, relativo));
+                }
+                catch { continue; }
+
+                // Sanidade: o caminho tem de ficar mesmo dentro da pasta de origem.
+                if (!arquivo.StartsWith(de + sep, StringComparison.OrdinalIgnoreCase)) continue;
+                if (!File.Exists(arquivo)) continue;
+
+                try
+                {
+                    var pastaAlvo = Path.GetDirectoryName(alvo);
+                    if (!string.IsNullOrEmpty(pastaAlvo)) Directory.CreateDirectory(pastaAlvo);
                     if (File.Exists(alvo)) File.Delete(alvo);
                     try { File.Move(arquivo, alvo); }
                     catch (IOException) { File.Copy(arquivo, alvo, true); File.Delete(arquivo); }
                     movidos++;
                 }
                 catch { /* arquivo em uso: sera baixado de novo */ }
-            }
-
-            foreach (var pasta in Directory.GetDirectories(origem))
-            {
-                var alvo = Path.Combine(destino, Path.GetFileName(pasta));
-                try
-                {
-                    if (Directory.Exists(alvo)) Directory.Delete(alvo, true);
-                    try { Directory.Move(pasta, alvo); }
-                    catch (IOException) { CopyDirectory(pasta, alvo); Directory.Delete(pasta, true); }
-                    movidos++;
-                }
-                catch { /* ignora */ }
             }
 
             return movidos;
@@ -886,6 +919,7 @@ namespace MuLauncher
             }
 
             SetStatus("Verificando atualizações...");
+            var instalacaoNova = !File.Exists(Path.Combine(_gameDir, "main.exe"));
             var result = await Updater.RunAsync(_gameDir, SetStatus, SetProgress);
 
             if (result.Success)
@@ -896,6 +930,10 @@ namespace MuLauncher
                                : ""));
                 EnablePlay();
                 _gearButton.Enabled = true;
+
+                // Deixa o launcher junto do jogo (e na Area de Trabalho na primeira
+                // instalacao), para o jogador nao precisar procurar o atalho.
+                EnsureLauncherCopies(instalacaoNova);
                 return;
             }
 
@@ -914,6 +952,45 @@ namespace MuLauncher
 
             if (hasGame) EnablePlay();
             _gearButton.Enabled = true;
+        }
+
+        /// <summary>
+        /// Deixa uma copia do launcher dentro da pasta do jogo (o jogo fica completo,
+        /// sem depender de onde o launcher foi baixado) e, na primeira instalacao,
+        /// tambem na Area de Trabalho para abrir com dois cliques.
+        /// </summary>
+        private void EnsureLauncherCopies(bool instalacaoNova)
+        {
+            string self;
+            try { self = Application.ExecutablePath; }
+            catch { return; }
+            if (string.IsNullOrWhiteSpace(self) || !File.Exists(self)) return;
+
+            var nome = Path.GetFileName(self);
+            var destinos = new List<string>();
+
+            try { destinos.Add(Path.Combine(_gameDir, nome)); } catch { }
+
+            if (instalacaoNova)
+            {
+                try
+                {
+                    var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                    if (!string.IsNullOrWhiteSpace(desktop)) destinos.Add(Path.Combine(desktop, nome));
+                }
+                catch { /* sem Area de Trabalho: ignora */ }
+            }
+
+            foreach (var destino in destinos)
+            {
+                try
+                {
+                    var alvo = Path.GetFullPath(destino);
+                    if (string.Equals(alvo, Path.GetFullPath(self), StringComparison.OrdinalIgnoreCase)) continue;
+                    File.Copy(self, alvo, true);
+                }
+                catch { /* arquivo em uso ou sem permissao: ignora */ }
+            }
         }
 
         /// <summary>Engrenagem: escolher a pasta onde o jogo e baixado.</summary>
@@ -945,6 +1022,7 @@ namespace MuLauncher
                         this,
                         "Mover os arquivos do jogo que já estão em:\n\n" + anteriorFull +
                         "\n\npara:\n\n" + novoFull +
+                        "\n\nSó os arquivos do jogo são movidos — o resto da pasta não é tocado." +
                         "\n\nEscolha \"Não\" para baixar tudo de novo na pasta nova.",
                         "Bloodlust Launcher", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
@@ -953,8 +1031,13 @@ namespace MuLauncher
                         SetStatus("Movendo arquivos do jogo...");
                         try
                         {
-                            var movidos = GameFolder.MoveContents(anteriorFull, novoFull);
-                            SetStatus(string.Format("{0} item(ns) movido(s). Conferindo atualizações...", movidos));
+                            // Lista oficial do que e do jogo: nada fora dela e movido.
+                            var gameFiles = await Updater.FetchGameFileSetAsync(_exeDir);
+                            var movidos = GameFolder.MoveContents(anteriorFull, novoFull, gameFiles);
+
+                            SetStatus(gameFiles == null
+                                ? "Não deu para listar os arquivos do jogo — nada foi movido. Baixando tudo de novo..."
+                                : string.Format("{0} arquivo(s) do jogo movido(s). Conferindo atualizações...", movidos));
                         }
                         catch (Exception ex)
                         {
