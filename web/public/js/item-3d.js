@@ -1,7 +1,8 @@
-/* Inspetor 3D de itens do MU para a Cash Shop.
-   Le o .bmd (decifrando a versao 0x0C), as texturas .OZJ/.OZT e desenha o
-   item num canvas com z-buffer, permitindo girar com o mouse.
-   Portado do renderizador Python (bmd-icone.py) usado para gerar os icones. */
+/* Inspetor 3D de itens do MU (Cash Shop).
+   Usa Three.js para renderizar o modelo .bmd com UV/iluminacao corretos.
+   - decifra o .bmd (versao 0x0C) e monta a geometria
+   - orienta a ponta da arma para cima (tip) ou usa o eixo dominante
+   - texturas ja vem resolvidas do servidor (item-models.js) */
 (function () {
   'use strict';
 
@@ -25,21 +26,18 @@
     var size = new DataView(buf).getInt32(4, true);
     if (size < 0 || size > raw.length - 8) throw new Error('tamanho invalido');
     if (ver === 15) throw new Error('BMD versao 15 (LEA) nao suportado');
-    var enc = raw.subarray(8, 8 + size);
-    var dec = decryptFileCryptor(enc);
     var out = new Uint8Array(raw);
-    out.set(dec, 8);
+    out.set(decryptFileCryptor(raw.subarray(8, 8 + size)), 8);
     return out;
   }
 
-  /* ---------- parsing ---------- */
   function parseBmd(buf) {
     var d = decifra(buf);
     var dv = new DataView(d.buffer, d.byteOffset, d.byteLength);
     var off = (d[3] === 12 || d[3] === 15) ? 8 : 4;
-    off += 32;                                     // nome do modelo
+    off += 32;
     var meshCount = dv.getUint16(off, true); off += 2;
-    off += 4;                                      // boneCount, actionCount
+    off += 4; // boneCount, actionCount
 
     function str(o, n) {
       var s = '', c;
@@ -71,7 +69,7 @@
         uvs[t * 2 + 1] = dv.getFloat32(off + t * 8 + 4, true);
       }
       off += nt * 8;
-      var tris = new Int16Array(ntri * 13);         // poly + 3x4 indices
+      var tris = new Int16Array(ntri * 13);
       for (var k = 0; k < ntri; k++) {
         var b = off + k * 64, o = k * 13;
         tris[o] = d[b];
@@ -89,96 +87,52 @@
     return meshes;
   }
 
-  /* ---------- texturas ---------- */
-  var OZJ_EXTS = ['.ozj', '.OZJ', '.jpg', '.JPG', '.ozt', '.OZT', '.tga', '.png'];
-
-  function base(nome) { return nome.replace(/\.[^.]+$/, ''); }
-
-  function pegaTex(nome, pastas) {
-    var b = base(nome);
-    var tentativas = [];
-    pastas.forEach(function (p) {
-      OZJ_EXTS.forEach(function (e) { tentativas.push(p + '/' + b + e); });
-    });
-    var i = 0;
-    function proximo() {
-      if (i >= tentativas.length) return Promise.resolve(null);
-      var url = tentativas[i++];
-      return fetch(url).then(function (r) {
-        if (!r.ok) return proximo();
-        return r.arrayBuffer();
-      }).catch(proximo);
-    }
-    return proximo();
-  }
-
-  function imagemDeBlob(blob) {
-    return new Promise(function (res, rej) {
-      var url = URL.createObjectURL(blob);
-      var img = new Image();
-      img.onload = function () { URL.revokeObjectURL(url); res(img); };
-      img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('img')); };
-      img.src = url;
-    });
-  }
-
-  /* O .OZJ costuma ter DOIS jpegs (uma miniatura e a imagem principal), e a
-     principal pode estar sem o SOI. Entao: pega todos os trechos SOI..EOI,
-     tenta decodificar do maior para o menor e usa o primeiro que abrir. */
-  function melhorImagem(buf) {
-    var b = new Uint8Array(buf);
-    var sois = [];
+  /* ---------- textura: pega o maior jpeg embutido no .OZJ ---------- */
+  function melhoresJpegs(buf) {
+    var b = new Uint8Array(buf), sois = [];
     for (var i = 0; i < b.length - 2; i++) {
       if (b[i] === 0xFF && b[i + 1] === 0xD8 && b[i + 2] === 0xFF) sois.push(i);
     }
-    var cands = [];
-    sois.forEach(function (s) {
-      var e = -1;
+    var cands = sois.map(function (s) {
       for (var j = s + 2; j < b.length - 1; j++) {
-        if (b[j] === 0xFF && b[j + 1] === 0xD9) { e = j + 2; break; }
+        if (b[j] === 0xFF && b[j + 1] === 0xD9) return b.slice(s, j + 2);
       }
-      if (e > s) cands.push(b.slice(s, e));
-    });
-    if (!cands.length) cands.push(b);            // tenta o arquivo inteiro
+      return null;
+    }).filter(Boolean);
+    if (!cands.length) cands.push(b);
     cands.sort(function (x, y) { return y.length - x.length; });
-
-    function tenta(k) {
-      if (k >= cands.length) return Promise.resolve(null);
-      return imagemDeBlob(new Blob([cands[k]], { type: 'image/jpeg' }))
-        .then(texturaDeImagem)
-        .catch(function () { return tenta(k + 1); });
-    }
-    return tenta(0);
+    return cands;
   }
 
-  function texturaDeImagem(img) {
-    var c = document.createElement('canvas');
-    c.width = img.width; c.height = img.height;
-    var g = c.getContext('2d');
-    g.drawImage(img, 0, 0);
-    var d = g.getImageData(0, 0, c.width, c.height).data;
-    return { w: c.width, h: c.height, data: d };
+  function imagemParaTextura(buf) {
+    return new Promise(function (resolve) {
+      var cands = melhoresJpegs(buf);
+      var i = 0;
+      function prox() {
+        if (i >= cands.length) { resolve(null); return; }
+        var blob = new Blob([cands[i++]], { type: 'image/jpeg' });
+        var url = URL.createObjectURL(blob);
+        var img = new Image();
+        img.onload = function () {
+          URL.revokeObjectURL(url);
+          var tex = new THREE.Texture(img);
+          tex.needsUpdate = true;
+          tex.wrapS = THREE.RepeatWrapping;
+          tex.wrapT = THREE.RepeatWrapping;
+          tex.flipY = true;
+          resolve(tex);
+        };
+        img.onerror = function () { URL.revokeObjectURL(url); prox(); };
+        img.src = url;
+      }
+      prox();
+    });
   }
 
-  /* ---------- render ---------- */
-  function render(canvas, meshes, texs, angX, angY, margem, girarBase, tipCode) {
-    margem = margem === undefined ? 0.06 : margem;
-    var W = canvas.width, H = canvas.height;
-    var ctx = canvas.getContext('2d');
-    var img = ctx.createImageData(W, H);
-    var buf = img.data;
-    for (var i = 3; i < buf.length; i += 4) buf[i] = 0;    // transparente
-    var zbuf = new Float32Array(W * H).fill(-1e18);
-
-    var cx = Math.cos(angX), sx = Math.sin(angX);
-    var cy = Math.cos(angY), sy = Math.sin(angY);
-
-    // Eixo maior do modelo -> vertical da tela.
-    // SO para ARMAS (secoes 0..5). A "ponta" precisa apontar para CIMA (+Y);
-    // para as armas custom o tip vem pronto no mapa, para as padrao do MU
-    // assumimos a ponta no eixo dominante positivo.
+  /* ---------- orientacao (ponta para cima) ---------- */
+  function fazBase(girarBase, tipCode, meshes) {
     var eixo = 1;
-    if (girarBase) {
+    if (girarBase && !tipCode) {
       var b0 = [1e18, 1e18, 1e18], b1 = [-1e18, -1e18, -1e18];
       meshes.forEach(function (m) {
         for (var k = 0; k < m.verts.length; k += 3) {
@@ -192,129 +146,139 @@
       var t0 = b1[0] - b0[0], t1 = b1[1] - b0[1], t2 = b1[2] - b0[2];
       eixo = (t0 >= t1 && t0 >= t2) ? 0 : (t1 >= t2 ? 1 : 2);
     }
-
-    function base(x, y, z) {
+    return function (x, y, z) {
       if (!girarBase) return [x, y, z];
-      if (tipCode === "nx") return [y, -x, z];     // ponta em -X -> +Y
-      if (tipCode === "ny") return [-x, -y, z];    // ponta em -Y -> +Y
-      if (tipCode === "pz") return [x, z, -y];     // ponta em +Z -> +Y
-      // padrao do MU: ponta no eixo dominante positivo
+      if (tipCode === 'nx') return [y, -x, z];
+      if (tipCode === 'ny') return [-x, -y, z];
+      if (tipCode === 'pz') return [x, z, -y];
       if (eixo === 0) return [-y, x, z];
       if (eixo === 2) return [x, z, -y];
       return [x, y, z];
-    }
-
-    function vista(x, y, z) {
-      var b = base(x, y, z);
-      x = b[0]; y = b[1]; z = b[2];
-      // gira em Y depois em X (igual ao renderizador Python)
-      var x1 = x * cy + z * sy, z1 = -x * sy + z * cy;
-      var y1 = y * cx - z1 * sx, z2 = y * sx + z1 * cx;
-      return [x1, y1, z2];
-    }
-
-    // caixa do modelo (nos eixos de tela). Usa os percentis 1%/99% em vez do
-    // minimo/maximo: um vertice perdido nao estraga o enquadramento.
-    var xs = [], ys = [];
-    var transf = meshes.map(function (m) {
-      var v = new Float32Array(m.verts.length);
-      for (var k = 0; k < m.verts.length; k += 3) {
-        var p = vista(m.verts[k], m.verts[k + 1], m.verts[k + 2]);
-        v[k] = p[0]; v[k + 1] = p[1]; v[k + 2] = p[2];
-        xs.push(p[0]); ys.push(p[1]);
-      }
-      var nrm = new Float32Array(m.norms.length);
-      for (var q = 0; q < m.norms.length; q += 3) {
-        var n = vista(m.norms[q], m.norms[q + 1], m.norms[q + 2]);
-        nrm[q] = n[0]; nrm[q + 1] = n[1]; nrm[q + 2] = n[2];
-      }
-      return { verts: v, norms: nrm, uvs: m.uvs, tris: m.tris,
-               ntri: m.ntri, tex: m.tex };
-    });
-
-    xs.sort(function (a, b) { return a - b; });
-    ys.sort(function (a, b) { return a - b; });
-    var q = function (arr, f) { return arr[Math.min(arr.length - 1, Math.max(0, Math.floor(f * (arr.length - 1))))]; };
-    var mnx = q(xs, 0.01), mxx = q(xs, 0.99);
-    var mny = q(ys, 0.01), mxy = q(ys, 0.99);
-    if (!(mxx > mnx)) { mnx = xs[0]; mxx = xs[xs.length - 1]; }
-    if (!(mxy > mny)) { mny = ys[0]; mxy = ys[ys.length - 1]; }
-
-    var larg = Math.max(1e-6, mxx - mnx), alt = Math.max(1e-6, mxy - mny);
-    var esc = (Math.min(W, H) * (1 - 2 * margem)) / Math.max(larg, alt);
-    var ox = W / 2 - (mnx + mxx) / 2 * esc;
-    var oy = H / 2 + (mny + mxy) / 2 * esc;
-
-    var luz = [0.35, 0.45, 0.82];
-    var nl = Math.sqrt(luz[0] * luz[0] + luz[1] * luz[1] + luz[2] * luz[2]);
-    luz = [luz[0] / nl, luz[1] / nl, luz[2] / nl];
-
-    function tri(pa, pb, pc, ta, tb, tc, na, nb, nc, tex) {
-      var cor = 0.42 + 0.58 * Math.abs(
-        ((na[0] + nb[0] + nc[0]) / 3) * luz[0] +
-        ((na[1] + nb[1] + nc[1]) / 3) * luz[1] +
-        ((na[2] + nb[2] + nc[2]) / 3) * luz[2]);
-      var minx = Math.max(0, Math.floor(Math.min(pa[0], pb[0], pc[0])));
-      var maxx = Math.min(W - 1, Math.ceil(Math.max(pa[0], pb[0], pc[0])));
-      var miny = Math.max(0, Math.floor(Math.min(pa[1], pb[1], pc[1])));
-      var maxy = Math.min(H - 1, Math.ceil(Math.max(pa[1], pb[1], pc[1])));
-      var det = (pb[0] - pa[0]) * (pc[1] - pa[1]) - (pc[0] - pa[0]) * (pb[1] - pa[1]);
-      if (Math.abs(det) < 1e-9) return;
-      for (var y = miny; y <= maxy; y++) {
-        for (var x = minx; x <= maxx; x++) {
-          var w0 = ((pb[0] - pa[0]) * (y + .5 - pa[1]) - (x + .5 - pa[0]) * (pb[1] - pa[1])) / det;
-          if (w0 < 0) continue;
-          var w1 = ((x + .5 - pa[0]) * (pc[1] - pa[1]) - (pc[0] - pa[0]) * (y + .5 - pa[1])) / det;
-          if (w1 < 0) continue;
-          var w2 = 1 - w0 - w1;
-          if (w2 < 0) continue;
-          var z = w2 * pa[2] + w1 * pb[2] + w0 * pc[2];
-          var off = y * W + x;
-          if (z <= zbuf[off]) continue;
-          zbuf[off] = z;
-          var r, g, b;
-          if (tex) {
-            var u = w2 * ta[0] + w1 * tb[0] + w0 * tc[0];
-            var vv = w2 * ta[1] + w1 * tb[1] + w0 * tc[1];
-            u = u - Math.floor(u); vv = vv - Math.floor(vv);
-            var tx = (u * (tex.w - 1)) | 0, ty = (vv * (tex.h - 1)) | 0;
-            var ti = (ty * tex.w + tx) * 4;
-            r = tex.data[ti]; g = tex.data[ti + 1]; b = tex.data[ti + 2];
-          } else { r = g = b = 190; }
-          var p4 = off * 4;
-          buf[p4] = Math.min(255, r * cor);
-          buf[p4 + 1] = Math.min(255, g * cor);
-          buf[p4 + 2] = Math.min(255, b * cor);
-          buf[p4 + 3] = 255;
-        }
-      }
-    }
-
-    var L = [0.35, 0.45, 0.82];
-    transf.forEach(function (m) {
-      var tex = texs[m.tex] || null;
-      for (var k = 0; k < m.ntri; k++) {
-        var o = k * 13, poly = m.tris[o];
-        var n = poly === 4 ? 4 : 3;
-        var pa, pb, pc;
-        function pt(i) {
-          var vi = m.tris[o + 1 + i] * 3, ni = m.tris[o + 5 + i] * 3, ti = m.tris[o + 9 + i] * 2;
-          if (vi < 0 || vi + 2 >= m.verts.length) return null;
-          return {
-            p: [m.verts[vi] * esc + ox, oy - m.verts[vi + 1] * esc, m.verts[vi + 2]],
-            n: [m.norms[ni] || 0, m.norms[ni + 1] || 0, m.norms[ni + 2] || 0],
-            t: [m.uvs[ti] || 0, m.uvs[ti + 1] || 0]
-          };
-        }
-        var a = pt(0), b = pt(1), c = pt(2), dd = n === 4 ? pt(3) : null;
-        if (a && b && c) tri(a.p, b.p, c.p, a.t, b.t, c.t, a.n, b.n, c.n, tex);
-        if (dd && a && c) tri(a.p, c.p, dd.p, a.t, c.t, dd.t, a.n, c.n, dd.n, tex);
-      }
-    });
-    ctx.putImageData(img, 0, 0);
+    };
   }
 
-  /* ---------- API publica ---------- */
+  /* ---------- estado ---------- */
+  var st = null;
+
+  function monta(canvas, meshes, texs, girarBase, tipCode) {
+    if (st) {
+      st.renderer.dispose();
+      st = null;
+    }
+    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setSize(420, 420, false);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setClearColor(0x000000, 0);
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+    camera.position.set(0, 0, 3.4);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+    var dir = new THREE.DirectionalLight(0xffffff, 0.9);
+    dir.position.set(0.7, 1.0, 1.6);
+    scene.add(dir);
+    var dir2 = new THREE.DirectionalLight(0xffffff, 0.35);
+    dir2.position.set(-0.8, -0.3, -1.0);
+    scene.add(dir2);
+
+    var base = fazBase(girarBase, tipCode, meshes);
+
+    // monta geometria (rotacionada), junta tudo num grupo e calcula a caixa
+    var grupo = new THREE.Group();
+    var min = [1e18, 1e18, 1e18], max = [-1e18, -1e18, -1e18];
+
+    meshes.forEach(function (mesh) {
+      var pos = [], norm = [], uv = [];
+      for (var t = 0; t < mesh.ntri; t++) {
+        var o = t * 13, poly = mesh.tris[o];
+        var corners = poly === 4 ? [0, 1, 2, 0, 2, 3] : [0, 1, 2];
+        for (var j = 0; j < corners.length; j++) {
+          var c = corners[j];
+          var vi = mesh.tris[o + 1 + c], ni = mesh.tris[o + 5 + c], ti = mesh.tris[o + 9 + c];
+          if (vi < 0 || vi * 3 + 2 >= mesh.verts.length) continue;
+          var p = base(mesh.verts[vi * 3], mesh.verts[vi * 3 + 1], mesh.verts[vi * 3 + 2]);
+          pos.push(p[0], p[1], p[2]);
+          if (p[0] < min[0]) min[0] = p[0]; if (p[0] > max[0]) max[0] = p[0];
+          if (p[1] < min[1]) min[1] = p[1]; if (p[1] > max[1]) max[1] = p[1];
+          if (p[2] < min[2]) min[2] = p[2]; if (p[2] > max[2]) max[2] = p[2];
+          if (ni >= 0 && ni * 3 + 2 < mesh.norms.length) {
+            var n = base(mesh.norms[ni * 3], mesh.norms[ni * 3 + 1], mesh.norms[ni * 3 + 2]);
+            norm.push(n[0], n[1], n[2]);
+          } else {
+            norm.push(0, 1, 0);
+          }
+          if (ti >= 0 && ti * 2 + 1 < mesh.uvs.length) {
+            uv.push(mesh.uvs[ti * 2], mesh.uvs[ti * 2 + 1]);
+          } else {
+            uv.push(0, 0);
+          }
+        }
+      }
+      if (!pos.length) return;
+      var g = new THREE.BufferGeometry();
+      g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      g.setAttribute('normal', new THREE.Float32BufferAttribute(norm, 3));
+      g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+      var mat = new THREE.MeshStandardMaterial({
+        map: texs[mesh.tex] || null,
+        roughness: 0.55, metalness: 0.15, side: THREE.DoubleSide
+      });
+      grupo.add(new THREE.Mesh(g, mat));
+    });
+
+    // centraliza e escala para caber na camera
+    var centro = [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2];
+    var tam = Math.max(max[0] - min[0], max[1] - min[1], max[2] - min[2], 1e-6);
+    var escala = 2.1 / tam;
+    grupo.position.set(-centro[0] * escala, -centro[1] * escala, -centro[2] * escala);
+    grupo.scale.set(escala, escala, escala);
+
+    scene.add(grupo);
+    st = { renderer: renderer, scene: scene, camera: camera, grupo: grupo,
+           angX: 0.12, angY: 0.5 };
+
+    function desenha() {
+      renderer.render(scene, camera);
+    }
+    desenha();
+
+    // arrastar para girar
+    var arrastando = false, lx = 0, ly = 0;
+    canvas.onmousedown = function (e) { arrastando = true; lx = e.clientX; ly = e.clientY; };
+    window.addEventListener('mouseup', function () { arrastando = false; });
+    canvas.onmousemove = function (e) {
+      if (!arrastando) return;
+      st.angY += (e.clientX - lx) * 0.012; lx = e.clientX;
+      st.angX += (e.clientY - ly) * 0.012; ly = e.clientY;
+      st.angX = Math.max(-1.2, Math.min(1.2, st.angX));
+      desenha();
+    };
+    canvas.ontouchstart = function (e) {
+      if (e.touches.length) { lx = e.touches[0].clientX; ly = e.touches[0].clientY; }
+    };
+    canvas.ontouchmove = function (e) {
+      if (e.touches.length) {
+        st.angY += (e.touches[0].clientX - lx) * 0.012; lx = e.touches[0].clientX;
+        st.angX += (e.touches[0].clientY - ly) * 0.012; ly = e.touches[0].clientY;
+        st.angX = Math.max(-1.2, Math.min(1.2, st.angX));
+        desenha(); e.preventDefault();
+      }
+    };
+
+    // rotacao aplicada ao GRUPO (com a camera parada)
+    grupo.rotation.order = 'YXZ';
+    grupo.rotation.x = -st.angX;
+    grupo.rotation.y = st.angY;
+    // reaplica a cada frame de arrasto
+    var _desenha = desenha;
+    desenha = function () {
+      grupo.rotation.x = -st.angX;
+      grupo.rotation.y = st.angY;
+      _desenha();
+    };
+  }
+
   var cache = {};
 
   window.MUItem3D = {
@@ -328,78 +292,43 @@
       titulo.textContent = nome || ('Item ' + secao + ',' + indice);
       modal.classList.add('aberto');
       status.textContent = 'Carregando modelo...';
-      canvas.width = 420; canvas.height = 420;
 
       if (!info) { status.textContent = 'Este item não tem modelo 3D disponível.'; return; }
 
       var chave = secao + ',' + indice;
-      var pasta = '/updates/Data/' + info.dir + '/';
-      var pastas = [pasta, '/updates/Data/Item', '/updates/Data/Player'];
+      var girarBase = secao >= 0 && secao <= 5;
+      var tipCode = info.tip || null;
 
       function pronto(meshes, texs) {
-        var angX = 0.1745, angY = 0.4887;   // 10 e 28 graus, igual ao Python
-        var girarBase = secao >= 0 && secao <= 5;   // so armas
-        var tipCode = (info && info.tip) || null;
-        var arrastando = false, lx = 0;
-        function desenha() { render(canvas, meshes, texs, angX, angY, undefined, girarBase, tipCode); }
-        desenha();
+        monta(canvas, meshes, texs, girarBase, tipCode);
         status.textContent = 'Arraste para girar';
-        canvas.onmousedown = function (e) { arrastando = true; lx = e.clientX; };
-        window.onmouseup = function () { arrastando = false; };
-        canvas.onmousemove = function (e) {
-          if (!arrastando) return;
-          angY += (e.clientX - lx) * 0.012; lx = e.clientX;
-          desenha();
-        };
-        canvas.ontouchmove = function (e) {
-          if (e.touches.length) {
-            angY += (e.touches[0].clientX - lx) * 0.012; lx = e.touches[0].clientX;
-            desenha(); e.preventDefault();
-          }
-        };
-        canvas.ontouchstart = function (e) { if (e.touches.length) lx = e.touches[0].clientX; };
       }
 
       if (cache[chave]) { pronto(cache[chave][0], cache[chave][1]); return; }
 
-      fetch(pasta + info.file).then(function (r) {
+      fetch('/updates/Data/' + info.dir + '/' + info.file).then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.arrayBuffer();
       }).then(function (b) {
         var meshes = parseBmd(b);
-        // tira malhas de EFEITO (chama, brilho): viram um retangulo solto
-        var EFEITO = ['fire', 'flame', 'glow', 'light', 'effe', 'smoke',
-                      'spark', 'flash', 'flare', 'trail', 'fogo', 'chama'];
-        if (meshes.length > 1) {
-          var limpos = meshes.filter(function (m) {
-            var t = (m.tex || '').toLowerCase();
-            for (var i = 0; i < EFEITO.length; i++) if (t.indexOf(EFEITO[i]) >= 0) return false;
-            return true;
-          });
-          if (limpos.length) meshes = limpos;
-        }
-        // junta as texturas necessarias
         var nomes = [];
         meshes.forEach(function (m) { if (m.tex && nomes.indexOf(m.tex) < 0) nomes.push(m.tex); });
-        // texturas ja resolvidas no servidor (case + pasta), quando existirem
-        function carrega(t) {
-          var direto = (info && info.tex && info.tex[t]) ? info.tex[t] : null;
+        var texs = {};
+        return Promise.all(nomes.map(function (t) {
+          var direto = (info.tex && info.tex[t]) ? info.tex[t] : null;
+          function carrega(buf) { return buf ? imagemParaTextura(buf) : null; }
           if (direto) {
             return fetch('/updates/' + direto).then(function (r) {
               return r.ok ? r.arrayBuffer() : null;
-            }).catch(function () { return null; }).then(function (buf) {
-              return buf ? melhorImagem(buf) : null;
-            });
+            }).catch(function () { return null; }).then(carrega);
           }
-          return pegaTex(t, pastas).then(function (buf) {
-            return buf ? melhorImagem(buf) : null;
-          });
-        }
-        return Promise.all(nomes.map(carrega)).then(function (texs) {
-          var mapaTex = {};
-          nomes.forEach(function (t, i) { if (texs[i]) mapaTex[t] = texs[i]; });
-          cache[chave] = [meshes, mapaTex];
-          pronto(meshes, mapaTex);
+          return fetch('/updates/Data/' + info.dir + '/' + t).then(function (r) {
+            return r.ok ? r.arrayBuffer() : null;
+          }).catch(function () { return null; }).then(carrega);
+        })).then(function (lista) {
+          nomes.forEach(function (t, i) { if (lista[i]) texs[t] = lista[i]; });
+          cache[chave] = [meshes, texs];
+          pronto(meshes, texs);
         });
       }).catch(function (e) {
         status.textContent = 'Não foi possível carregar o modelo (' + e.message + ').';
