@@ -1215,7 +1215,7 @@ function findFreeWarehouseSlot(buffer, width, height) {
   return -1;
 }
 
-async function deliverItemToWarehouse(accountId, section, index, def) {
+async function loadWarehouseBuffer(accountId) {
   const [rows] = await pool.query('SELECT Items FROM warehouse WHERE AccountID = ? LIMIT 1', [accountId]);
   let buffer = rows.length && rows[0].Items ? Buffer.from(rows[0].Items) : Buffer.alloc(1200, 0xff);
   if (buffer.length < 1200) {
@@ -1223,11 +1223,60 @@ async function deliverItemToWarehouse(accountId, section, index, def) {
     buffer.copy(padded, 0, 0, Math.min(buffer.length, 1200));
     buffer = padded;
   }
+  return buffer;
+}
 
-  const slot = findFreeWarehouseSlot(buffer, def ? def.width : 1, def ? def.height : 1);
-  if (slot < 0) return { ok: false, error: 'Seu baú está cheio. Libere espaço para comprar.' };
+function countFreeWarehouseSlots(buffer) {
+  let free = 0;
+  for (let slot = 0; slot < 120; slot++) {
+    const chunk = buffer.subarray(slot * 10, slot * 10 + 10);
+    if (chunk.length === 10 && isEmptyItem(chunk)) free++;
+  }
+  return free;
+}
 
-  buildFullShopItem(section, index, def).copy(buffer, slot * 10);
+// Simula a entrega (sem gravar nada) para saber se TODOS os itens cabem no bau.
+// Coloca os maiores primeiro, o que melhora bastante o encaixe.
+function planWarehousePlacement(buffer, items) {
+  const work = Buffer.from(buffer);
+  const order = items
+    .map((item) => item)
+    .sort((a, b) => (b.width * b.height) - (a.width * a.height));
+
+  const placed = [];
+  for (const item of order) {
+    const slot = findFreeWarehouseSlot(work, item.width, item.height);
+    if (slot < 0) {
+      return { ok: false, placed: [], missing: item.name, needed: items.length };
+    }
+    buildFullShopItem(item.section, item.index, item).copy(work, slot * 10);
+    placed.push({ item, slot });
+  }
+
+  placed.sort((a, b) => a.slot - b.slot);
+  return { ok: true, placed, missing: null, needed: items.length };
+}
+
+// Entrega uma lista de itens de uma vez; valida tudo antes de gravar.
+async function deliverItemsToWarehouse(accountId, items) {
+  if (!items || items.length === 0) {
+    return { ok: false, error: 'Nenhum item para entregar.' };
+  }
+
+  const buffer = await loadWarehouseBuffer(accountId);
+  const plan = planWarehousePlacement(buffer, items);
+  if (!plan.ok) {
+    const free = countFreeWarehouseSlots(buffer);
+    return {
+      ok: false,
+      error: `Espaço insuficiente no baú: "${plan.missing}" não encaixa. São ${plan.needed} itens e você tem ${free} slots livres. Libere espaço e tente novamente.`
+    };
+  }
+
+  for (const entry of plan.placed) {
+    buildFullShopItem(entry.item.section, entry.item.index, entry.item).copy(buffer, entry.slot * 10);
+  }
+
   await applySerialsIfNeeded(buffer);
 
   await pool.query(
@@ -1235,7 +1284,19 @@ async function deliverItemToWarehouse(accountId, section, index, def) {
      ON DUPLICATE KEY UPDATE Items = VALUES(Items)`,
     [accountId, buffer]
   );
-  return { ok: true, slot };
+  return { ok: true, slots: plan.placed.map((entry) => entry.slot) };
+}
+
+// Valida (sem gravar) se a compra cabe no bau. Usado antes de cobrar o Cash.
+async function checkWarehouseSpace(accountId, items) {
+  const buffer = await loadWarehouseBuffer(accountId);
+  const plan = planWarehousePlacement(buffer, items);
+  return {
+    ok: plan.ok,
+    missing: plan.missing,
+    needed: plan.needed,
+    freeSlots: countFreeWarehouseSlots(buffer)
+  };
 }
 
 function getShopKits() {
@@ -1272,35 +1333,6 @@ function getShopKits() {
   }).filter((kit) => kit.items.length > 0);
 }
 
-async function deliverKitToWarehouse(accountId, items) {
-  const [rows] = await pool.query('SELECT Items FROM warehouse WHERE AccountID = ? LIMIT 1', [accountId]);
-  let buffer = rows.length && rows[0].Items ? Buffer.from(rows[0].Items) : Buffer.alloc(1200, 0xff);
-  if (buffer.length < 1200) {
-    const padded = Buffer.alloc(1200, 0xff);
-    buffer.copy(padded, 0, 0, Math.min(buffer.length, 1200));
-    buffer = padded;
-  }
-
-  const slots = [];
-  for (const item of items) {
-    const slot = findFreeWarehouseSlot(buffer, item.width, item.height);
-    if (slot < 0) {
-      return { ok: false, error: 'Seu baú não tem espaço suficiente para o kit completo. Libere espaço e tente novamente.' };
-    }
-    buildFullShopItem(item.section, item.index, item).copy(buffer, slot * 10);
-    slots.push(slot);
-  }
-
-  await applySerialsIfNeeded(buffer);
-
-  await pool.query(
-    `INSERT INTO warehouse (AccountID, Items, Money, pw) VALUES (?, ?, 0, 0)
-     ON DUPLICATE KEY UPDATE Items = VALUES(Items)`,
-    [accountId, buffer]
-  );
-  return { ok: true, slots };
-}
-
 function getShopCatalog() {
   const { defs } = getItemDefs();
   const grouped = new Map();
@@ -1329,15 +1361,25 @@ function getShopCatalog() {
 }
 
 app.get('/shop', requireUser, async (req, res) => {
-  const cash = await getCash(req.session.user.id);
+  const accountId = req.session.user.id;
+  const cash = await getCash(accountId);
   const catalog = getShopCatalog();
-  const kits = getShopKits();
+
+  const buffer = await loadWarehouseBuffer(accountId);
+  const freeSlots = countFreeWarehouseSlots(buffer);
+  const kits = getShopKits().map((kit) => ({
+    ...kit,
+    fits: planWarehousePlacement(buffer, kit.items).ok
+  }));
+
   const notice = req.query.ok ? { type: 'success', text: decodeURIComponent(String(req.query.ok)) } : null;
   const error = req.query.err ? { type: 'danger', text: decodeURIComponent(String(req.query.err)) } : null;
   res.render('shop', {
     catalog,
     kits,
     cash,
+    freeSlots,
+    warehouseSlots: 120,
     itemPrice: SHOP_ITEM_PRICE,
     kitPrice: SHOP_KIT_PRICE,
     notice,
@@ -1365,6 +1407,23 @@ app.post('/shop/buy', requireUser, async (req, res) => {
     return res.redirect('/shop?err=' + encodeURIComponent('Item não encontrado.'));
   }
 
+  const item = {
+    section,
+    index,
+    name: def.name,
+    width: def.width,
+    height: def.height,
+    skill: def.skill || 0
+  };
+
+  // Valida se o item cabe no bau ANTES de descontar o Cash
+  const space = await checkWarehouseSpace(accountId, [item]);
+  if (!space.ok) {
+    return res.redirect('/shop?err=' + encodeURIComponent(
+      `Sem espaço no baú para "${def.name}". Você tem ${space.freeSlots} slots livres. Libere espaço e tente novamente.`
+    ));
+  }
+
   const price = SHOP_ITEM_PRICE;
   const [debit] = await pool.query(
     'UPDATE web_cash SET cash = cash - ? WHERE account_id = ? AND cash >= ?',
@@ -1375,13 +1434,13 @@ app.post('/shop/buy', requireUser, async (req, res) => {
     return res.redirect('/shop?err=' + encodeURIComponent(`Cash insuficiente. Você tem ${cash} Cash e o item custa ${price}.`));
   }
 
-  const delivered = await deliverItemToWarehouse(accountId, section, index, def);
+  const delivered = await deliverItemsToWarehouse(accountId, [item]);
   if (!delivered.ok) {
     await addCash(accountId, price); // devolve o Cash
     return res.redirect('/shop?err=' + encodeURIComponent(delivered.error || 'Não foi possível entregar o item.'));
   }
 
-  return res.redirect('/shop?ok=' + encodeURIComponent(`Comprado: ${def.name} +15 completo. Entregue no baú (slot ${delivered.slot}).`));
+  return res.redirect('/shop?ok=' + encodeURIComponent(`Comprado: ${def.name} +15 completo. Entregue no baú (slot ${delivered.slots[0]}).`));
 });
 
 app.post('/shop/kit/buy', requireUser, async (req, res) => {
@@ -1396,6 +1455,14 @@ app.post('/shop/kit/buy', requireUser, async (req, res) => {
     return res.redirect('/shop?err=' + encodeURIComponent('Kit inválido.'));
   }
 
+  // Valida se TODOS os itens do kit encaixam no bau ANTES de descontar o Cash
+  const space = await checkWarehouseSpace(accountId, kit.items);
+  if (!space.ok) {
+    return res.redirect('/shop?err=' + encodeURIComponent(
+      `Sem espaço no baú para o ${kit.name}: "${space.missing}" não encaixa. O kit tem ${kit.items.length} itens e você tem ${space.freeSlots} slots livres. Libere espaço e tente novamente.`
+    ));
+  }
+
   const price = kit.price;
   const [debit] = await pool.query(
     'UPDATE web_cash SET cash = cash - ? WHERE account_id = ? AND cash >= ?',
@@ -1406,7 +1473,7 @@ app.post('/shop/kit/buy', requireUser, async (req, res) => {
     return res.redirect('/shop?err=' + encodeURIComponent(`Cash insuficiente. Você tem ${cash} Cash e o kit custa ${price}.`));
   }
 
-  const delivered = await deliverKitToWarehouse(accountId, kit.items);
+  const delivered = await deliverItemsToWarehouse(accountId, kit.items);
   if (!delivered.ok) {
     await addCash(accountId, price); // devolve o Cash
     return res.redirect('/shop?err=' + encodeURIComponent(delivered.error || 'Não foi possível entregar o kit.'));
