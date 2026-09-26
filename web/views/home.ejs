@@ -111,40 +111,24 @@
 
           <div class="bg-white p-4 border rounded-3 shadow-sm mb-4">
             <h2 class="mu-section-title"><span class="mu-ornament">&#9670;</span> Top 10</h2>
-            <div class="table-responsive">
-              <table class="table table-bordered table-striped mb-0">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Nome</th>
-                    <th>GR</th>
-                    <th>Reset</th>
-                    <th>Nível</th>
-                    <th>Classe</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% if (!ranking || ranking.length === 0) { %>
-                    <tr>
-                      <td colspan="6" class="text-center">Sem dados</td>
-                    </tr>
-                  <% } else { %>
-                    <% ranking.forEach(function(row, idx) { %>
-                      <tr>
-                        <td><%= idx + 1 %></td>
-                        <td><%= row.Name %></td>
-                        <td><%= row.GrandResetCount %></td>
-                        <td><%= row.ResetCount %></td>
-                        <td><%= row.cLevel %></td>
-                        <td class="text-center">
-                          <img src="<%= row.ClassIcon %>" alt="<%= row.ClassName %>" title="<%= row.ClassName %>" class="class-icon" />
-                        </td>
-                      </tr>
-                    <% }); %>
-                  <% } %>
-                </tbody>
-              </table>
-            </div>
+            <ol class="mu-top-list">
+              <% if (!ranking || ranking.length === 0) { %>
+                <li class="mu-top-empty">Sem dados</li>
+              <% } else { %>
+                <% ranking.forEach(function(row, idx) { %>
+                  <li class="mu-top-item">
+                    <span class="mu-top-rank"><%= idx + 1 %></span>
+                    <img src="<%= row.ClassIcon %>" alt="<%= row.ClassName %>" title="<%= row.ClassName %>" class="class-icon" />
+                    <span class="mu-top-name"><%= row.Name %></span>
+                    <span class="mu-top-stats">
+                      <span class="mu-top-stat"><b><%= row.GrandResetCount %></b><small>GR</small></span>
+                      <span class="mu-top-stat"><b><%= row.ResetCount %></b><small>Resets</small></span>
+                      <span class="mu-top-stat"><b><%= row.cLevel %></b><small>Nível</small></span>
+                    </span>
+                  </li>
+                <% }); %>
+              <% } %>
+            </ol>
           </div>
 
           <div class="bg-white p-4 border rounded-3 shadow-sm">
