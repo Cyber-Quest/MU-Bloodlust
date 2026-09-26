@@ -240,7 +240,7 @@
         </h3>
         <div class="shop-grid">
           <% group.items.forEach(function (item) { %>
-            <div class="shop-item" data-name="<%= item.name.toLowerCase() %>">
+            <div class="shop-item" data-name="<%= item.name.toLowerCase() %>" data-sec="<%= item.section %>" data-idx="<%= item.index %>" title="Clique para ver em 3D">
               <div class="shop-item-img">
                 <img src="/assets/items/<%= item.section %>/<%= item.index %>.png"
                      alt="<%= item.name %>" loading="lazy"
@@ -287,6 +287,50 @@
       });
     });
   })();
+</script>
+
+
+<style>
+  #mu3d { display: none; position: fixed; inset: 0; z-index: 9999;
+          background: rgba(6, 8, 12, .84); align-items: center; justify-content: center; }
+  #mu3d.aberto { display: flex; }
+  #mu3d .mu3d-caixa { position: relative; background: #26262d; border-radius: 16px;
+          border: 1px solid rgba(224, 176, 97, .35); padding: 14px 16px 10px; text-align: center; }
+  #mu3d h3 { margin: 0 26px 8px; font-size: 1rem; color: var(--mu-gold, #e0b061); font-weight: 700; }
+  #mu3d canvas { background: radial-gradient(circle at 50% 40%, #23232c 0%, #101015 75%);
+          border-radius: 12px; cursor: grab; touch-action: none; display: block; }
+  #mu3d canvas:active { cursor: grabbing; }
+  #mu3d .mu3d-st { font-size: .74rem; opacity: .7; margin-top: 8px; min-height: 1em; }
+  #mu3d .mu3d-x { position: absolute; top: 8px; right: 12px; background: none; border: 0;
+          color: var(--mu-gold, #e0b061); font-size: 1.1rem; cursor: pointer; line-height: 1; }
+</style>
+<div id="mu3d">
+  <div class="mu3d-caixa">
+    <button type="button" class="mu3d-x" onclick="MUItem3D.fechar()">&#10005;</button>
+    <h3 id="mu3d-nome"></h3>
+    <canvas id="mu3d-canvas" width="420" height="420"></canvas>
+    <div class="mu3d-st" id="mu3d-status"></div>
+  </div>
+</div>
+<script src="/data/item-models.js"></script>
+<script src="/js/item-3d.js"></script>
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('button, a, input, form, select, label')) return;
+    var card = e.target.closest('.shop-item');
+    if (!card || !card.dataset.sec) return;
+    var el = card.querySelector('.shop-item-name');
+    window.MUItem3D.abrir(card.dataset.sec, card.dataset.idx,
+                          el ? el.textContent.trim() : '');
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') window.MUItem3D.fechar();
+  });
+  document.getElementById('mu3d').addEventListener('click', function (e) {
+    if (e.target.id === 'mu3d') window.MUItem3D.fechar();
+  });
+})();
 </script>
 
 <%- include('partials/site_footer') %>
