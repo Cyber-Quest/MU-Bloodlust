@@ -189,6 +189,76 @@
 "dir": "Item/Custom/41",
 "file": "Axe27.bmd"
 },
+"10,0": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale01.bmd"
+},
+"10,1": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale02.bmd"
+},
+"10,10": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale11.bmd"
+},
+"10,11": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale12.bmd"
+},
+"10,12": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale13.bmd"
+},
+"10,13": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale14.bmd"
+},
+"10,14": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale15.bmd"
+},
+"10,15": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale16.bmd"
+},
+"10,16": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale17.bmd"
+},
+"10,17": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale18.bmd"
+},
+"10,18": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale19.bmd"
+},
+"10,19": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale20.bmd"
+},
+"10,2": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale03.bmd"
+},
+"10,20": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale21.bmd"
+},
 "10,21": {
 "custom": true,
 "dir": "Player/Custom/21",
@@ -219,6 +289,136 @@
 "dir": "Player/Custom/26",
 "file": "GloveMale32.bmd"
 },
+"10,27": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale28.bmd"
+},
+"10,28": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale29.bmd"
+},
+"10,29": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale30.bmd"
+},
+"10,3": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale04.bmd"
+},
+"10,30": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale31.bmd"
+},
+"10,31": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale32.bmd"
+},
+"10,4": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale05.bmd"
+},
+"10,5": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale06.bmd"
+},
+"10,6": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale07.bmd"
+},
+"10,7": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale08.bmd"
+},
+"10,8": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale09.bmd"
+},
+"10,9": {
+"custom": false,
+"dir": "Player",
+"file": "GloveMale10.bmd"
+},
+"11,0": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale01.bmd"
+},
+"11,1": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale02.bmd"
+},
+"11,10": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale11.bmd"
+},
+"11,11": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale12.bmd"
+},
+"11,12": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale13.bmd"
+},
+"11,13": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale14.bmd"
+},
+"11,14": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale15.bmd"
+},
+"11,15": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale16.bmd"
+},
+"11,16": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale17.bmd"
+},
+"11,17": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale18.bmd"
+},
+"11,18": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale19.bmd"
+},
+"11,19": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale20.bmd"
+},
+"11,2": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale03.bmd"
+},
+"11,20": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale21.bmd"
+},
 "11,21": {
 "custom": true,
 "dir": "Player/Custom/21",
@@ -248,6 +448,66 @@
 "custom": true,
 "dir": "Player/Custom/26",
 "file": "BootMale32.bmd"
+},
+"11,27": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale28.bmd"
+},
+"11,28": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale29.bmd"
+},
+"11,29": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale30.bmd"
+},
+"11,3": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale04.bmd"
+},
+"11,30": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale31.bmd"
+},
+"11,31": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale32.bmd"
+},
+"11,4": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale05.bmd"
+},
+"11,5": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale06.bmd"
+},
+"11,6": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale07.bmd"
+},
+"11,7": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale08.bmd"
+},
+"11,8": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale09.bmd"
+},
+"11,9": {
+"custom": false,
+"dir": "Player",
+"file": "BootMale10.bmd"
 },
 "12,0": {
 "custom": false,
@@ -979,6 +1239,76 @@
 "dir": "Item",
 "file": "Shield10.bmd"
 },
+"7,0": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale01.bmd"
+},
+"7,1": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale02.bmd"
+},
+"7,10": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale11.bmd"
+},
+"7,11": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale12.bmd"
+},
+"7,12": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale13.bmd"
+},
+"7,13": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale14.bmd"
+},
+"7,14": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale15.bmd"
+},
+"7,15": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale16.bmd"
+},
+"7,16": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale17.bmd"
+},
+"7,17": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale18.bmd"
+},
+"7,18": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale19.bmd"
+},
+"7,19": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale20.bmd"
+},
+"7,2": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale03.bmd"
+},
+"7,20": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale21.bmd"
+},
 "7,21": {
 "custom": true,
 "dir": "Player/Custom/21",
@@ -1008,6 +1338,136 @@
 "custom": true,
 "dir": "Player/Custom/26",
 "file": "HelmMale32.bmd"
+},
+"7,27": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale28.bmd"
+},
+"7,28": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale29.bmd"
+},
+"7,29": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale30.bmd"
+},
+"7,3": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale04.bmd"
+},
+"7,30": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale31.bmd"
+},
+"7,31": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale32.bmd"
+},
+"7,4": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale05.bmd"
+},
+"7,5": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale06.bmd"
+},
+"7,6": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale07.bmd"
+},
+"7,7": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale08.bmd"
+},
+"7,8": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale09.bmd"
+},
+"7,9": {
+"custom": false,
+"dir": "Player",
+"file": "HelmMale10.bmd"
+},
+"8,0": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale01.bmd"
+},
+"8,1": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale02.bmd"
+},
+"8,10": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale11.bmd"
+},
+"8,11": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale12.bmd"
+},
+"8,12": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale13.bmd"
+},
+"8,13": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale14.bmd"
+},
+"8,14": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale15.bmd"
+},
+"8,15": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale16.bmd"
+},
+"8,16": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale17.bmd"
+},
+"8,17": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale18.bmd"
+},
+"8,18": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale19.bmd"
+},
+"8,19": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale20.bmd"
+},
+"8,2": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale03.bmd"
+},
+"8,20": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale21.bmd"
 },
 "8,21": {
 "custom": true,
@@ -1039,6 +1499,136 @@
 "dir": "Player/Custom/26",
 "file": "ArmorMale32.bmd"
 },
+"8,27": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale28.bmd"
+},
+"8,28": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale29.bmd"
+},
+"8,29": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale30.bmd"
+},
+"8,3": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale04.bmd"
+},
+"8,30": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale31.bmd"
+},
+"8,31": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale32.bmd"
+},
+"8,4": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale05.bmd"
+},
+"8,5": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale06.bmd"
+},
+"8,6": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale07.bmd"
+},
+"8,7": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale08.bmd"
+},
+"8,8": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale09.bmd"
+},
+"8,9": {
+"custom": false,
+"dir": "Player",
+"file": "ArmorMale10.bmd"
+},
+"9,0": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale01.bmd"
+},
+"9,1": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale02.bmd"
+},
+"9,10": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale11.bmd"
+},
+"9,11": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale12.bmd"
+},
+"9,12": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale13.bmd"
+},
+"9,13": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale14.bmd"
+},
+"9,14": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale15.bmd"
+},
+"9,15": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale16.bmd"
+},
+"9,16": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale17.bmd"
+},
+"9,17": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale18.bmd"
+},
+"9,18": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale19.bmd"
+},
+"9,19": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale20.bmd"
+},
+"9,2": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale03.bmd"
+},
+"9,20": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale21.bmd"
+},
 "9,21": {
 "custom": true,
 "dir": "Player/Custom/21",
@@ -1068,5 +1658,65 @@
 "custom": true,
 "dir": "Player/Custom/26",
 "file": "PantMale32.bmd"
+},
+"9,27": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale28.bmd"
+},
+"9,28": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale29.bmd"
+},
+"9,29": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale30.bmd"
+},
+"9,3": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale04.bmd"
+},
+"9,30": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale31.bmd"
+},
+"9,31": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale32.bmd"
+},
+"9,4": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale05.bmd"
+},
+"9,5": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale06.bmd"
+},
+"9,6": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale07.bmd"
+},
+"9,7": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale08.bmd"
+},
+"9,8": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale09.bmd"
+},
+"9,9": {
+"custom": false,
+"dir": "Player",
+"file": "PantMale10.bmd"
 }
 }
