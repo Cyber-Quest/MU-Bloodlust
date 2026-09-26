@@ -227,3 +227,14 @@ CommandWareNumber_AL0=5
 CommandWareNumber_AL1=5
 CommandWareNumber_AL2=5
 CommandWareNumber_AL3=5
+
+;==================================================
+; Reset NPC Settings
+;==================================================
+; NPC que executa o /reset quando o jogador clica nele.
+; Ele usa as MESMAS checagens do comando /reset (nivel, dinheiro, limite).
+; 0 = desativado.
+;   245 = Wizard Izabel        235 = Sebina the Priest (usada pelas quests!)
+;   254 = Pasi the Mage        244 = Caren the Barmaid
+; O NPC precisa estar spawnado em MonsterSetBase.txt.
+ResetNpcIndex=245

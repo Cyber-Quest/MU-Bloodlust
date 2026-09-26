@@ -339,6 +339,8 @@ public:
 	int m_CommandGrandResetLimitWek[MAX_ACCOUNT_LEVEL];
 	int m_CommandGrandResetLimitMon[MAX_ACCOUNT_LEVEL];
 	int m_CommandWareNumber[MAX_ACCOUNT_LEVEL];
+	// NPC que executa o /reset quando clicado (0 = desativado)
+	int m_ResetNpcIndex;
 	// Skill
 	int m_ManaShieldConstA;
 	int m_ManaShieldConstB;

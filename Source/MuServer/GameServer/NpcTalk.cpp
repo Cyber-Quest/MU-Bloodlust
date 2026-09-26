@@ -2,6 +2,7 @@
 #include "NpcTalk.h"
 #include "BloodCastle.h"
 #include "ChaosBox.h"
+#include "CommandManager.h"
 #include "CustomNpcMove.h"
 #include "DevilSquare.h"
 #include "DSProtocol.h"
@@ -46,6 +47,17 @@ bool CNpcTalk::NpcTalk(LPOBJ lpNpc, LPOBJ lpObj)
 
 	if (gCustomNpcMove.GetNpcMove(lpObj, lpNpc->Class, lpNpc->Map, lpNpc->X, lpNpc->Y) != 0)
 	{
+		return 1;
+	}
+
+	// NPC de reset: clicar nele executa o mesmo /reset (com todas as checagens
+	// de nivel, dinheiro e limite). Configuravel em GameServerInfo - Command.dat.
+	if (gServerInfo.m_ResetNpcIndex != 0 && lpNpc->Class == gServerInfo.m_ResetNpcIndex)
+	{
+		char argumento[8] = { 0 };
+
+		gCommandManager.CommandReset(lpObj, argumento);
+
 		return 1;
 	}
 

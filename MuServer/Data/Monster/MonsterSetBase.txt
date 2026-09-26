@@ -12,6 +12,7 @@
 251	0	0	116	141	3	// Hanzo the Blacksmith
 255	0	0	123	135	1	// Lumen the Barmaid
 254	0	0	118	113	3	// Pasi the Mage
+245	0	0	120	113	3	// Wizard Izabel (NPC de reset)
 240	0	0	147	145	1	// Safety Guardian
 240	0	0	146	110	3	// Safety Guardian
 236	0	0	130	127	3	// Golden Archer
@@ -34,7 +35,7 @@ end
 233	2	0	219	9	3	// Messenger of Archangel
 235	2	0	183	32	3	// Sebina the Priest
 244	2	0	226	25	3	// Caren the Barmaid
-245	2	0	225	41	3	// Wizard Izabel
+245	2	0	225	41	3	// Wizard Izabel (NPC de reset)
 246	2	0	186	47	3	// Weapons Merchant Zienna
 247	2	20	224	79	5	// Archer Guard
 247	2	20	219	79	5	// Archer Guard
@@ -52,6 +53,7 @@ end
 237	3	0	171	105	3	// Charon
 242	3	0	173	125	1	// Elf Lala
 243	3	0	195	124	2	// Eo the Craftsman
+245	3	0	197	124	2	// Wizard Izabel (NPC de reset)
 240	3	0	172	96	3	// Safety Guardian
 238	3	0	180	103	1	// Chaos Goblin
 236	3	0	169	109	3	// Golden Archer
@@ -65,6 +67,7 @@ end
 0
 //Mob\tMapNum\tRange\tPosX\tPosY\tDirect\tName
 253	4	0	207	75	1	// Potion Girl Amy
+245	4	0	209	75	1	// Wizard Izabel (NPC de reset)
 end
 
 //=========================================================================================================================================
@@ -73,6 +76,7 @@ end
 0
 //Mob\tMapNum\tRange\tPosX\tPosY\tDirect\tName
 253	7	0	23	25	1	// Potion Girl Amy
+245	7	0	25	25	1	// Wizard Izabel (NPC de reset)
 end
 //		TRAPS			//
 //======================================//

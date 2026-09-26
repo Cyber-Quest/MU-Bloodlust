@@ -1290,6 +1290,10 @@ void CServerInfo::ReadCommandInfo(const char* section, const char* path)
 	this->m_CommandWareNumber[2] = GetPrivateProfileInt(section, "CommandWareNumber_AL2", 0, path);
 
 	this->m_CommandWareNumber[3] = GetPrivateProfileInt(section, "CommandWareNumber_AL3", 0, path);
+
+	// NPC que executa o reset ao ser clicado (0 = desativado).
+	// 245 = "Wizard Izabel"; 235 = "Sebina the Priest" (mas essa e usada pelas quests).
+	this->m_ResetNpcIndex = GetPrivateProfileInt(section, "ResetNpcIndex", 0, path);
 }
 
 void CServerInfo::ReadCommonInfo(const char* section, const char* path)
