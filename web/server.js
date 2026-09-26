@@ -1192,27 +1192,83 @@ function buildFullShopItem(section, index, def) {
   return bytes;
 }
 
-function findFreeWarehouseSlot(buffer, width, height) {
-  const cols = 8;
-  const rows = 15;
+const WAREHOUSE_COLS = 8;
+const WAREHOUSE_ROWS = 15;
+const WAREHOUSE_CELLS = WAREHOUSE_COLS * WAREHOUSE_ROWS; // 120
+
+function itemFootprint(def) {
+  return {
+    w: Math.max(1, Number(def && def.width) || 1),
+    h: Math.max(1, Number(def && def.height) || 1)
+  };
+}
+
+// O bau guarda cada item apenas no slot de cima/esquerda; as demais celulas que o
+// item ocupa sao VIRTUAIS (o cliente remonta esse mapa ao carregar o bau).
+// Aqui a grade 8x15 real e reconstruida: cada celula aponta para o slot do item que
+// a ocupa, ou null se estiver livre. Sem isso, o posicionamento acha que um elmo 2x2
+// "cabe" em cima de uma asa 3x3 e os itens ficam sobrepostos no jogo.
+function buildWarehouseCellMap(buffer) {
+  const { map } = getItemDefs();
+  const cells = new Array(WAREHOUSE_CELLS).fill(null);
+  const mark = (slot, def) => {
+    const { w, h } = itemFootprint(def);
+    const x0 = slot % WAREHOUSE_COLS;
+    const y0 = Math.floor(slot / WAREHOUSE_COLS);
+    cells[slot] = slot;
+    for (let dy = 0; dy < h; dy++) {
+      for (let dx = 0; dx < w; dx++) {
+        const x = x0 + dx;
+        const y = y0 + dy;
+        if (x >= WAREHOUSE_COLS || y >= WAREHOUSE_ROWS) continue;
+        cells[y * WAREHOUSE_COLS + x] = slot;
+      }
+    }
+  };
+
+  for (let slot = 0; slot < WAREHOUSE_CELLS; slot++) {
+    const chunk = buffer.subarray(slot * 10, slot * 10 + 10);
+    if (chunk.length < 10 || isEmptyItem(chunk)) continue;
+    const item = decodeItemBytes(chunk);
+    mark(slot, map.get(`${item.section}:${item.index}`));
+  }
+  return cells;
+}
+
+function findFreeWarehouseSlot(cells, width, height) {
   const w = Math.max(1, Number(width) || 1);
   const h = Math.max(1, Number(height) || 1);
-  for (let y = 0; y <= rows - h; y++) {
-    for (let x = 0; x <= cols - w; x++) {
+  if (w > WAREHOUSE_COLS || h > WAREHOUSE_ROWS) return -1;
+  for (let y = 0; y <= WAREHOUSE_ROWS - h; y++) {
+    for (let x = 0; x <= WAREHOUSE_COLS - w; x++) {
       let free = true;
       for (let dy = 0; dy < h && free; dy++) {
         for (let dx = 0; dx < w; dx++) {
-          const off = ((y + dy) * cols + (x + dx)) * 10;
-          if (off + 10 > buffer.length || !isEmptyItem(buffer.subarray(off, off + 10))) {
+          if (cells[(y + dy) * WAREHOUSE_COLS + (x + dx)] !== null) {
             free = false;
             break;
           }
         }
       }
-      if (free) return y * cols + x;
+      if (free) return y * WAREHOUSE_COLS + x;
     }
   }
   return -1;
+}
+
+function occupyCells(cells, slot, width, height) {
+  const w = Math.max(1, Number(width) || 1);
+  const h = Math.max(1, Number(height) || 1);
+  const x0 = slot % WAREHOUSE_COLS;
+  const y0 = Math.floor(slot / WAREHOUSE_COLS);
+  for (let dy = 0; dy < h; dy++) {
+    for (let dx = 0; dx < w; dx++) {
+      const x = x0 + dx;
+      const y = y0 + dy;
+      if (x >= WAREHOUSE_COLS || y >= WAREHOUSE_ROWS) continue;
+      cells[y * WAREHOUSE_COLS + x] = slot;
+    }
+  }
 }
 
 async function loadWarehouseBuffer(accountId) {
@@ -1227,34 +1283,116 @@ async function loadWarehouseBuffer(accountId) {
 }
 
 function countFreeWarehouseSlots(buffer) {
+  const cells = buildWarehouseCellMap(buffer);
   let free = 0;
-  for (let slot = 0; slot < 120; slot++) {
-    const chunk = buffer.subarray(slot * 10, slot * 10 + 10);
-    if (chunk.length === 10 && isEmptyItem(chunk)) free++;
+  for (const cell of cells) {
+    if (cell === null) free++;
   }
   return free;
+}
+
+// Itens do bau que estao sobrepostos (bug antigo de posicionamento) ou fora da grade.
+// Serve para avisar o jogador e para o reparo.
+function findWarehouseConflicts(buffer) {
+  const { map } = getItemDefs();
+  const cells = new Array(WAREHOUSE_CELLS).fill(-2);
+  const conflicts = [];
+  for (let slot = 0; slot < WAREHOUSE_CELLS; slot++) {
+    const chunk = buffer.subarray(slot * 10, slot * 10 + 10);
+    if (chunk.length < 10 || isEmptyItem(chunk)) continue;
+    const item = decodeItemBytes(chunk);
+    const def = map.get(`${item.section}:${item.index}`);
+    const { w, h } = itemFootprint(def);
+    const x0 = slot % WAREHOUSE_COLS;
+    const y0 = Math.floor(slot / WAREHOUSE_COLS);
+    let bad = false;
+    if (x0 + w > WAREHOUSE_COLS || y0 + h > WAREHOUSE_ROWS) bad = true;
+    for (let dy = 0; dy < h; dy++) {
+      for (let dx = 0; dx < w; dx++) {
+        const x = x0 + dx;
+        const y = y0 + dy;
+        if (x >= WAREHOUSE_COLS || y >= WAREHOUSE_ROWS) continue;
+        const at = y * WAREHOUSE_COLS + x;
+        if (cells[at] !== -2 && cells[at] !== slot) bad = true;
+        cells[at] = slot;
+      }
+    }
+    if (bad) conflicts.push({ slot, section: item.section, index: item.index, name: def ? def.name : `${item.section}:${item.index}` });
+  }
+  return conflicts;
 }
 
 // Simula a entrega (sem gravar nada) para saber se TODOS os itens cabem no bau.
 // Coloca os maiores primeiro, o que melhora bastante o encaixe.
 function planWarehousePlacement(buffer, items) {
   const work = Buffer.from(buffer);
+  const cells = buildWarehouseCellMap(work);
   const order = items
     .map((item) => item)
     .sort((a, b) => (b.width * b.height) - (a.width * a.height));
 
   const placed = [];
   for (const item of order) {
-    const slot = findFreeWarehouseSlot(work, item.width, item.height);
+    const slot = findFreeWarehouseSlot(cells, item.width, item.height);
     if (slot < 0) {
       return { ok: false, placed: [], missing: item.name, needed: items.length };
     }
     buildFullShopItem(item.section, item.index, item).copy(work, slot * 10);
+    occupyCells(cells, slot, item.width, item.height);
     placed.push({ item, slot });
   }
 
   placed.sort((a, b) => a.slot - b.slot);
   return { ok: true, placed, missing: null, needed: items.length };
+}
+
+// Reorganiza o bau usando o tamanho real de cada item, preservando os bytes
+// originais (serial, nivel, opcoes). Corrige baus que ficaram com itens sobrepostos.
+function repackWarehouse(buffer) {
+  const { map } = getItemDefs();
+  const items = [];
+  for (let slot = 0; slot < WAREHOUSE_CELLS; slot++) {
+    const chunk = buffer.subarray(slot * 10, slot * 10 + 10);
+    if (chunk.length < 10 || isEmptyItem(chunk)) continue;
+    const item = decodeItemBytes(chunk);
+    const def = map.get(`${item.section}:${item.index}`);
+    const { w, h } = itemFootprint(def);
+    items.push({
+      section: item.section,
+      index: item.index,
+      name: def ? def.name : `${item.section}:${item.index}`,
+      width: w,
+      height: h,
+      bytes: Buffer.from(chunk)
+    });
+  }
+
+  const work = Buffer.alloc(WAREHOUSE_CELLS * 10, 0xff);
+  const cells = buildWarehouseCellMap(work);
+  const placed = [];
+  const failed = [];
+  const order = items.slice().sort((a, b) => (b.width * b.height) - (a.width * a.height));
+  for (const item of order) {
+    const slot = findFreeWarehouseSlot(cells, item.width, item.height);
+    if (slot < 0) {
+      failed.push(item);
+      continue;
+    }
+    item.bytes.copy(work, slot * 10);
+    occupyCells(cells, slot, item.width, item.height);
+    placed.push({ item, slot });
+  }
+  placed.sort((a, b) => a.slot - b.slot);
+  return { buffer: work, placed, failed, total: items.length };
+}
+
+// Se o bau tiver itens sobrepostos (bug antigo de posicionamento), reorganiza antes
+// de mexer nele. Assim qualquer compra tambem conserta baus ja corrompidos.
+function healWarehouseBuffer(buffer) {
+  if (findWarehouseConflicts(buffer).length === 0) return buffer;
+  const repacked = repackWarehouse(buffer);
+  if (repacked.failed.length > 0) return buffer;
+  return repacked.buffer;
 }
 
 // Entrega uma lista de itens de uma vez; valida tudo antes de gravar.
@@ -1263,13 +1401,13 @@ async function deliverItemsToWarehouse(accountId, items) {
     return { ok: false, error: 'Nenhum item para entregar.' };
   }
 
-  const buffer = await loadWarehouseBuffer(accountId);
+  const buffer = healWarehouseBuffer(await loadWarehouseBuffer(accountId));
   const plan = planWarehousePlacement(buffer, items);
   if (!plan.ok) {
     const free = countFreeWarehouseSlots(buffer);
     return {
       ok: false,
-      error: `Espaço insuficiente no baú: "${plan.missing}" não encaixa. São ${plan.needed} itens e você tem ${free} slots livres. Libere espaço e tente novamente.`
+      error: `Espaço insuficiente no baú: "${plan.missing}" não encaixa. São ${plan.needed} itens e você tem ${free} espaços livres. Libere espaço e tente novamente.`
     };
   }
 
@@ -1289,7 +1427,7 @@ async function deliverItemsToWarehouse(accountId, items) {
 
 // Valida (sem gravar) se a compra cabe no bau. Usado antes de cobrar o Cash.
 async function checkWarehouseSpace(accountId, items) {
-  const buffer = await loadWarehouseBuffer(accountId);
+  const buffer = healWarehouseBuffer(await loadWarehouseBuffer(accountId));
   const plan = planWarehousePlacement(buffer, items);
   return {
     ok: plan.ok,
@@ -1365,7 +1503,9 @@ app.get('/shop', requireUser, async (req, res) => {
   const cash = await getCash(accountId);
   const catalog = getShopCatalog();
 
-  const buffer = await loadWarehouseBuffer(accountId);
+  const rawBuffer = await loadWarehouseBuffer(accountId);
+  const conflicts = findWarehouseConflicts(rawBuffer).length;
+  const buffer = healWarehouseBuffer(rawBuffer);
   const freeSlots = countFreeWarehouseSlots(buffer);
   const kits = getShopKits().map((kit) => ({
     ...kit,
@@ -1379,6 +1519,7 @@ app.get('/shop', requireUser, async (req, res) => {
     kits,
     cash,
     freeSlots,
+    warehouseConflicts: conflicts,
     warehouseSlots: 120,
     itemPrice: SHOP_ITEM_PRICE,
     kitPrice: SHOP_KIT_PRICE,
@@ -1420,7 +1561,7 @@ app.post('/shop/buy', requireUser, async (req, res) => {
   const space = await checkWarehouseSpace(accountId, [item]);
   if (!space.ok) {
     return res.redirect('/shop?err=' + encodeURIComponent(
-      `Sem espaço no baú para "${def.name}". Você tem ${space.freeSlots} slots livres. Libere espaço e tente novamente.`
+      `Sem espaço no baú para "${def.name}". Você tem ${space.freeSlots} espaços livres. Libere espaço e tente novamente.`
     ));
   }
 
@@ -1459,7 +1600,7 @@ app.post('/shop/kit/buy', requireUser, async (req, res) => {
   const space = await checkWarehouseSpace(accountId, kit.items);
   if (!space.ok) {
     return res.redirect('/shop?err=' + encodeURIComponent(
-      `Sem espaço no baú para o ${kit.name}: "${space.missing}" não encaixa. O kit tem ${kit.items.length} itens e você tem ${space.freeSlots} slots livres. Libere espaço e tente novamente.`
+      `Sem espaço no baú para o ${kit.name}: "${space.missing}" não encaixa. O kit tem ${kit.items.length} itens e você tem ${space.freeSlots} espaços livres. Libere espaço e tente novamente.`
     ));
   }
 
@@ -3256,13 +3397,54 @@ app.get('/admin/accounts/:id/warehouse/editor', requireAdmin, requireAdminPasswo
   const itemsHex = rows[0] ? bufferToHex(rows[0].Items, 1200) : bufferToHex(Buffer.alloc(1200, 0xff), 1200);
   const offline = await ensureAccountOffline(accountId);
 
+  const buffer = rows[0] && rows[0].Items ? Buffer.from(rows[0].Items) : Buffer.alloc(1200, 0xff);
+  const conflicts = findWarehouseConflicts(buffer);
+
   res.render('admin_warehouse_graphic', {
     accountId,
     itemsHex,
     offline,
+    conflicts,
     notice,
     error
   });
+});
+
+// Corrige baus com itens sobrepostos (bug antigo de posicionamento da loja).
+// Reorganiza tudo usando o tamanho real de cada item, sem alterar os itens.
+app.post('/admin/accounts/:id/warehouse/repair', requireAdmin, requireAdminPasswordChange, async (req, res) => {
+  const accountId = String(req.params.id || '').trim();
+  const back = `/admin/accounts/${encodeURIComponent(accountId)}/warehouse/editor`;
+
+  const offline = await ensureAccountOffline(accountId);
+  if (!offline) {
+    return res.redirect(`${back}?err=${encodeURIComponent('A conta está online. Desconecte-a para reparar.')}`);
+  }
+
+  const [rows] = await pool.query('SELECT Items FROM warehouse WHERE AccountID = ? LIMIT 1', [accountId]);
+  if (!rows[0] || !rows[0].Items) {
+    return res.redirect(`${back}?err=${encodeURIComponent('Esta conta ainda não tem baú.')}`);
+  }
+
+  const buffer = Buffer.from(rows[0].Items);
+  const before = findWarehouseConflicts(buffer);
+  if (before.length === 0) {
+    return res.redirect(`${back}?ok=${encodeURIComponent('Este baú já está correto, nada para reparar.')}`);
+  }
+
+  const repacked = repackWarehouse(buffer);
+  if (repacked.failed.length > 0) {
+    return res.redirect(`${back}?err=${encodeURIComponent(`Não foi possível reorganizar: ${repacked.failed.length} item(ns) não couberam.`)}`);
+  }
+
+  await pool.query(
+    `INSERT INTO warehouse (AccountID, Items, Money, pw)
+     VALUES (?, ?, 0, 0)
+     ON DUPLICATE KEY UPDATE Items = VALUES(Items)`,
+    [accountId, repacked.buffer]
+  );
+
+  return res.redirect(`${back}?ok=${encodeURIComponent(`Baú reparado: ${repacked.placed.length} itens reorganizados (${before.length} estavam sobrepostos).`)}`);
 });
 
 app.post('/admin/accounts/:id/warehouse/editor', requireAdmin, requireAdminPasswordChange, async (req, res) => {

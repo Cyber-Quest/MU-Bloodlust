@@ -25,6 +25,19 @@
     <div class="alert">A conta está online. Desconecte-a para salvar alterações.</div>
   <% } %>
 
+  <% if (typeof conflicts !== 'undefined' && conflicts.length > 0) { %>
+    <div class="alert">
+      <strong>Baú com itens sobrepostos.</strong>
+      <%= conflicts.length %> item(ns) ocupam o mesmo espaço que outro:
+      <%= conflicts.map(function (c) { return c.name + ' (slot ' + c.slot + ')'; }).join(', ') %>.
+      O jogo pode não exibir todos eles. Use <strong>Reparar baú</strong> para reorganizar
+      sem alterar nenhum item.
+      <form method="post" action="/admin/accounts/<%= accountId %>/warehouse/repair" style="margin-top:10px">
+        <button type="submit">Reparar baú</button>
+      </form>
+    </div>
+  <% } %>
+
   <div id="inventory-editor"
        data-mode="warehouse"
        data-account="<%= accountId %>"

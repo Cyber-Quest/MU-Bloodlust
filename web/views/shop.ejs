@@ -155,6 +155,13 @@
 
     <% if (notice) { %><div class="alert alert-success"><%= notice.text %></div><% } %>
     <% if (error) { %><div class="alert alert-danger"><%= error.text %></div><% } %>
+    <% if (typeof warehouseConflicts !== 'undefined' && warehouseConflicts > 0) { %>
+      <div class="alert alert-warning">
+        Seu baú tem <strong><%= warehouseConflicts %></strong> item(ns) sobreposto(s) por um problema antigo da loja,
+        e o jogo pode não exibir todos eles. <strong>Qualquer compra aqui reorganiza o baú automaticamente</strong>
+        (nenhum item é perdido), ou peça para o admin usar "Reparar baú".
+      </div>
+    <% } %>
 
     <div class="shop-toolbar">
       <input id="shop-search" type="search" class="form-control" placeholder="Buscar item pelo nome..." autocomplete="off" />
