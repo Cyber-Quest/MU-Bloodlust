@@ -85,58 +85,44 @@
 11,021		0		"BootMale22"		// Great Dragon Boot
 
 //// ------------------------------------------------------------------ ////
-////			SKINS CUSTOM (todos os conjuntos do cliente)	////
+////		CONJUNTOS CUSTOM (projeto MuEmu kayito)		////
 //// ------------------------------------------------------------------ ////
 // Index	Skill		Model			Comment
 
-// Skin Barbaro (Class01)
-07,022		0		"HelmClass01"		// Skin Barbaro - Elmo
-08,022		0		"ArmorClass01"		// Skin Barbaro - Armadura
-09,022		0		"PantClass01"		// Skin Barbaro - Calcas
-10,022		0		"GloveClass01"		// Skin Barbaro - Luvas
-11,022		0		"BootClass01"		// Skin Barbaro - Botas
+// Majestyc (Male23) - dark400 + cundunHead
+07,022		0		"HelmMale23"		// Majestyc Helm
+08,022		0		"ArmorMale23"		// Majestyc Armor
+09,022		0		"PantMale23"		// Majestyc Pants
+10,022		0		"GloveMale23"		// Majestyc Gloves
+11,022		0		"BootMale23"		// Majestyc Boots
 
-// Skin Mago (Class02)
-07,023		0		"HelmClass02"		// Skin Mago - Elmo
-08,023		0		"ArmorClass02"		// Skin Mago - Armadura
-09,023		0		"PantClass02"		// Skin Mago - Calcas
-10,023		0		"GloveClass02"		// Skin Mago - Luvas
-11,023		0		"BootClass02"		// Skin Mago - Botas
+// Nature (Male25)
+07,023		0		"HelmMale25"		// Nature Helm
+08,023		0		"ArmorMale25"		// Nature Armor
+09,023		0		"PantMale25"		// Nature Pants
+10,023		0		"GloveMale25"		// Nature Gloves
+11,023		0		"BootMale25"		// Nature Boots
 
-// Skin Guerreiro (Class03)
-07,024		0		"HelmClass03"		// Skin Guerreiro - Elmo
-08,024		0		"ArmorClass03"		// Skin Guerreiro - Armadura
-09,024		0		"PantClass03"		// Skin Guerreiro - Calcas
-10,024		0		"GloveClass03"		// Skin Guerreiro - Luvas
-11,024		0		"BootClass03"		// Skin Guerreiro - Botas
+// Especial Set 01 (Male30) - Valorous Darkruned
+07,024		0		"HelmMale30"		// Especial Set 01 Helm
+08,024		0		"ArmorMale30"		// Especial Set 01 Armor
+09,024		0		"PantMale30"		// Especial Set 01 Pants
+10,024		0		"GloveMale30"		// Especial Set 01 Gloves
+11,024		0		"BootMale30"		// Especial Set 01 Boots
 
-// Skin Special 01 (Class04) - item especial MuAway
-07,025		0		"HelmClass04"		// Skin Special 01 - Elmo
-08,025		0		"ArmorClass04"		// Skin Special 01 - Armadura
-09,025		0		"PantClass04"		// Skin Special 01 - Calcas
-10,025		0		"GloveClass04"		// Skin Special 01 - Luvas
-11,025		0		"BootClass04"		// Skin Special 01 - Botas
+// Especial Set 02 (Male31) - Scourgestalker
+07,025		0		"HelmMale31"		// Especial Set 02 Helm
+08,025		0		"ArmorMale31"		// Especial Set 02 Armor
+09,025		0		"PantMale31"		// Especial Set 02 Pants
+10,025		0		"GloveMale31"		// Especial Set 02 Gloves
+11,025		0		"BootMale31"		// Especial Set 02 Boots
 
-// Skin Man 01 (Class202)
-07,026		0		"HelmClass202"		// Skin Man 01 - Elmo
-08,026		0		"ArmorClass202"		// Skin Man 01 - Armadura
-09,026		0		"PantClass202"		// Skin Man 01 - Calcas
-10,026		0		"GloveClass202"		// Skin Man 01 - Luvas
-11,026		0		"BootClass202"		// Skin Man 01 - Botas
-
-// Skin Man 022 (Class201)
-07,027		0		"HelmClass201"		// Skin Man 022 - Elmo
-08,027		0		"ArmorClass201"		// Skin Man 022 - Armadura
-09,027		0		"PantClass201"		// Skin Man 022 - Calcas
-10,027		0		"GloveClass201"		// Skin Man 022 - Luvas
-11,027		0		"BootClass201"		// Skin Man 022 - Botas
-
-// Skin Man 033 (Class203)
-07,028		0		"HelmClass203"		// Skin Man 033 - Elmo
-08,028		0		"ArmorClass203"		// Skin Man 033 - Armadura
-09,028		0		"PantClass203"		// Skin Man 033 - Calcas
-10,028		0		"GloveClass203"		// Skin Man 033 - Luvas
-11,028		0		"BootClass203"		// Skin Man 033 - Botas
+// Especial Set 03 (Male32) - Seadbrno
+07,026		0		"HelmMale32"		// Especial Set 03 Helm
+08,026		0		"ArmorMale32"		// Especial Set 03 Armor
+09,026		0		"PantMale32"		// Especial Set 03 Pants
+10,026		0		"GloveMale32"		// Especial Set 03 Gloves
+11,026		0		"BootMale32"		// Especial Set 03 Boots
 
 //// --------------------------------------------------------------------------------------------------------- ////
 //// WINGS, RINGS AND PENDANTS REQUIRE THEIR OWN SYSTEM. DON'T ADD THEM HERE BECAUSE THEY WON'T WORK CORRECTLY ////
