@@ -1100,6 +1100,26 @@ const SHOP_SECTIONS = [
   'Joias e Consumíveis', 'Pergaminhos'
 ];
 
+// Itens especiais: joias, asas, orbs, pets/acessorios e itens de evento.
+// Ficam agrupados numa secao propria em vez de misturados com o equipamento.
+const SHOP_SPECIAL_REFS = [
+  // Joias
+  [12, 15], [14, 13], [14, 14], [14, 16], [14, 22], [14, 26],
+  // Asas (nivel 1, 2 e 3)
+  [12, 0], [12, 1], [12, 2], [12, 3], [12, 4], [12, 5], [12, 6],
+  // Orbs (skills)
+  [12, 7], [12, 8], [12, 9], [12, 10], [12, 11], [12, 12], [12, 13], [12, 14],
+  [12, 16], [12, 17], [12, 18], [12, 19],
+  // Pets, aneis e pingentes
+  [13, 0], [13, 1], [13, 2], [13, 3], [13, 8], [13, 9], [13, 10], [13, 12], [13, 13],
+  // Itens especiais / de evento
+  [13, 14], [13, 15], [13, 16], [13, 17], [13, 18], [13, 19],
+  [14, 11], [14, 12], [14, 17], [14, 18], [14, 19], [14, 20], [14, 21],
+  [14, 23], [14, 24], [14, 25]
+];
+
+const SHOP_SPECIAL_TITLE = 'Itens Especiais';
+
 const SHOP_ITEM_PRICE = 1000;      // preço padrão em Cash (full +15)
 const SHOP_ITEM_LEVEL = 15;        // +15
 const SHOP_ITEM_ADD = 7;           // +28 de opção
@@ -1480,10 +1500,13 @@ function getShopKits() {
 }
 
 function getShopCatalog() {
-  const { defs } = getItemDefs();
+  const { defs, map } = getItemDefs();
+  const specialKeys = new Set(SHOP_SPECIAL_REFS.map(([s, i]) => `${s}:${i}`));
+
   const grouped = new Map();
   for (const def of defs) {
     if (!def || !def.name) continue;
+    if (specialKeys.has(`${def.section}:${def.index}`)) continue; // vai para "Itens Especiais"
     if (!grouped.has(def.section)) grouped.set(def.section, []);
     grouped.get(def.section).push({
       section: def.section,
@@ -1495,7 +1518,33 @@ function getShopCatalog() {
       price: SHOP_ITEM_PRICE
     });
   }
+
   const catalog = [];
+
+  // Secao de itens especiais (sempre primeiro)
+  const specialItems = [];
+  for (const [s, i] of SHOP_SPECIAL_REFS) {
+    const def = map.get(`${s}:${i}`);
+    if (!def || !def.name) continue;
+    specialItems.push({
+      section: s,
+      index: i,
+      name: def.name,
+      width: def.width,
+      height: def.height,
+      skill: def.skill || 0,
+      price: SHOP_ITEM_PRICE
+    });
+  }
+  if (specialItems.length) {
+    catalog.push({
+      section: 'special',
+      title: SHOP_SPECIAL_TITLE,
+      special: true,
+      items: specialItems
+    });
+  }
+
   for (const [section, items] of [...grouped.entries()].sort((a, b) => a[0] - b[0])) {
     catalog.push({
       section,

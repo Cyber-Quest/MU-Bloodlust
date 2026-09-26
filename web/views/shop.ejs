@@ -39,6 +39,29 @@
 
   .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 12px; }
 
+  /* Secao de itens especiais (joias, asas, orbs, pets) */
+  .shop-section--special {
+    padding: 18px 16px 10px;
+    border-radius: 16px;
+    border: 1px solid var(--mu-gold-line, rgba(224, 176, 97, .35));
+    background:
+      radial-gradient(700px 220px at 12% 0%, rgba(224, 176, 97, .14), transparent 70%),
+      linear-gradient(180deg, rgba(20, 26, 38, .88), rgba(10, 14, 22, .92));
+    box-shadow: 0 14px 34px rgba(0, 0, 0, .45);
+  }
+  .shop-section--special h3 { color: var(--mu-gold-bright, #f7e0a8); }
+  .shop-special-icon {
+    color: var(--mu-gold, #e0b061); margin-right: 8px;
+    text-shadow: 0 0 14px var(--mu-gold-glow, rgba(224, 176, 97, .22));
+  }
+  .shop-special-tag {
+    font-size: .64rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 999px;
+    color: var(--mu-gold, #e0b061);
+    border: 1px solid var(--mu-gold-line, rgba(224, 176, 97, .35));
+    background: rgba(224, 176, 97, .08);
+  }
+
   .shop-item {
     display: flex; flex-direction: column;
     border-radius: 12px; overflow: hidden;
@@ -214,8 +237,13 @@
     <% } %>
 
     <% catalog.forEach(function (group) { %>
-      <section class="shop-section" id="sec-<%= group.section %>">
-        <h3><%= group.title %> <span class="shop-count"><%= group.items.length %></span></h3>
+      <section class="shop-section <%= group.special ? 'shop-section--special' : '' %>" id="sec-<%= group.section %>">
+        <h3>
+          <% if (group.special) { %><i class="bi bi-stars shop-special-icon"></i><% } %>
+          <%= group.title %>
+          <span class="shop-count"><%= group.items.length %></span>
+          <% if (group.special) { %><span class="shop-special-tag">Joias &bull; Asas &bull; Orbs &bull; Pets</span><% } %>
+        </h3>
         <div class="shop-grid">
           <% group.items.forEach(function (item) { %>
             <div class="shop-item" data-name="<%= item.name.toLowerCase() %>">
