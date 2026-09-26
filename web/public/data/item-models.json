@@ -67,7 +67,7 @@
 "0,20": {
 "custom": true,
 "dir": "Item/Custom/20",
-"file": "Sword21.bmd"
+"file": "sword21.bmd"
 },
 "0,21": {
 "custom": true,
@@ -77,27 +77,27 @@
 "0,22": {
 "custom": true,
 "dir": "Item/Custom/22",
-"file": "Sword23.bmd"
+"file": "sword23.bmd"
 },
 "0,23": {
 "custom": true,
 "dir": "Item/Custom/23",
-"file": "Sword24.bmd"
+"file": "sword24.bmd"
 },
 "0,24": {
 "custom": true,
 "dir": "Item/Custom/24",
-"file": "Axe20.bmd"
+"file": "axe20.bmd"
 },
 "0,25": {
 "custom": true,
 "dir": "Item/Custom/25",
-"file": "Axe23.bmd"
+"file": "axe23.bmd"
 },
 "0,26": {
 "custom": true,
 "dir": "Item/Custom/26",
-"file": "Axe26.bmd"
+"file": "axe26.bmd"
 },
 "0,3": {
 "custom": false,
@@ -187,7 +187,7 @@
 "1,9": {
 "custom": true,
 "dir": "Item/Custom/41",
-"file": "Axe27.bmd"
+"file": "axe27.bmd"
 },
 "10,0": {
 "custom": false,
@@ -198,31 +198,6 @@
 "custom": false,
 "dir": "Player",
 "file": "GloveMale02.bmd"
-},
-"10,10": {
-"custom": false,
-"dir": "Player",
-"file": "GloveMale11.bmd"
-},
-"10,11": {
-"custom": false,
-"dir": "Player",
-"file": "GloveMale12.bmd"
-},
-"10,12": {
-"custom": false,
-"dir": "Player",
-"file": "GloveMale13.bmd"
-},
-"10,13": {
-"custom": false,
-"dir": "Player",
-"file": "GloveMale14.bmd"
-},
-"10,14": {
-"custom": false,
-"dir": "Player",
-"file": "GloveMale15.bmd"
 },
 "10,15": {
 "custom": false,
@@ -299,25 +274,10 @@
 "dir": "Player",
 "file": "GloveMale29.bmd"
 },
-"10,29": {
-"custom": false,
-"dir": "Player",
-"file": "GloveMale30.bmd"
-},
 "10,3": {
 "custom": false,
 "dir": "Player",
 "file": "GloveMale04.bmd"
-},
-"10,30": {
-"custom": false,
-"dir": "Player",
-"file": "GloveMale31.bmd"
-},
-"10,31": {
-"custom": false,
-"dir": "Player",
-"file": "GloveMale32.bmd"
 },
 "10,4": {
 "custom": false,
@@ -358,31 +318,6 @@
 "custom": false,
 "dir": "Player",
 "file": "BootMale02.bmd"
-},
-"11,10": {
-"custom": false,
-"dir": "Player",
-"file": "BootMale11.bmd"
-},
-"11,11": {
-"custom": false,
-"dir": "Player",
-"file": "BootMale12.bmd"
-},
-"11,12": {
-"custom": false,
-"dir": "Player",
-"file": "BootMale13.bmd"
-},
-"11,13": {
-"custom": false,
-"dir": "Player",
-"file": "BootMale14.bmd"
-},
-"11,14": {
-"custom": false,
-"dir": "Player",
-"file": "BootMale15.bmd"
 },
 "11,15": {
 "custom": false,
@@ -459,25 +394,10 @@
 "dir": "Player",
 "file": "BootMale29.bmd"
 },
-"11,29": {
-"custom": false,
-"dir": "Player",
-"file": "BootMale30.bmd"
-},
 "11,3": {
 "custom": false,
 "dir": "Player",
 "file": "BootMale04.bmd"
-},
-"11,30": {
-"custom": false,
-"dir": "Player",
-"file": "BootMale31.bmd"
-},
-"11,31": {
-"custom": false,
-"dir": "Player",
-"file": "BootMale32.bmd"
 },
 "11,4": {
 "custom": false,
@@ -757,7 +677,7 @@
 "14,22": {
 "custom": false,
 "dir": "Item",
-"file": "Jewel22.bmd"
+"file": "jewel22.bmd"
 },
 "14,23": {
 "custom": false,
@@ -952,7 +872,7 @@
 "3,11": {
 "custom": true,
 "dir": "Item/Custom/107",
-"file": "Spear14.bmd"
+"file": "spear14.bmd"
 },
 "3,2": {
 "custom": false,
@@ -1107,7 +1027,7 @@
 "5,11": {
 "custom": true,
 "dir": "Item/Custom/171",
-"file": "Staff13.bmd"
+"file": "staff13.bmd"
 },
 "5,2": {
 "custom": false,
@@ -1187,17 +1107,17 @@
 "6,15": {
 "custom": false,
 "dir": "Item",
-"file": "Shield16.bmd"
+"file": "shield16.bmd"
 },
 "6,16": {
 "custom": false,
 "dir": "Item",
-"file": "Shield17.bmd"
+"file": "shield17.bmd"
 },
 "6,17": {
 "custom": true,
 "dir": "Item/Custom/209",
-"file": "Shield21.bmd"
+"file": "shield21.bmd"
 },
 "6,2": {
 "custom": false,
@@ -1249,36 +1169,6 @@
 "dir": "Player",
 "file": "HelmMale02.bmd"
 },
-"7,10": {
-"custom": false,
-"dir": "Player",
-"file": "HelmMale11.bmd"
-},
-"7,11": {
-"custom": false,
-"dir": "Player",
-"file": "HelmMale12.bmd"
-},
-"7,12": {
-"custom": false,
-"dir": "Player",
-"file": "HelmMale13.bmd"
-},
-"7,13": {
-"custom": false,
-"dir": "Player",
-"file": "HelmMale14.bmd"
-},
-"7,14": {
-"custom": false,
-"dir": "Player",
-"file": "HelmMale15.bmd"
-},
-"7,15": {
-"custom": false,
-"dir": "Player",
-"file": "HelmMale16.bmd"
-},
 "7,16": {
 "custom": false,
 "dir": "Player",
@@ -1303,11 +1193,6 @@
 "custom": false,
 "dir": "Player",
 "file": "HelmMale03.bmd"
-},
-"7,20": {
-"custom": false,
-"dir": "Player",
-"file": "HelmMale21.bmd"
 },
 "7,21": {
 "custom": true,
@@ -1349,25 +1234,10 @@
 "dir": "Player",
 "file": "HelmMale29.bmd"
 },
-"7,29": {
-"custom": false,
-"dir": "Player",
-"file": "HelmMale30.bmd"
-},
 "7,3": {
 "custom": false,
 "dir": "Player",
 "file": "HelmMale04.bmd"
-},
-"7,30": {
-"custom": false,
-"dir": "Player",
-"file": "HelmMale31.bmd"
-},
-"7,31": {
-"custom": false,
-"dir": "Player",
-"file": "HelmMale32.bmd"
 },
 "7,4": {
 "custom": false,
@@ -1408,31 +1278,6 @@
 "custom": false,
 "dir": "Player",
 "file": "ArmorMale02.bmd"
-},
-"8,10": {
-"custom": false,
-"dir": "Player",
-"file": "ArmorMale11.bmd"
-},
-"8,11": {
-"custom": false,
-"dir": "Player",
-"file": "ArmorMale12.bmd"
-},
-"8,12": {
-"custom": false,
-"dir": "Player",
-"file": "ArmorMale13.bmd"
-},
-"8,13": {
-"custom": false,
-"dir": "Player",
-"file": "ArmorMale14.bmd"
-},
-"8,14": {
-"custom": false,
-"dir": "Player",
-"file": "ArmorMale15.bmd"
 },
 "8,15": {
 "custom": false,
@@ -1509,25 +1354,10 @@
 "dir": "Player",
 "file": "ArmorMale29.bmd"
 },
-"8,29": {
-"custom": false,
-"dir": "Player",
-"file": "ArmorMale30.bmd"
-},
 "8,3": {
 "custom": false,
 "dir": "Player",
 "file": "ArmorMale04.bmd"
-},
-"8,30": {
-"custom": false,
-"dir": "Player",
-"file": "ArmorMale31.bmd"
-},
-"8,31": {
-"custom": false,
-"dir": "Player",
-"file": "ArmorMale32.bmd"
 },
 "8,4": {
 "custom": false,
@@ -1568,31 +1398,6 @@
 "custom": false,
 "dir": "Player",
 "file": "PantMale02.bmd"
-},
-"9,10": {
-"custom": false,
-"dir": "Player",
-"file": "PantMale11.bmd"
-},
-"9,11": {
-"custom": false,
-"dir": "Player",
-"file": "PantMale12.bmd"
-},
-"9,12": {
-"custom": false,
-"dir": "Player",
-"file": "PantMale13.bmd"
-},
-"9,13": {
-"custom": false,
-"dir": "Player",
-"file": "PantMale14.bmd"
-},
-"9,14": {
-"custom": false,
-"dir": "Player",
-"file": "PantMale15.bmd"
 },
 "9,15": {
 "custom": false,
@@ -1669,25 +1474,10 @@
 "dir": "Player",
 "file": "PantMale29.bmd"
 },
-"9,29": {
-"custom": false,
-"dir": "Player",
-"file": "PantMale30.bmd"
-},
 "9,3": {
 "custom": false,
 "dir": "Player",
 "file": "PantMale04.bmd"
-},
-"9,30": {
-"custom": false,
-"dir": "Player",
-"file": "PantMale31.bmd"
-},
-"9,31": {
-"custom": false,
-"dir": "Player",
-"file": "PantMale32.bmd"
 },
 "9,4": {
 "custom": false,

@@ -156,7 +156,31 @@
 
     var cx = Math.cos(angX), sx = Math.sin(angX);
     var cy = Math.cos(angY), sy = Math.sin(angY);
+
+    // Eixo maior do modelo -> vertical da tela (igual ao renderizador Python).
+    // Sem isso a espada aparece deitada.
+    var b0 = [1e18, 1e18, 1e18], b1 = [-1e18, -1e18, -1e18];
+    meshes.forEach(function (m) {
+      for (var k = 0; k < m.verts.length; k += 3) {
+        for (var a = 0; a < 3; a++) {
+          var v = m.verts[k + a];
+          if (v < b0[a]) b0[a] = v;
+          if (v > b1[a]) b1[a] = v;
+        }
+      }
+    });
+    var t0 = b1[0] - b0[0], t1 = b1[1] - b0[1], t2 = b1[2] - b0[2];
+    var eixo = (t0 >= t1 && t0 >= t2) ? 0 : (t1 >= t2 ? 1 : 2);
+
+    function base(x, y, z) {
+      if (eixo === 0) return [-y, x, z];    // lamina em X -> Y
+      if (eixo === 2) return [x, z, -y];    // lamina em Z -> Y
+      return [x, y, z];
+    }
+
     function vista(x, y, z) {
+      var b = base(x, y, z);
+      x = b[0]; y = b[1]; z = b[2];
       // gira em Y depois em X (igual ao renderizador Python)
       var x1 = x * cy + z * sy, z1 = -x * sy + z * cy;
       var y1 = y * cx - z1 * sx, z2 = y * sx + z1 * cx;
@@ -307,6 +331,17 @@
         return r.arrayBuffer();
       }).then(function (b) {
         var meshes = parseBmd(b);
+        // tira malhas de EFEITO (chama, brilho): viram um retangulo solto
+        var EFEITO = ['fire', 'flame', 'glow', 'light', 'effe', 'smoke',
+                      'spark', 'flash', 'flare', 'trail', 'fogo', 'chama'];
+        if (meshes.length > 1) {
+          var limpos = meshes.filter(function (m) {
+            var t = (m.tex || '').toLowerCase();
+            for (var i = 0; i < EFEITO.length; i++) if (t.indexOf(EFEITO[i]) >= 0) return false;
+            return true;
+          });
+          if (limpos.length) meshes = limpos;
+        }
         // junta as texturas necessarias
         var nomes = [];
         meshes.forEach(function (m) { if (m.tex && nomes.indexOf(m.tex) < 0) nomes.push(m.tex); });
