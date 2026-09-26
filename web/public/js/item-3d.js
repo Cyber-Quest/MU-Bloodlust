@@ -192,6 +192,25 @@
 
     var base = fazBase(girarBase, tipCode, meshes);
 
+    // 1a passada: extensao apos a rotacao base, para achar a "frente".
+    // Se a maior dimensao horizontal cair na profundidade (Z), o item esta
+    // de lado -> gira 90 graus em torno de Y para a frente encarar a camera.
+    var mn = [1e18, 1e18, 1e18], mx = [-1e18, -1e18, -1e18];
+    meshes.forEach(function (mesh) {
+      for (var k = 0; k < mesh.verts.length; k += 3) {
+        var q = base(mesh.verts[k], mesh.verts[k + 1], mesh.verts[k + 2]);
+        for (var a = 0; a < 3; a++) {
+          if (q[a] < mn[a]) mn[a] = q[a];
+          if (q[a] > mx[a]) mx[a] = q[a];
+        }
+      }
+    });
+    var yaw = (mx[2] - mn[2]) > (mx[0] - mn[0]);
+    function orient(x, y, z) {
+      var q = base(x, y, z);
+      return yaw ? [q[2], q[1], -q[0]] : q;
+    }
+
     // monta geometria (rotacionada), junta tudo num grupo e calcula a caixa
     var grupo = new THREE.Group();
     var min = [1e18, 1e18, 1e18], max = [-1e18, -1e18, -1e18];
@@ -205,13 +224,13 @@
           var c = corners[j];
           var vi = mesh.tris[o + 1 + c], ni = mesh.tris[o + 5 + c], ti = mesh.tris[o + 9 + c];
           if (vi < 0 || vi * 3 + 2 >= mesh.verts.length) continue;
-          var p = base(mesh.verts[vi * 3], mesh.verts[vi * 3 + 1], mesh.verts[vi * 3 + 2]);
+          var p = orient(mesh.verts[vi * 3], mesh.verts[vi * 3 + 1], mesh.verts[vi * 3 + 2]);
           pos.push(p[0], p[1], p[2]);
           if (p[0] < min[0]) min[0] = p[0]; if (p[0] > max[0]) max[0] = p[0];
           if (p[1] < min[1]) min[1] = p[1]; if (p[1] > max[1]) max[1] = p[1];
           if (p[2] < min[2]) min[2] = p[2]; if (p[2] > max[2]) max[2] = p[2];
           if (ni >= 0 && ni * 3 + 2 < mesh.norms.length) {
-            var n = base(mesh.norms[ni * 3], mesh.norms[ni * 3 + 1], mesh.norms[ni * 3 + 2]);
+            var n = orient(mesh.norms[ni * 3], mesh.norms[ni * 3 + 1], mesh.norms[ni * 3 + 2]);
             norm.push(n[0], n[1], n[2]);
           } else {
             norm.push(0, 1, 0);
