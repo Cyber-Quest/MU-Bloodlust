@@ -112,19 +112,6 @@
     return proximo();
   }
 
-  function jpegDaOZJ(buf) {
-    var b = new Uint8Array(buf), ini = -1, fim = -1;
-    for (var i = 0; i < b.length - 2; i++) {
-      if (b[i] === 0xFF && b[i + 1] === 0xD8 && b[i + 2] === 0xFF) { ini = i; break; }
-    }
-    if (ini < 0) return null;
-    for (var j = b.length - 2; j > ini; j--) {
-      if (b[j] === 0xFF && b[j + 1] === 0xD9) { fim = j + 2; break; }
-    }
-    if (fim < 0) return null;
-    return new Blob([b.slice(ini, fim)], { type: 'image/jpeg' });
-  }
-
   function imagemDeBlob(blob) {
     return new Promise(function (res, rej) {
       var url = URL.createObjectURL(blob);
@@ -133,6 +120,35 @@
       img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('img')); };
       img.src = url;
     });
+  }
+
+  /* O .OZJ costuma ter DOIS jpegs (uma miniatura e a imagem principal), e a
+     principal pode estar sem o SOI. Entao: pega todos os trechos SOI..EOI,
+     tenta decodificar do maior para o menor e usa o primeiro que abrir. */
+  function melhorImagem(buf) {
+    var b = new Uint8Array(buf);
+    var sois = [];
+    for (var i = 0; i < b.length - 2; i++) {
+      if (b[i] === 0xFF && b[i + 1] === 0xD8 && b[i + 2] === 0xFF) sois.push(i);
+    }
+    var cands = [];
+    sois.forEach(function (s) {
+      var e = -1;
+      for (var j = s + 2; j < b.length - 1; j++) {
+        if (b[j] === 0xFF && b[j + 1] === 0xD9) { e = j + 2; break; }
+      }
+      if (e > s) cands.push(b.slice(s, e));
+    });
+    if (!cands.length) cands.push(b);            // tenta o arquivo inteiro
+    cands.sort(function (x, y) { return y.length - x.length; });
+
+    function tenta(k) {
+      if (k >= cands.length) return Promise.resolve(null);
+      return imagemDeBlob(new Blob([cands[k]], { type: 'image/jpeg' }))
+        .then(texturaDeImagem)
+        .catch(function () { return tenta(k + 1); });
+    }
+    return tenta(0);
   }
 
   function texturaDeImagem(img) {
@@ -187,15 +203,15 @@
       return [x1, y1, z2];
     }
 
-    // caixa do modelo todo (nos eixos de tela)
-    var mnx = 1e18, mxx = -1e18, mny = 1e18, mxy = -1e18;
+    // caixa do modelo (nos eixos de tela). Usa os percentis 1%/99% em vez do
+    // minimo/maximo: um vertice perdido nao estraga o enquadramento.
+    var xs = [], ys = [];
     var transf = meshes.map(function (m) {
       var v = new Float32Array(m.verts.length);
       for (var k = 0; k < m.verts.length; k += 3) {
         var p = vista(m.verts[k], m.verts[k + 1], m.verts[k + 2]);
         v[k] = p[0]; v[k + 1] = p[1]; v[k + 2] = p[2];
-        if (p[0] < mnx) mnx = p[0]; if (p[0] > mxx) mxx = p[0];
-        if (p[1] < mny) mny = p[1]; if (p[1] > mxy) mxy = p[1];
+        xs.push(p[0]); ys.push(p[1]);
       }
       var nrm = new Float32Array(m.norms.length);
       for (var q = 0; q < m.norms.length; q += 3) {
@@ -205,6 +221,14 @@
       return { verts: v, norms: nrm, uvs: m.uvs, tris: m.tris,
                ntri: m.ntri, tex: m.tex };
     });
+
+    xs.sort(function (a, b) { return a - b; });
+    ys.sort(function (a, b) { return a - b; });
+    var q = function (arr, f) { return arr[Math.min(arr.length - 1, Math.max(0, Math.floor(f * (arr.length - 1))))]; };
+    var mnx = q(xs, 0.01), mxx = q(xs, 0.99);
+    var mny = q(ys, 0.01), mxy = q(ys, 0.99);
+    if (!(mxx > mnx)) { mnx = xs[0]; mxx = xs[xs.length - 1]; }
+    if (!(mxy > mny)) { mny = ys[0]; mxy = ys[ys.length - 1]; }
 
     var larg = Math.max(1e-6, mxx - mnx), alt = Math.max(1e-6, mxy - mny);
     var esc = (Math.min(W, H) * (1 - 2 * margem)) / Math.max(larg, alt);
@@ -303,7 +327,7 @@
       var pastas = [pasta, '/updates/Data/Item', '/updates/Data/Player'];
 
       function pronto(meshes, texs) {
-        var angX = -0.16, angY = 0.0;
+        var angX = 0.1745, angY = 0.4887;   // 10 e 28 graus, igual ao Python
         var arrastando = false, lx = 0;
         function desenha() { render(canvas, meshes, texs, angX, angY); }
         desenha();
@@ -348,9 +372,7 @@
         return Promise.all(nomes.map(function (t) {
           return pegaTex(t, pastas).then(function (buf) {
             if (!buf) return null;
-            var jpg = jpegDaOZJ(buf);
-            var b2 = jpg || new Blob([buf]);
-            return imagemDeBlob(b2).then(texturaDeImagem).catch(function () { return null; });
+            return melhorImagem(buf);
           });
         })).then(function (texs) {
           var mapaTex = {};
