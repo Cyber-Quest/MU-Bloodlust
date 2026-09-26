@@ -119,7 +119,7 @@
           tex.needsUpdate = true;
           tex.wrapS = THREE.RepeatWrapping;
           tex.wrapT = THREE.RepeatWrapping;
-          tex.flipY = true;
+          tex.flipY = false; // UV do MU sao "v=0 no topo" (igual ao jogo/DirectX)
           resolve(tex);
         };
         img.onerror = function () { URL.revokeObjectURL(url); prox(); };
@@ -155,6 +155,14 @@
       if (eixo === 2) return [x, z, -y];
       return [x, y, z];
     };
+  }
+
+  /* ---------- tira malhas de efeito (chama/brilho), que viram retangulo solto ---------- */
+  var EFEITO = /fire|flame|glow|light|effe|smoke|spark|flash|flare|trail|fogo|chama/i;
+  function filtraEfeito(meshes) {
+    if (meshes.length <= 1) return meshes;
+    var limpos = meshes.filter(function (m) { return !EFEITO.test(m.tex); });
+    return limpos.length ? limpos : meshes;
   }
 
   /* ---------- estado ---------- */
@@ -235,10 +243,13 @@
     grupo.scale.set(escala, escala, escala);
 
     scene.add(grupo);
+    grupo.rotation.order = 'YXZ';
     st = { renderer: renderer, scene: scene, camera: camera, grupo: grupo,
            angX: 0.12, angY: 0.5 };
 
     function desenha() {
+      grupo.rotation.x = -st.angX;
+      grupo.rotation.y = st.angY;
       renderer.render(scene, camera);
     }
     desenha();
@@ -264,18 +275,6 @@
         st.angX = Math.max(-1.2, Math.min(1.2, st.angX));
         desenha(); e.preventDefault();
       }
-    };
-
-    // rotacao aplicada ao GRUPO (com a camera parada)
-    grupo.rotation.order = 'YXZ';
-    grupo.rotation.x = -st.angX;
-    grupo.rotation.y = st.angY;
-    // reaplica a cada frame de arrasto
-    var _desenha = desenha;
-    desenha = function () {
-      grupo.rotation.x = -st.angX;
-      grupo.rotation.y = st.angY;
-      _desenha();
     };
   }
 
@@ -310,7 +309,7 @@
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.arrayBuffer();
       }).then(function (b) {
-        var meshes = parseBmd(b);
+        var meshes = filtraEfeito(parseBmd(b));
         var nomes = [];
         meshes.forEach(function (m) { if (m.tex && nomes.indexOf(m.tex) < 0) nomes.push(m.tex); });
         var texs = {};
