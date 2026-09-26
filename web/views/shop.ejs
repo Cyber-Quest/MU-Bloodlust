@@ -78,9 +78,6 @@
   .shop-item-img img {
     max-width: 92%; max-height: 92%; width: auto; height: auto;
     object-fit: contain;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
   }
   .shop-item-plus {
     position: absolute; top: 5px; right: 6px;
@@ -124,9 +121,6 @@
   .shop-kit-preview img {
     width: 42px; height: 42px; object-fit: contain;
     background: #26262d; border-radius: 6px; padding: 2px;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
   }
   .shop-kit-price {
     font-size: .88rem; font-weight: 800; margin-top: auto;
@@ -215,9 +209,9 @@
               </div>
               <div class="shop-kit-preview">
                 <% kit.items.forEach(function (it) { %>
-                  <img src="/assets/items/<%= it.section %>/<%= it.index %>.jpg"
+                  <img src="/assets/items/<%= it.section %>/<%= it.index %>.png"
                        alt="<%= it.name %>" title="<%= it.name %> +15" loading="lazy"
-                       onerror="this.onerror=null;this.src='/assets/inventory/unknownItem.jpg';" />
+                       onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='/assets/items/<%= it.section %>/<%= it.index %>.jpg';}else{this.onerror=null;this.src='/assets/inventory/unknownItem.jpg';}" />
                 <% }); %>
               </div>
               <div class="shop-kit-price"><%= kit.price.toLocaleString('pt-BR') %> <span>Cash</span></div>
@@ -248,9 +242,9 @@
           <% group.items.forEach(function (item) { %>
             <div class="shop-item" data-name="<%= item.name.toLowerCase() %>">
               <div class="shop-item-img">
-                <img src="/assets/items/<%= item.section %>/<%= item.index %>.jpg"
+                <img src="/assets/items/<%= item.section %>/<%= item.index %>.png"
                      alt="<%= item.name %>" loading="lazy"
-                     onerror="this.onerror=null;this.src='/assets/inventory/unknownItem.jpg';" />
+                     onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='/assets/items/<%= item.section %>/<%= item.index %>.jpg';}else{this.onerror=null;this.src='/assets/inventory/unknownItem.jpg';}" />
                 <span class="shop-item-plus">+15</span>
               </div>
               <div class="shop-item-name" title="<%= item.name %>"><%= item.name %></div>
