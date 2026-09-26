@@ -130,24 +130,48 @@
   }
 
   /* ---------- orientacao (ponta para cima) ---------- */
-  function fazBase(girarBase, tipCode, meshes) {
-    var eixo = 1;
-    if (girarBase && !tipCode) {
-      var b0 = [1e18, 1e18, 1e18], b1 = [-1e18, -1e18, -1e18];
-      meshes.forEach(function (m) {
-        for (var k = 0; k < m.verts.length; k += 3) {
-          for (var a = 0; a < 3; a++) {
-            var v = m.verts[k + a];
-            if (v < b0[a]) b0[a] = v;
-            if (v > b1[a]) b1[a] = v;
-          }
+  function fazBase(secao, tipCode, meshes) {
+    // extensao do modelo nos 3 eixos
+    var b0 = [1e18, 1e18, 1e18], b1 = [-1e18, -1e18, -1e18];
+    meshes.forEach(function (m) {
+      for (var k = 0; k < m.verts.length; k += 3) {
+        for (var a = 0; a < 3; a++) {
+          var v = m.verts[k + a];
+          if (v < b0[a]) b0[a] = v;
+          if (v > b1[a]) b1[a] = v;
         }
-      });
-      var t0 = b1[0] - b0[0], t1 = b1[1] - b0[1], t2 = b1[2] - b0[2];
-      eixo = (t0 >= t1 && t0 >= t2) ? 0 : (t1 >= t2 ? 1 : 2);
+      }
+    });
+    var e = [b1[0] - b0[0], b1[1] - b0[1], b1[2] - b0[2]];
+
+    // ESCUDO (6): a face fina -> camera (Z) e o eixo maior -> cima (Y).
+    // O escudo e' chato, entao o eixo mais fino e' sempre a normal da face.
+    if (secao === 6) {
+      var thin = (e[0] <= e[1] && e[0] <= e[2]) ? 0 : (e[1] <= e[2] ? 1 : 2);
+      var long = (e[0] >= e[1] && e[0] >= e[2]) ? 0 : (e[1] >= e[2] ? 1 : 2);
+      var mid = 3 - thin - long;
+      var perm = [mid, long, thin]; // perm[alvo] = eixo de origem
+      var signs = [1, 1, 1];
+      var inv = 0, i, j;
+      for (i = 0; i < 3; i++) for (j = i + 1; j < 3; j++) if (perm[i] > perm[j]) inv++;
+      if (inv % 2 === 1) signs[2] = -1; // mantem det=+1 (rotacao pura, sem espelho)
+      return function (x, y, z) {
+        var v = [x, y, z];
+        return [signs[0] * v[perm[0]], signs[1] * v[perm[1]], signs[2] * v[perm[2]]];
+      };
+    }
+
+    // ARMADURAS / PECAS (7-11): ja estao no padrao do MU (cima=+Y, frente=+Z)
+    if (secao >= 7) {
+      return function (x, y, z) { return [x, y, z]; };
+    }
+
+    // ARMAS (0-5): ponta para cima
+    var eixo = 1;
+    if (!tipCode) {
+      eixo = (e[0] >= e[1] && e[0] >= e[2]) ? 0 : (e[1] >= e[2] ? 1 : 2);
     }
     return function (x, y, z) {
-      if (!girarBase) return [x, y, z];
       if (tipCode === 'nx') return [y, -x, z];
       if (tipCode === 'ny') return [-x, -y, z];
       if (tipCode === 'pz') return [x, z, -y];
@@ -168,7 +192,7 @@
   /* ---------- estado ---------- */
   var st = null;
 
-  function monta(canvas, meshes, texs, girarBase, tipCode) {
+  function monta(canvas, meshes, texs, secao, tipCode) {
     if (st) {
       st.renderer.dispose();
       st = null;
@@ -190,7 +214,7 @@
     dir2.position.set(-0.8, -0.3, -1.0);
     scene.add(dir2);
 
-    var base = fazBase(girarBase, tipCode, meshes);
+    var base = fazBase(secao, tipCode, meshes);
 
     // 1a passada: extensao apos a rotacao base, para achar a "frente".
     // Se a maior dimensao horizontal cair na profundidade (Z), o item esta
@@ -314,11 +338,11 @@
       if (!info) { status.textContent = 'Este item não tem modelo 3D disponível.'; return; }
 
       var chave = secao + ',' + indice;
-      var girarBase = secao >= 0 && secao <= 5;
+      var secaoN = Number(secao);
       var tipCode = info.tip || null;
 
       function pronto(meshes, texs) {
-        monta(canvas, meshes, texs, girarBase, tipCode);
+        monta(canvas, meshes, texs, secaoN, tipCode);
         status.textContent = 'Arraste para girar';
       }
 
