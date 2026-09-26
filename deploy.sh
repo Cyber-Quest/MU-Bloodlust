@@ -53,6 +53,9 @@ if [ ! -f Client/update-manifest.json ] || [ ! -f downloads/MuOnline-97k.zip ] |
    [ -n "$(find Client Encoder tools -newer downloads/MuOnline-97k.zip -print -quit 2>/dev/null)" ]; then
   echo "==> Cliente mudou -> regenerando manifesto e zip de download"
   python3 tools/gen-manifest.py Client
+  # OBS: 'zip' atualiza o arquivo e NAO remove entradas de arquivos apagados,
+  # entao o zip precisa ser recriado do zero a cada vez.
+  rm -f downloads/MuOnline-97k.zip
   ( cd Client && zip -r -q ../downloads/MuOnline-97k.zip . -x 'ScreenShots/*' -x 'update-manifest.json' )
   ls -lh downloads/MuOnline-97k.zip
 else
